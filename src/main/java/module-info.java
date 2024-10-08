@@ -9,6 +9,8 @@ module com.lms {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires json.simple;
+    requires org.json;
 
     opens com.lms to javafx.fxml;
     exports com.lms;
