@@ -1,5 +1,4 @@
 module com.lms {
-    requires javafx.controls;
     requires javafx.fxml;
     requires javafx.web;
 
@@ -9,6 +8,7 @@ module com.lms {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
+    requires com.jfoenix;
 
     opens com.lms to javafx.fxml;
     exports com.lms;
