@@ -34,6 +34,6 @@ public class SignupController implements Initializable {
     }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ControllerUtils.fadeTransition(signupScreen, 0.8, 1, 0.1);
+        ControllerUtils.fadeTransition(signupScreen, 0.6, 1, 0.3);
     }
 }

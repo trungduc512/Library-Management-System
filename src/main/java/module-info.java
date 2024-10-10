@@ -9,6 +9,7 @@ module com.lms {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.jfoenix;
+    requires jdk.xml.dom;
 
     opens com.lms to javafx.fxml;
     exports com.lms;

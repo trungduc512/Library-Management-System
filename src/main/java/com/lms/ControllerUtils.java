@@ -1,6 +1,7 @@
 package com.lms;
 
 import javafx.animation.FadeTransition;
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -23,11 +24,20 @@ public class ControllerUtils {
     }
 
     public static void fadeTransition(Node node, double fromOpacity, double toOpacity, double second) {
-        FadeTransition loginScreenTransition = new FadeTransition(Duration.seconds(second), node);
-        loginScreenTransition.setFromValue(fromOpacity);
-        loginScreenTransition.setToValue(toOpacity);
-        loginScreenTransition.setCycleCount(1);
-        loginScreenTransition.play();
+        FadeTransition transition = new FadeTransition(Duration.seconds(second), node);
+        transition.setFromValue(fromOpacity);
+        transition.setToValue(toOpacity);
+        transition.setCycleCount(1);
+        transition.play();
+    }
+
+    public static void slideTransition (Node node, double fromX, double toX, double second) {
+        node.setTranslateX(fromX);
+        TranslateTransition slide = new TranslateTransition();
+        slide.setDuration(Duration.seconds(second));
+        slide.setNode(node);
+        slide.setToX(toX);
+        slide.play();
     }
 
 }
