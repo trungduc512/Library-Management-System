@@ -1,4 +1,4 @@
-package com.lms;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,7 +35,7 @@ public class Librarian extends User {
       stmt.setInt(5, book.getTotalBooks());
       stmt.setInt(6, book.getBorrowedBooks());  // Thêm borrowed_books
       stmt.executeUpdate();
-      System.out.println("com.lms.Book saved to database.");
+      System.out.println("classes.Book saved to database.");
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -50,7 +50,7 @@ public class Librarian extends User {
       stmt.setInt(1, book.getTotalBooks());
       stmt.setString(2, book.getIsbn());
       stmt.executeUpdate();
-      System.out.println("com.lms.Book updated in database.");
+      System.out.println("classes.Book updated in database.");
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -63,7 +63,7 @@ public class Librarian extends User {
         PreparedStatement stmt = conn.prepareStatement(sql)) {
       stmt.setString(1, isbn);
       stmt.executeUpdate();
-      System.out.println("com.lms.Book deleted from database.");
+      System.out.println("classes.Book deleted from database.");
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -74,7 +74,7 @@ public class Librarian extends User {
       int totalBooks) {
     Book FindBook = User.getBookByIsbn(isbn);
     if (FindBook != null) {
-      System.out.println("com.lms.Book already exists.");
+      System.out.println("classes.Book already exists.");
       return;
     }
     Book newBook = new Book(title, author, isbn, description, totalBooks, 0);
@@ -94,7 +94,7 @@ public class Librarian extends User {
       updateTotalBook(book);
       System.out.println("Updated book: " + book.getTitle());
     } else {
-      System.out.println("com.lms.Book not found.");
+      System.out.println("classes.Book not found.");
     }
   }
 
@@ -105,7 +105,7 @@ public class Librarian extends User {
       deleteBook(book.getIsbn()); // Xóa sách khỏi cơ sở dữ liệu
       System.out.println("Deleted book: " + book.getTitle());
     } else {
-      System.out.println("com.lms.Book not found.");
+      System.out.println("classes.Book not found.");
     }
   }
 
@@ -114,8 +114,8 @@ public class Librarian extends User {
     List<Borrower> borrowers = new ArrayList<>();
     String sql = "SELECT * FROM Borrowers";
     try (Connection conn = DatabaseHelper.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        ResultSet rs = stmt.executeQuery()) {
+         PreparedStatement stmt = conn.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
       while (rs.next()) {
         int id = rs.getInt("id");
         String hoTen = rs.getString("ho_ten");

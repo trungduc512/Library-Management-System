@@ -1,4 +1,4 @@
-package com.lms;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,7 +27,7 @@ public class Borrower extends User {
     this.setHoTen(hoTen);
     String sql = "UPDATE Users SET ho_ten = ? WHERE id = ?";
     try (Connection conn = DatabaseHelper.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql)) {
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
       stmt.setString(1, hoTen);
       stmt.setInt(2, getId());
       stmt.executeUpdate();
@@ -48,7 +48,7 @@ public class Borrower extends User {
         stmt.setInt(1, book.getBorrowedBooks() + quantity);
         stmt.setString(6, isbn);
         stmt.executeUpdate();
-        System.out.println("com.lms.Book updated in database.");
+        System.out.println("classes.Book updated in database.");
       } catch (SQLException e) {
         e.printStackTrace();
       }
@@ -68,7 +68,7 @@ public class Borrower extends User {
         stmt.setInt(1, book.getBorrowedBooks() - quantity);
         stmt.setString(6, isbn);
         stmt.executeUpdate();
-        System.out.println("com.lms.Book updated in database.");
+        System.out.println("classes.Book updated in database.");
       } catch (SQLException e) {
         e.printStackTrace();
       }
@@ -103,7 +103,7 @@ public class Borrower extends User {
 
           // Gọi hàm để thêm bản ghi mượn sách
           if (addBorrowedBookRecord(this.getId(), book.getTitle(), book.getIsbn(), quantity)) {
-            // Cập nhật số lượng sách trong đối tượng com.lms.Book
+            // Cập nhật số lượng sách trong đối tượng classes.Book
 
             incrementBorrowedBooks(book.getIsbn(), quantity); // Tăng số lượng sách đã mượn
 
@@ -120,7 +120,7 @@ public class Borrower extends User {
   }
 
 
-  // Thêm bản ghi vào bảng com.lms.BorrowedBookRecord
+  // Thêm bản ghi vào bảng classes.BorrowedBookRecord
   private boolean addBorrowedBookRecord(int borrowerId, String title, String isbn, int quantity) {
     String sql = "INSERT INTO BorrowedBookRecord (borrower_id,title, isbn, quantity, borrowed_date) VALUES (?, ?, ?, ?)";
     try (Connection conn = DatabaseHelper.getConnection();
@@ -170,7 +170,7 @@ public class Borrower extends User {
 
   // Hàm trả sách
   public boolean returnBook(int recordId) {
-    // Tìm bản ghi trong com.lms.BorrowedBookRecord
+    // Tìm bản ghi trong classes.BorrowedBookRecord
     BorrowedBookRecord record = findBorrowedRecordById(recordId);
     if (record == null) {
       System.out.println("Không tìm thấy bản ghi mượn sách.");
@@ -183,11 +183,11 @@ public class Borrower extends User {
       reduceBorrowedBooks(book.getIsbn(), record.getQuantity()); // Giảm số lượng sách đã mượn
     }
 
-    // Xóa bản ghi khỏi com.lms.BorrowedBookRecord
+    // Xóa bản ghi khỏi classes.BorrowedBookRecord
     return deleteBorrowedBookRecord(recordId);
   }
 
-  // Hàm xóa bản ghi mượn sách khỏi com.lms.BorrowedBookRecord
+  // Hàm xóa bản ghi mượn sách khỏi classes.BorrowedBookRecord
   private boolean deleteBorrowedBookRecord(int recordId) {
     String sql = "DELETE FROM BorrowedBookRecord WHERE id = ?";
     try (Connection conn = DatabaseHelper.getConnection();

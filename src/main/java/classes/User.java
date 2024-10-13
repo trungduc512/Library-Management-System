@@ -1,4 +1,4 @@
-package com.lms;
+package classes;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -87,8 +87,8 @@ public class User {
     List<Book> books = new ArrayList<>();
     String sql = "SELECT * FROM Books";
     try (Connection conn = DatabaseHelper.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        ResultSet rs = stmt.executeQuery()) {
+         PreparedStatement stmt = conn.prepareStatement(sql);
+         ResultSet rs = stmt.executeQuery()) {
       while (rs.next()) {
         String title = rs.getString("title");
         String author = rs.getString("author");
@@ -130,7 +130,7 @@ public class User {
 //
 //  public static boolean register(String hoTen, String tenTaiKhoan, String password) {
 //    // Kiểm tra nếu tên tài khoản đã tồn tại
-//    if (com.lms.User.userExists(tenTaiKhoan)) {
+//    if (classes.User.userExists(tenTaiKhoan)) {
 //      System.out.println("Tên tài khoản đã tồn tại");
 //      return false;
 //    }
@@ -138,7 +138,7 @@ public class User {
 //    String hashedPassword = hashPassword(password);  // Mã hóa mật khẩu
 //
 //    String sql = "INSERT INTO Users (ho_ten, ten_tai_khoan, password) VALUES (?, ?, ?)";
-//    try (Connection conn = com.lms.DatabaseHelper.getConnection();
+//    try (Connection conn = classes.DatabaseHelper.getConnection();
 //        PreparedStatement stmt = conn.prepareStatement(sql,
 //            PreparedStatement.RETURN_GENERATED_KEYS)) {
 //      stmt.setString(1, hoTen);
@@ -154,9 +154,9 @@ public class User {
 //  }
 //
 //  // Hàm đăng nhập (login)
-//  public static com.lms.User login(String tenTaiKhoan, String password) {
+//  public static classes.User login(String tenTaiKhoan, String password) {
 //    String sql = "SELECT * FROM Users WHERE ten_tai_khoan = ?";
-//    try (Connection conn = com.lms.DatabaseHelper.getConnection();
+//    try (Connection conn = classes.DatabaseHelper.getConnection();
 //        PreparedStatement stmt = conn.prepareStatement(sql)) {
 //      stmt.setString(1, tenTaiKhoan);
 //      ResultSet rs = stmt.executeQuery();
@@ -169,7 +169,7 @@ public class User {
 //          int userId = rs.getInt("user_id");
 //          String hoTen = rs.getString("ho_ten");
 //          System.out.println("Đăng nhập thành công");
-//          return new com.lms.User(userId, hoTen, tenTaiKhoan, storedPassword);  // Đăng nhập thành công
+//          return new classes.User(userId, hoTen, tenTaiKhoan, storedPassword);  // Đăng nhập thành công
 //        } else {
 //          System.out.println("Sai mật khẩu");
 //        }
@@ -183,7 +183,7 @@ public class User {
 //  }
 //
 //  // Hàm đăng xuất (logout)
-//  public static void logout(com.lms.User user) {
+//  public static void logout(classes.User user) {
 //    System.out.println("Người dùng " + user.getTenTaiKhoan() + " đã đăng xuất.");
 //    // Thực hiện các hành động cần thiết khi đăng xuất (nếu cần)
 //  }
@@ -191,7 +191,7 @@ public class User {
 //  // Hàm kiểm tra tên tài khoản đã tồn tại chưa
 //  public static boolean userExists(String tenTaiKhoan) {
 //    String sql = "SELECT * FROM Users WHERE ten_tai_khoan = ?";
-//    try (Connection conn = com.lms.DatabaseHelper.getConnection();
+//    try (Connection conn = classes.DatabaseHelper.getConnection();
 //        PreparedStatement stmt = conn.prepareStatement(sql)) {
 //      stmt.setString(1, tenTaiKhoan);
 //      ResultSet rs = stmt.executeQuery();

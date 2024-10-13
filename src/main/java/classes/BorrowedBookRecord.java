@@ -1,4 +1,4 @@
-package com.lms;
+package classes;
 
 import java.time.LocalDate;
 
