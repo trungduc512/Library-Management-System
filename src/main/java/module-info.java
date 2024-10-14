@@ -10,6 +10,8 @@ module com.lms {
     requires eu.hansolo.tilesfx;
     requires com.jfoenix;
     requires jdk.xml.dom;
+    requires json.simple;
+    requires org.json;
 
     opens com.lms to javafx.fxml;
     exports com.lms;
