@@ -16,7 +16,7 @@ public class Main {
     public static void main(String[] args) {
 
         try {
-            //create API requeset
+            //create API request
             String isbn = "059035342X"; //Harry Potter
             String apiURL = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
             URL url = new URL(apiURL + isbn);
@@ -76,7 +76,7 @@ public class Main {
             //get description of the book
             String description = (String) volumeInfo.get("description");
 
-            //print gathered infomation
+            //print gathered information
             System.out.println("Title:");
             System.out.println(title);
             System.out.println("Authors:");
