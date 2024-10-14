@@ -9,10 +9,10 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.Objects;
 
-public class HelloApplication extends Application {
+public class MenuTest extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Login.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Menu.fxml")));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.setTitle("Login");
