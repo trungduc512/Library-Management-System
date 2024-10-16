@@ -41,6 +41,9 @@ public class MenuController implements Initializable {
     @FXML
     private AnchorPane feature3Pane;
 
+    @FXML
+    private AnchorPane searchPane;
+
     //sub feature: 840 x 510
     @FXML
     private void backToHome (ActionEvent event) throws Exception {
@@ -64,6 +67,10 @@ public class MenuController implements Initializable {
         return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Feature3.fxml")));
     }
 
+    private AnchorPane createSearchScreen() throws IOException {
+        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SearchBook.fxml")));
+    }
+
     public void useFeature1() {
         switchNode(feature1Pane);
     }
@@ -74,6 +81,10 @@ public class MenuController implements Initializable {
 
     public void useFeature3() {
         switchNode(feature3Pane);
+    }
+
+    public void toSearchScreen() {
+        switchNode(searchPane);
     }
 
     // Switch Layout Panes in Center of BorderPane
@@ -89,6 +100,7 @@ public class MenuController implements Initializable {
             feature1Pane = createFeature1Pane();
             feature2Pane = createFeature2Pane();
             feature3Pane = createFeature3Pane();
+            searchPane = createSearchScreen();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

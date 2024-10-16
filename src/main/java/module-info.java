@@ -12,6 +12,7 @@ module com.lms {
     requires jdk.xml.dom;
     requires json.simple;
     requires org.json;
+    requires jdk.jfr;
 
     opens com.lms to javafx.fxml;
     exports com.lms;

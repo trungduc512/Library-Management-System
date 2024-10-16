@@ -27,7 +27,7 @@
                         <Font size="16.0" />
                      </font>
                   </JFXButton>
-                  <JFXButton alignment="BASELINE_LEFT" focusTraversable="false" prefHeight="41.0" prefWidth="202.0" styleClass="dashboardItem" text="Feature" onAction="#useFeature1" textFill="WHITE">
+                  <JFXButton alignment="BASELINE_LEFT" focusTraversable="false" onAction="#useFeature1" prefHeight="41.0" prefWidth="202.0" styleClass="dashboardItem" text="Feature" textFill="WHITE">
                      <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -39,7 +39,7 @@
                         <Font size="16.0" />
                      </font>
                   </JFXButton>
-                  <JFXButton alignment="BASELINE_LEFT" focusTraversable="false" prefHeight="41.0" prefWidth="202.0" styleClass="dashboardItem" text="Feature" onAction="#useFeature2" textFill="WHITE">
+                  <JFXButton alignment="BASELINE_LEFT" focusTraversable="false" onAction="#useFeature2" prefHeight="41.0" prefWidth="202.0" styleClass="dashboardItem" text="Feature" textFill="WHITE">
                      <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
@@ -51,11 +51,11 @@
                         <Font size="16.0" />
                      </font>
                   </JFXButton>
-                  <JFXButton alignment="BASELINE_LEFT" focusTraversable="false" prefHeight="41.0" prefWidth="202.0" styleClass="dashboardItem" text="Feature" onAction="#useFeature3" textFill="WHITE">
+                  <JFXButton alignment="BASELINE_LEFT" focusTraversable="false" onAction="#toSearchScreen" prefHeight="41.0" prefWidth="202.0" styleClass="dashboardItem" text="Search" textFill="WHITE">
                      <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@Images/add2.png" />
+                              <Image url="@Images/search-icon.png" />
                            </image>
                         </ImageView>
                      </graphic>
