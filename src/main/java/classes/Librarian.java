@@ -18,8 +18,8 @@ public class Librarian extends User {
   ;
 
 
-  private Librarian(int id, String hoTen, String tenTaiKhoan, String password) {
-    super(id, hoTen, tenTaiKhoan, password);
+  private Librarian(int id, String fullName, String userName, String password) {
+    super(id, fullName, userName, password);
     this.books = new ArrayList<>();
   }
 
@@ -118,11 +118,11 @@ public class Librarian extends User {
          ResultSet rs = stmt.executeQuery()) {
       while (rs.next()) {
         int id = rs.getInt("id");
-        String hoTen = rs.getString("ho_ten");
-        String tenTaiKhoan = rs.getString("ten_tai_khoan");
+        String fullName = rs.getString("ho_ten");
+        String userName = rs.getString("ten_tai_khoan");
         String password = rs.getString("password");
-        borrowers.add(new Borrower(id, hoTen, tenTaiKhoan, password));
-        System.out.println("ID: " + id + ", Họ tên: " + hoTen + ", Tên tài khoản: " + tenTaiKhoan);
+        borrowers.add(new Borrower(id, fullName, userName, password));
+        System.out.println("ID: " + id + ", Họ tên: " + fullName + ", Tên tài khoản: " + userName);
       }
     } catch (SQLException e) {
       e.printStackTrace();
@@ -132,9 +132,9 @@ public class Librarian extends User {
 
   // Hàm đăng ký (register)
 
-  public static boolean register(String hoTen, String tenTaiKhoan, String password) {
+  public static boolean register(String fullName, String userName, String password) {
     // Kiểm tra nếu tên tài khoản đã tồn tại
-    if (Librarian.userExists(tenTaiKhoan)) {
+    if (Librarian.userExists(userName)) {
       System.out.println("Tên tài khoản đã tồn tại");
       return false;
     }
@@ -145,8 +145,8 @@ public class Librarian extends User {
     try (Connection conn = DatabaseHelper.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql,
             PreparedStatement.RETURN_GENERATED_KEYS)) {
-      stmt.setString(1, hoTen);
-      stmt.setString(2, tenTaiKhoan);
+      stmt.setString(1, fullName);
+      stmt.setString(2, userName);
       stmt.setString(3, password);
       stmt.executeUpdate();
       System.out.println("Đăng ký thành công");
@@ -158,11 +158,11 @@ public class Librarian extends User {
   }
 
   // Hàm đăng nhập (login)
-  public static Librarian login(String tenTaiKhoan, String password) {
+  public static Librarian login(String userName, String password) {
     String sql = "SELECT * FROM Librarians  WHERE ten_tai_khoan = ?";
     try (Connection conn = DatabaseHelper.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setString(1, tenTaiKhoan);
+      stmt.setString(1, userName);
       ResultSet rs = stmt.executeQuery();
 
       if (rs.next()) {
@@ -171,9 +171,9 @@ public class Librarian extends User {
         // Kiểm tra mật khẩu có khớp hay không
         if (checkPassword(password, storedPassword)) {
           int userId = rs.getInt("id");
-          String hoTen = rs.getString("ho_ten");
+          String fullName = rs.getString("ho_ten");
           System.out.println("Đăng nhập thành công");
-          return new Librarian(userId, hoTen, tenTaiKhoan, storedPassword);  // Đăng nhập thành công
+          return new Librarian(userId, fullName, userName, storedPassword);  // Đăng nhập thành công
         } else {
           System.out.println("Sai mật khẩu");
         }
@@ -188,16 +188,16 @@ public class Librarian extends User {
 
   // Hàm đăng xuất (logout)
   public static void logout(User user) {
-    System.out.println("Người dùng " + user.getTenTaiKhoan() + " đã đăng xuất.");
+    System.out.println("Người dùng " + user.getUserName() + " đã đăng xuất.");
     // Thực hiện các hành động cần thiết khi đăng xuất (nếu cần)
   }
 
   // Hàm kiểm tra tên tài khoản đã tồn tại chưa
-  public static boolean userExists(String tenTaiKhoan) {
+  public static boolean userExists(String userName) {
     String sql = "SELECT * FROM Librarians  WHERE ten_tai_khoan = ?";
     try (Connection conn = DatabaseHelper.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setString(1, tenTaiKhoan);
+      stmt.setString(1, userName);
       ResultSet rs = stmt.executeQuery();
       return rs.next();
     } catch (SQLException e) {

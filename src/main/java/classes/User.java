@@ -9,128 +9,140 @@ import java.util.List;
 
 
 public class User {
+    private int id;
+    private String fullName;  // Họ tên người dùng
+    private String userName;  // Tên tài khoản (username)
+    private String password;
 
-  private int id;
-  private String hoTen;       // Họ tên người dùng
-  private String tenTaiKhoan;  // Tên tài khoản (username)
-  private String password;
-
-  // Constructor
-  protected User() {
-  }
-
-  protected User(int id, String hoTen, String tenTaiKhoan, String password) {
-    this.id = id;
-    this.hoTen = hoTen;
-    this.tenTaiKhoan = tenTaiKhoan;
-    this.password = password;
-  }
-
-  // Getters và Setters
-  public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
-  }
-
-  public String getHoTen() {
-    return hoTen;
-  }
-
-  public void setHoTen(String hoTen) {
-    this.hoTen = hoTen;
-  }
-
-  public String getTenTaiKhoan() {
-    return tenTaiKhoan;
-  }
-
-  public void setTenTaiKhoan(String tenTaiKhoan) {
-    this.tenTaiKhoan = tenTaiKhoan;
-  }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public void setPassword(String password) {
-    this.password = password;
-  }
-
-  //Hàm tìm sách theo tên
-  public static List<Book> searchBooksByTitle(String title) {
-    List<Book> books = new ArrayList<>();
-    String sql = "SELECT * FROM Books WHERE title LIKE ? LIMIT 5"; // Giới hạn kết quả 5 cuốn
-    try (Connection conn = DatabaseHelper.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setString(1, "%" + title + "%");
-      ResultSet rs = stmt.executeQuery();
-      while (rs.next()) {
-        String bookTitle = rs.getString("title");
-        String author = rs.getString("author");
-        String isbn = rs.getString("isbn");
-        String description = rs.getString("description");
-        int totalBook = rs.getInt("total_books");
-        int borrowedBook = rs.getInt("borrowed_books");
-        books.add(new Book(bookTitle, author, isbn, description, totalBook, borrowedBook));
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
+    // Constructor
+    protected User() {
     }
-    return books;
-  }
 
-  // Hàm lấy danh sách sách từ cơ sở dữ liệu
-  public static List<Book> getAllBooks() {
-    List<Book> books = new ArrayList<>();
-    String sql = "SELECT * FROM Books";
-    try (Connection conn = DatabaseHelper.getConnection();
-         PreparedStatement stmt = conn.prepareStatement(sql);
-         ResultSet rs = stmt.executeQuery()) {
-      while (rs.next()) {
-        String title = rs.getString("title");
-        String author = rs.getString("author");
-        String isbn = rs.getString("isbn");
-        String description = rs.getString("description");
-        int totalBooks = rs.getInt("total_books");
-        int borrowedBooks = rs.getInt("borrowed_books");
-        books.add(new Book(title, author, isbn, description, totalBooks, borrowedBooks));
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
+    protected User(int id, String fullName, String userName, String password) {
+        this.id = id;
+        this.fullName = fullName;
+        this.userName = userName;
+        this.password = password;
     }
-    return books;
-  }
 
-  // Hàm lấy thông tin sách từ ISBN
-  public static Book getBookByIsbn(String isbn) {
-    String sql = "SELECT * FROM Books WHERE isbn = ?";
-    try (Connection conn = DatabaseHelper.getConnection();
-        PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setString(1, isbn);
-      ResultSet rs = stmt.executeQuery();
-      if (rs.next()) {
-        String title = rs.getString("title");
-        String author = rs.getString("author");
-        String description = rs.getString("description");
-        int totalBooks = rs.getInt("total_books");
-        int borrowedBooks = rs.getInt("borrowed_books");
-        return new Book(title, author, isbn, description, totalBooks, borrowedBooks);
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
+    // Getters và Setters
+    public int getId() {
+      return id;
     }
-    return null;  // Nếu không tìm thấy sách
-  }
 
+    public void setId(int id) {
+      this.id = id;
+    }
+
+    public String getFullName() {
+      return fullName;
+    }
+
+    public void setFullName(String fullName) {
+      this.fullName = fullName;
+    }
+
+    public String getUserName() {
+      return userName;
+    }
+
+    public void setUserName(String userName) {
+      this.userName = userName;
+    }
+
+    public String getPassword() {
+      return password;
+    }
+
+    public void setPassword(String password) {
+      this.password = password;
+    }
+
+    //Hàm tìm sách theo tên
+    public static List<Book> searchBooksByTitle(String title) {
+        List<Book> books = new ArrayList<>();
+        String sql = "SELECT * FROM Books WHERE title LIKE ? LIMIT 5"; // Giới hạn kết quả 5 cuốn
+      
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+          
+            stmt.setString(1, "%" + title + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String bookTitle = rs.getString("title");
+                String author = rs.getString("author");
+                String isbn = rs.getString("isbn");
+                String description = rs.getString("description");
+                int totalBook = rs.getInt("total_books");
+                int borrowedBook = rs.getInt("borrowed_books");
+                
+                books.add(new Book(bookTitle, author, isbn, description, totalBook, borrowedBook));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return books;
+    }
+
+    // Hàm lấy danh sách sách từ cơ sở dữ liệu
+    public static List<Book> getAllBooks() {
+        List<Book> books = new ArrayList<>();
+        String sql = "SELECT * FROM Books";
+        
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+          
+            while (rs.next()) {
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                String isbn = rs.getString("isbn");
+                String description = rs.getString("description");
+                int totalBooks = rs.getInt("total_books");
+                int borrowedBooks = rs.getInt("borrowed_books");
+               
+                books.add(new Book(title, author, isbn, description, totalBooks, borrowedBooks));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return books;
+    }
+
+    // Hàm lấy thông tin sách từ ISBN
+    public static Book getBookByIsbn(String isbn) {
+        String sql = "SELECT * FROM Books WHERE isbn = ?";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+          
+            stmt.setString(1, isbn);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) {
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                String description = rs.getString("description");
+                int totalBooks = rs.getInt("total_books");
+                int borrowedBooks = rs.getInt("borrowed_books");
+                
+                return new Book(title, author, isbn, description, totalBooks, borrowedBooks);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return null;  // Nếu không tìm thấy sách
+    }
 }
 //  // Hàm đăng ký (register)
 //
-//  public static boolean register(String hoTen, String tenTaiKhoan, String password) {
+//  public static boolean register(String fullName, String userName, String password) {
 //    // Kiểm tra nếu tên tài khoản đã tồn tại
-//    if (classes.User.userExists(tenTaiKhoan)) {
+//    if (classes.User.userExists(userName)) {
 //      System.out.println("Tên tài khoản đã tồn tại");
 //      return false;
 //    }
@@ -141,8 +153,8 @@ public class User {
 //    try (Connection conn = classes.DatabaseHelper.getConnection();
 //        PreparedStatement stmt = conn.prepareStatement(sql,
 //            PreparedStatement.RETURN_GENERATED_KEYS)) {
-//      stmt.setString(1, hoTen);
-//      stmt.setString(2, tenTaiKhoan);
+//      stmt.setString(1, fullName);
+//      stmt.setString(2, userName);
 //      stmt.setString(3, password);
 //      stmt.executeUpdate();
 //      System.out.println("Đăng ký thành công");
@@ -154,11 +166,11 @@ public class User {
 //  }
 //
 //  // Hàm đăng nhập (login)
-//  public static classes.User login(String tenTaiKhoan, String password) {
+//  public static classes.User login(String userName, String password) {
 //    String sql = "SELECT * FROM Users WHERE ten_tai_khoan = ?";
 //    try (Connection conn = classes.DatabaseHelper.getConnection();
 //        PreparedStatement stmt = conn.prepareStatement(sql)) {
-//      stmt.setString(1, tenTaiKhoan);
+//      stmt.setString(1, userName);
 //      ResultSet rs = stmt.executeQuery();
 //
 //      if (rs.next()) {
@@ -167,9 +179,9 @@ public class User {
 //        // Kiểm tra mật khẩu có khớp hay không
 //        if (checkPassword(password, storedPassword)) {
 //          int userId = rs.getInt("user_id");
-//          String hoTen = rs.getString("ho_ten");
+//          String fullName = rs.getString("ho_ten");
 //          System.out.println("Đăng nhập thành công");
-//          return new classes.User(userId, hoTen, tenTaiKhoan, storedPassword);  // Đăng nhập thành công
+//          return new classes.User(userId, fullName, userName, storedPassword);  // Đăng nhập thành công
 //        } else {
 //          System.out.println("Sai mật khẩu");
 //        }
@@ -184,16 +196,16 @@ public class User {
 //
 //  // Hàm đăng xuất (logout)
 //  public static void logout(classes.User user) {
-//    System.out.println("Người dùng " + user.getTenTaiKhoan() + " đã đăng xuất.");
+//    System.out.println("Người dùng " + user.getuserName() + " đã đăng xuất.");
 //    // Thực hiện các hành động cần thiết khi đăng xuất (nếu cần)
 //  }
 //
 //  // Hàm kiểm tra tên tài khoản đã tồn tại chưa
-//  public static boolean userExists(String tenTaiKhoan) {
+//  public static boolean userExists(String userName) {
 //    String sql = "SELECT * FROM Users WHERE ten_tai_khoan = ?";
 //    try (Connection conn = classes.DatabaseHelper.getConnection();
 //        PreparedStatement stmt = conn.prepareStatement(sql)) {
-//      stmt.setString(1, tenTaiKhoan);
+//      stmt.setString(1, userName);
 //      ResultSet rs = stmt.executeQuery();
 //      return rs.next();
 //    } catch (SQLException e) {

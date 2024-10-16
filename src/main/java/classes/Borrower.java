@@ -15,20 +15,20 @@ public class Borrower extends User {
 
 
   // Constructor
-  public Borrower(int id, String hoTen, String tenTaiKhoan, String password) {
-    super(id, hoTen, tenTaiKhoan, password);
+  public Borrower(int id, String fullName, String userName, String password) {
+    super(id, fullName, userName, password);
     this.borrowedBooks = new ArrayList<>();
     this.searchedBooks = new ArrayList<>();
 
   }
 
   // Hàm cập nhật hồ sơ
-  public void updateProfile(String hoTen) {
-    this.setHoTen(hoTen);
+  public void updateProfile(String fullName) {
+    this.setFullName(fullName);
     String sql = "UPDATE Users SET ho_ten = ? WHERE id = ?";
     try (Connection conn = DatabaseHelper.getConnection();
          PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setString(1, hoTen);
+      stmt.setString(1, fullName);
       stmt.setInt(2, getId());
       stmt.executeUpdate();
       System.out.println("Profile updated in database.");
@@ -225,9 +225,9 @@ public class Borrower extends User {
 
   // Hàm đăng ký (register)
 
-  public static boolean register(String hoTen, String tenTaiKhoan, String password) {
+  public static boolean register(String fullName, String userName, String password) {
     // Kiểm tra nếu tên tài khoản đã tồn tại
-    if (Borrower.userExists(tenTaiKhoan)) {
+    if (Borrower.userExists(userName)) {
       System.out.println("Tên tài khoản đã tồn tại");
       return false;
     }
@@ -238,8 +238,8 @@ public class Borrower extends User {
     try (Connection conn = DatabaseHelper.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql,
             PreparedStatement.RETURN_GENERATED_KEYS)) {
-      stmt.setString(1, hoTen);
-      stmt.setString(2, tenTaiKhoan);
+      stmt.setString(1, fullName);
+      stmt.setString(2, userName);
       stmt.setString(3, password);
       stmt.executeUpdate();
       System.out.println("Đăng ký thành công");
@@ -251,11 +251,11 @@ public class Borrower extends User {
   }
 
   // Hàm đăng nhập (login)
-  public static Borrower login(String tenTaiKhoan, String password) {
+  public static Borrower login(String userName, String password) {
     String sql = "SELECT * FROM Borrowers  WHERE ten_tai_khoan = ?";
     try (Connection conn = DatabaseHelper.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setString(1, tenTaiKhoan);
+      stmt.setString(1, userName);
       ResultSet rs = stmt.executeQuery();
 
       if (rs.next()) {
@@ -264,9 +264,9 @@ public class Borrower extends User {
         // Kiểm tra mật khẩu có khớp hay không
         if (checkPassword(password, storedPassword)) {
           int userId = rs.getInt("id");
-          String hoTen = rs.getString("ho_ten");
+          String fullName = rs.getString("ho_ten");
           System.out.println("Đăng nhập thành công");
-          return new Borrower(userId, hoTen, tenTaiKhoan, storedPassword);  // Đăng nhập thành công
+          return new Borrower(userId, fullName, userName, storedPassword);  // Đăng nhập thành công
         } else {
           System.out.println("Sai mật khẩu");
         }
@@ -281,16 +281,16 @@ public class Borrower extends User {
 
   // Hàm đăng xuất (logout)
   public static void logout(User user) {
-    System.out.println("Người dùng " + user.getTenTaiKhoan() + " đã đăng xuất.");
+    System.out.println("Người dùng " + user.getUserName() + " đã đăng xuất.");
     // Thực hiện các hành động cần thiết khi đăng xuất (nếu cần)
   }
 
   // Hàm kiểm tra tên tài khoản đã tồn tại chưa
-  public static boolean userExists(String tenTaiKhoan) {
+  public static boolean userExists(String userName) {
     String sql = "SELECT * FROM Borrowers  WHERE ten_tai_khoan = ?";
     try (Connection conn = DatabaseHelper.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql)) {
-      stmt.setString(1, tenTaiKhoan);
+      stmt.setString(1, userName);
       ResultSet rs = stmt.executeQuery();
       return rs.next();
     } catch (SQLException e) {
