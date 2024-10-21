@@ -13,7 +13,11 @@ module com.lms {
     requires json.simple;
     requires org.json;
     requires jdk.jfr;
+    requires java.sql;
 
     opens com.lms to javafx.fxml;
     exports com.lms;
+
+    opens classes to javafx.fxml;
+    exports classes;
 }
