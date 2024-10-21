@@ -8,16 +8,15 @@ module com.lms {
     requires org.kordamp.ikonli.javafx;
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
-<<<<<<< HEAD
     requires com.jfoenix;
     requires jdk.xml.dom;
     requires json.simple;
     requires org.json;
     requires jdk.jfr;
-=======
     requires java.sql;
->>>>>>> dev-main-feature
 
+    opens com.lms to javafx.fxml;
+    exports com.lms;
 
     opens classes to javafx.fxml;
     exports classes;
