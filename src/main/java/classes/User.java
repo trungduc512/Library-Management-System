@@ -1,18 +1,14 @@
 package classes;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class User {
-    private int id;
-    private String fullName;  // Họ tên người dùng
-    private String userName;  // Tên tài khoản (username)
-    private String password;
+public abstract class User {
+    protected int id;
+    protected String fullName;  // Họ tên người dùng
+    protected String userName;  // Tên tài khoản (username)
+    protected String password;
 
     // Constructor
     protected User() {
@@ -27,45 +23,45 @@ public class User {
 
     // Getters và Setters
     public int getId() {
-      return id;
+        return id;
     }
 
     public void setId(int id) {
-      this.id = id;
+        this.id = id;
     }
 
     public String getFullName() {
-      return fullName;
+        return fullName;
     }
 
     public void setFullName(String fullName) {
-      this.fullName = fullName;
+        this.fullName = fullName;
     }
 
     public String getUserName() {
-      return userName;
+        return userName;
     }
 
     public void setUserName(String userName) {
-      this.userName = userName;
+        this.userName = userName;
     }
 
     public String getPassword() {
-      return password;
+        return password;
     }
 
     public void setPassword(String password) {
-      this.password = password;
+        this.password = password;
     }
 
     //Hàm tìm sách theo tên
-    public static List<Book> searchBooksByTitle(String title) {
-        List<Book> books = new ArrayList<>();
-        String sql = "SELECT * FROM Books WHERE title LIKE ? LIMIT 5"; // Giới hạn kết quả 5 cuốn
-      
+    public static ArrayList<Book> searchBooksByTitle(String title) {
+        ArrayList<Book> books = new ArrayList<>();
+        String sql = "SELECT * FROM Books WHERE title LIKE ?";
+
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-          
+
             stmt.setString(1, "%" + title + "%");
             ResultSet rs = stmt.executeQuery();
 
@@ -76,25 +72,25 @@ public class User {
                 String description = rs.getString("description");
                 int totalBook = rs.getInt("total_books");
                 int borrowedBook = rs.getInt("borrowed_books");
-                
+
                 books.add(new Book(bookTitle, author, isbn, description, totalBook, borrowedBook));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return books;
     }
 
     // Hàm lấy danh sách sách từ cơ sở dữ liệu
-    public static List<Book> getAllBooks() {
-        List<Book> books = new ArrayList<>();
+    public static ArrayList<Book> getAllBooks() {
+        ArrayList<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM Books";
-        
+
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
-          
+
             while (rs.next()) {
                 String title = rs.getString("title");
                 String author = rs.getString("author");
@@ -102,13 +98,13 @@ public class User {
                 String description = rs.getString("description");
                 int totalBooks = rs.getInt("total_books");
                 int borrowedBooks = rs.getInt("borrowed_books");
-               
+
                 books.add(new Book(title, author, isbn, description, totalBooks, borrowedBooks));
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return books;
     }
 
@@ -117,112 +113,26 @@ public class User {
         String sql = "SELECT * FROM Books WHERE isbn = ?";
 
         try (Connection conn = DatabaseHelper.getConnection();
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-          
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, isbn);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 String title = rs.getString("title");
                 String author = rs.getString("author");
                 String description = rs.getString("description");
                 int totalBooks = rs.getInt("total_books");
                 int borrowedBooks = rs.getInt("borrowed_books");
-                
+
                 return new Book(title, author, isbn, description, totalBooks, borrowedBooks);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
+
         return null;  // Nếu không tìm thấy sách
     }
 }
-//  // Hàm đăng ký (register)
-//
-//  public static boolean register(String fullName, String userName, String password) {
-//    // Kiểm tra nếu tên tài khoản đã tồn tại
-//    if (classes.User.userExists(userName)) {
-//      System.out.println("Tên tài khoản đã tồn tại");
-//      return false;
-//    }
-//
-//    String hashedPassword = hashPassword(password);  // Mã hóa mật khẩu
-//
-//    String sql = "INSERT INTO Users (ho_ten, ten_tai_khoan, password) VALUES (?, ?, ?)";
-//    try (Connection conn = classes.DatabaseHelper.getConnection();
-//        PreparedStatement stmt = conn.prepareStatement(sql,
-//            PreparedStatement.RETURN_GENERATED_KEYS)) {
-//      stmt.setString(1, fullName);
-//      stmt.setString(2, userName);
-//      stmt.setString(3, password);
-//      stmt.executeUpdate();
-//      System.out.println("Đăng ký thành công");
-//      return true;
-//    } catch (SQLException e) {
-//      e.printStackTrace();
-//    }
-//    return false;
-//  }
-//
-//  // Hàm đăng nhập (login)
-//  public static classes.User login(String userName, String password) {
-//    String sql = "SELECT * FROM Users WHERE ten_tai_khoan = ?";
-//    try (Connection conn = classes.DatabaseHelper.getConnection();
-//        PreparedStatement stmt = conn.prepareStatement(sql)) {
-//      stmt.setString(1, userName);
-//      ResultSet rs = stmt.executeQuery();
-//
-//      if (rs.next()) {
-//        String storedPassword = rs.getString("password");
-//
-//        // Kiểm tra mật khẩu có khớp hay không
-//        if (checkPassword(password, storedPassword)) {
-//          int userId = rs.getInt("user_id");
-//          String fullName = rs.getString("ho_ten");
-//          System.out.println("Đăng nhập thành công");
-//          return new classes.User(userId, fullName, userName, storedPassword);  // Đăng nhập thành công
-//        } else {
-//          System.out.println("Sai mật khẩu");
-//        }
-//      } else {
-//        System.out.println("Không tìm thấy người dùng");
-//      }
-//    } catch (SQLException e) {
-//      e.printStackTrace();
-//    }
-//    return null;  // Đăng nhập thất bại
-//  }
-//
-//  // Hàm đăng xuất (logout)
-//  public static void logout(classes.User user) {
-//    System.out.println("Người dùng " + user.getuserName() + " đã đăng xuất.");
-//    // Thực hiện các hành động cần thiết khi đăng xuất (nếu cần)
-//  }
-//
-//  // Hàm kiểm tra tên tài khoản đã tồn tại chưa
-//  public static boolean userExists(String userName) {
-//    String sql = "SELECT * FROM Users WHERE ten_tai_khoan = ?";
-//    try (Connection conn = classes.DatabaseHelper.getConnection();
-//        PreparedStatement stmt = conn.prepareStatement(sql)) {
-//      stmt.setString(1, userName);
-//      ResultSet rs = stmt.executeQuery();
-//      return rs.next();
-//    } catch (SQLException e) {
-//      e.printStackTrace();
-//    }
-//    return false;
-//  }
-//
-//  // Mã hóa mật khẩu (hash password)
-//  private static String hashPassword(String password) {
-//    // Ở đây bạn có thể sử dụng thư viện mã hóa mạnh như BCrypt hoặc SHA-256
-//    return password;  // Trong ví dụ này, trả về mật khẩu như cũ (cần thay bằng mã hóa thực sự)
-//  }
-//
-//  // Kiểm tra mật khẩu (check password)
-//  private static boolean checkPassword(String password, String hashedPassword) {
-//    // So sánh mật khẩu đã mã hóa
-//    return password.equals(hashedPassword);  // Thay thế bằng hàm kiểm tra mật khẩu mã hóa thực sự
-//  }
-//}
+
+
