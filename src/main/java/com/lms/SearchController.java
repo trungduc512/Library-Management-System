@@ -1,5 +1,7 @@
 package com.lms;
 
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -37,10 +39,43 @@ public class SearchController implements Initializable {
     private TextField search;
 
     @FXML
-    private void clicked(ActionEvent event) throws Exception {
-        String isbn = search.getText();
-        GoogleBooksAPIClient apiClient = new GoogleBooksAPIClient(isbn);
+    private ProgressBar progressBar;
 
+    @FXML
+    private void clicked(ActionEvent event) {
+        String isbn = search.getText();
+        loadDataInBackground(isbn);
+    }
+
+    private void loadDataInBackground(String isbn) {
+        Task<GoogleBooksAPIClient> task = new Task<GoogleBooksAPIClient>() {
+            @Override
+            protected GoogleBooksAPIClient call() throws Exception {
+                // Fetch data from the API in the background
+                return new GoogleBooksAPIClient(isbn);
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            GoogleBooksAPIClient apiClient = task.getValue();
+            Platform.runLater(() -> updateUI(apiClient));
+        });
+
+        task.setOnFailed(event -> {
+            Platform.runLater(() -> {
+                // Handle the failure (show error message, etc.)
+                vbox.getChildren().clear();
+                Label errorLabel = new Label("Failed to load data.");
+                vbox.getChildren().add(errorLabel);
+            });
+        });
+
+        Thread thread = new Thread(task);
+        thread.setDaemon(true); // Allow the thread to terminate when the application exits
+        thread.start();
+    }
+
+    private void updateUI(GoogleBooksAPIClient apiClient) {
         // Clear the VBox
         vbox.getChildren().clear();
 
@@ -103,7 +138,6 @@ public class SearchController implements Initializable {
         descriptionFlow.setStyle("-fx-padding: 0 20px 10px 20px;"); // Adjusted padding for spacing
         vbox.getChildren().add(descriptionFlow);
     }
-
 
 
 
