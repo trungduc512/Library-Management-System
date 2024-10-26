@@ -36,7 +36,8 @@ public class GoogleBooksAPIClient {
     }
 
     public String getPublisher() {
-        return (String) volumeInfo.get("publisher");
+        String result = (String) volumeInfo.get("publisher");
+        return (result != null) ? result : "N/A" ;
     }
 
     public String getPublishedDate() {
@@ -44,12 +45,24 @@ public class GoogleBooksAPIClient {
     }
 
     public String getDescription() {
-        return (String) volumeInfo.get("description");
+        String result = (String) volumeInfo.get("description");
+        return (result != null) ? result : "N/A";
     }
 
     public String getThumbnailURL() {
         JSONObject imageLinks = (JSONObject) volumeInfo.get("imageLinks");
         return (String) imageLinks.get("thumbnail");
+    }
+
+    public String getISBN() {
+        JSONArray ISBNList = (JSONArray) volumeInfo.get("industryIdentifiers");
+        for (Object obj : ISBNList) {
+            JSONObject identifier = (JSONObject) obj;
+            if ("ISBN_13".equals(identifier.get("type"))) {
+                return (String) identifier.get("identifier");
+            }
+        }
+        return null;
     }
 
     private static JSONArray getJsonArray(String isbn) throws IOException, ParseException {

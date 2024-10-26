@@ -31,5 +31,18 @@
     -fx-border-width: 0px 0px 0px 3px;
 }
 
+.spinner .text-field {
+    -fx-cursor: default;
+}
+
+.spinner .increment-arrow-button,
+.spinner .decrement-arrow-button {
+    -fx-cursor: hand;
+}
+
+.addBookButton:hover {
+    -fx-cursor: hand;
+}
+
 .header {
 }
