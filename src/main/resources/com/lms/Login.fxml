@@ -3,13 +3,13 @@
 <?import com.jfoenix.controls.JFXButton?>
 <?import com.jfoenix.controls.JFXCheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.control.PasswordField?>
 
 <HBox fx:id="loginScreen" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="890.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.LoginController">
 <children>
@@ -46,8 +46,8 @@
         <children>
             <AnchorPane layoutX="173.0" layoutY="242.0" prefHeight="66.0" prefWidth="256.0">
                 <children>
-                    <PasswordField alignment="CENTER" layoutX="36.0" layoutY="40.0" prefHeight="25.0" prefWidth="227.0" promptText="Enter Password" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
-                    <TextField alignment="CENTER" layoutX="36.0" layoutY="2.0" prefHeight="25.0" prefWidth="227.0" promptText="Enter Username" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
+                    <PasswordField fx:id="passwordField" alignment="CENTER" layoutX="36.0" layoutY="40.0" prefHeight="25.0" prefWidth="227.0" promptText="Enter Password" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
+                    <TextField fx:id="usernameField" alignment="CENTER" layoutX="36.0" layoutY="2.0" prefHeight="25.0" prefWidth="227.0" promptText="Enter Username" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
                     <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="2.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
                         <image>
                             <Image url="@Images/username-logo.png" />
@@ -66,18 +66,18 @@
                 </font>
             </Label>
             <Label layoutX="244.0" layoutY="162.0" text="Sign in to your account" textFill="WHITE" />
-            <JFXCheckBox layoutX="198.0" layoutY="328.0" prefHeight="18.0" prefWidth="152.0" style="-fx-cursor: hand;" styleClass="adminCheckBox" text="Login as administrator" textFill="WHITE" unCheckedColor="WHITE" />
+            <JFXCheckBox fx:id="adminCheckBox" layoutX="198.0" layoutY="328.0" prefHeight="18.0" prefWidth="152.0" style="-fx-cursor: hand;" styleClass="adminCheckBox" text="Login as administrator" textFill="WHITE" unCheckedColor="WHITE" />
             <AnchorPane layoutX="201.0" layoutY="402.0" prefHeight="31.0" prefWidth="227.0">
                 <children>
                     <Label layoutY="7.0" text="Don't have an account?" textFill="WHITE" />
-                    <JFXButton fx:id="toSignupButton" layoutX="137.0" layoutY="3.0" prefHeight="18.0" prefWidth="96.0" style="-fx-cursor: hand;" styleClass="signupButton" text="Sign up now!" onAction="#toSignupScreen" textFill="WHITE">
+                    <JFXButton fx:id="toSignupButton" layoutX="137.0" layoutY="3.0" onAction="#toSignupScreen" prefHeight="18.0" prefWidth="96.0" style="-fx-cursor: hand;" styleClass="signupButton" text="Sign up now!" textFill="WHITE">
                         <font>
                             <Font name="System Bold" size="12.0" />
                         </font>
                     </JFXButton>
                 </children>
             </AnchorPane>
-            <JFXButton fx:id="loginButton" layoutX="357.0" layoutY="324.0" prefHeight="25.0" prefWidth="79.0" style="-fx-border-color: #ffffff; -fx-border-radius: 3em; -fx-background-radius: 3em; -fx-cursor: hand;" styleClass="loginButton" text="Login" onAction="#toMainMenu" textFill="WHITE" />
+            <JFXButton fx:id="loginButton" layoutX="357.0" layoutY="324.0" onAction="#loginUser" prefHeight="25.0" prefWidth="79.0" style="-fx-border-color: #ffffff; -fx-border-radius: 3em; -fx-background-radius: 3em; -fx-cursor: hand;" styleClass="loginButton" text="Login" textFill="WHITE" />
         </children>
     </AnchorPane>
 </children>
