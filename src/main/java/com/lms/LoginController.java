@@ -4,6 +4,7 @@ import classes.LMS;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
@@ -12,8 +13,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -43,6 +46,9 @@ public class LoginController implements Initializable {
     private JFXCheckBox adminCheckBox;
 
     @FXML
+    private Label loginMessageLabel;
+
+    @FXML
     private void toSignupScreen(ActionEvent event) throws Exception {
         ControllerUtils.switchSceneWithinStage(toSignupButton, "Signup.fxml");
     }
@@ -55,24 +61,41 @@ public class LoginController implements Initializable {
     private void loginUser() throws IOException {
         String password = passwordField.getText();
         String username = usernameField.getText();
-        if (password.length() < 8) {
-            ControllerUtils.showErrorAlert("Invalid password.", "Password must be at least 8 character long.");
-            return;
-        }
-        if (!adminCheckBox.isSelected()) {
-            if (!LMS.getInstance().loginBorrower(username, password)) {
-                ControllerUtils.showErrorAlert("Invalid information", "Username or password is invalid.");
-            } else {
-                toMainMenu();
+
+        // Run in a background thread
+        new Thread(() -> {
+            if (password.length() < 8) {
+                // Update UI on the JavaFX Application Thread
+                Platform.runLater(() -> {
+                    loginMessageLabel.setText("Password must be at least 8 characters.");
+                    loginMessageLabel.setTextFill(Color.web("#E4404E"));
+                });
+                return;
             }
-        } else {
-            if (!LMS.getInstance().loginLibrarian(username, password)) {
-                ControllerUtils.showErrorAlert("Invalid information", "Username or password is invalid.");
+
+            boolean loginSuccess;
+            if (!adminCheckBox.isSelected()) {
+                loginSuccess = LMS.getInstance().loginBorrower(username, password);
             } else {
-                toMainMenu();
+                loginSuccess = LMS.getInstance().loginLibrarian(username, password);
             }
-        }
+
+            // Update UI on the JavaFX Application Thread
+            Platform.runLater(() -> {
+                if (!loginSuccess) {
+                    loginMessageLabel.setText("Wrong password or username.");
+                    loginMessageLabel.setTextFill(Color.web("#E4404E"));
+                } else {
+                    try {
+                        toMainMenu();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        }).start();
     }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
