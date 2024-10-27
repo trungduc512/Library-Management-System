@@ -5,6 +5,7 @@ import classes.LMS;
 import classes.Librarian;
 import com.jfoenix.controls.JFXButton;
 import javafx.animation.FadeTransition;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.BooleanBinding;
 import javafx.event.ActionEvent;
@@ -13,11 +14,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -50,6 +49,9 @@ public class SignupController implements Initializable {
     private PasswordField confirmPasswordField;
 
     @FXML
+    private Label signupMessageLabel;
+
+    @FXML
     private void backToLogin(ActionEvent event) throws Exception {
         ControllerUtils.switchSceneWithinStage(backToLogin, "Login.fxml");
     }
@@ -61,14 +63,29 @@ public class SignupController implements Initializable {
         String confirmedPassword = confirmPasswordField.getText();
         String fullname = fullnameField.getText();
         if (!confirmedPassword.equals(password)) {
-            ControllerUtils.showErrorAlert("Password does not match.", "Please make sure your password match.");
+            signupMessageLabel.setText("Password does not match.");
+            signupMessageLabel.setTextFill(Color.web("#E4404E"));
             return;
         }
         if (password.length() < 8) {
-            ControllerUtils.showErrorAlert("Invalid password.", "Password must be at least 8 character long.");
+            signupMessageLabel.setText("Password must be at least 8 characters.");
+            signupMessageLabel.setTextFill(Color.web("#E4404E"));
             return;
         }
-        Borrower.register(fullname, username, password);
+        new Thread(() -> {
+            boolean success = Borrower.register(fullname, username, password);
+
+            // Update the UI based on the registration result
+            Platform.runLater(() -> {
+                if (!success) {
+                    signupMessageLabel.setText("Account already exists.");
+                    signupMessageLabel.setTextFill(Color.web("#E4404E")); // Set message color to red when failed
+                } else {
+                    signupMessageLabel.setText("Your registration has been successful!");
+                    signupMessageLabel.setTextFill(Color.web("#8CC24A")); // Set message color to green when successful
+                }
+            });
+        }).start();
     }
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

@@ -14,6 +14,7 @@ module com.lms {
     requires org.json;
     requires jdk.jfr;
     requires java.sql;
+    requires java.management;
 
     opens com.lms to javafx.fxml;
     exports com.lms;

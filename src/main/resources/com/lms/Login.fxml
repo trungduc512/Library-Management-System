@@ -66,7 +66,7 @@
                 </font>
             </Label>
             <Label layoutX="244.0" layoutY="162.0" text="Sign in to your account" textFill="WHITE" />
-            <JFXCheckBox fx:id="adminCheckBox" layoutX="198.0" layoutY="328.0" prefHeight="18.0" prefWidth="152.0" style="-fx-cursor: hand;" styleClass="adminCheckBox" text="Login as administrator" textFill="WHITE" unCheckedColor="WHITE" />
+            <JFXCheckBox fx:id="adminCheckBox" layoutX="191.0" layoutY="345.0" prefHeight="18.0" prefWidth="152.0" style="-fx-cursor: hand;" styleClass="adminCheckBox" text="Login as administrator" textFill="WHITE" unCheckedColor="WHITE" />
             <AnchorPane layoutX="201.0" layoutY="402.0" prefHeight="31.0" prefWidth="227.0">
                 <children>
                     <Label layoutY="7.0" text="Don't have an account?" textFill="WHITE" />
@@ -77,7 +77,8 @@
                     </JFXButton>
                 </children>
             </AnchorPane>
-            <JFXButton fx:id="loginButton" layoutX="357.0" layoutY="324.0" onAction="#loginUser" prefHeight="25.0" prefWidth="79.0" style="-fx-border-color: #ffffff; -fx-border-radius: 3em; -fx-background-radius: 3em; -fx-cursor: hand;" styleClass="loginButton" text="Login" textFill="WHITE" />
+            <JFXButton fx:id="loginButton" layoutX="355.0" layoutY="341.0" onAction="#loginUser" prefHeight="25.0" prefWidth="79.0" style="-fx-border-color: #ffffff; -fx-border-radius: 3em; -fx-background-radius: 3em; -fx-cursor: hand;" styleClass="loginButton" text="Login" textFill="WHITE" />
+            <Label fx:id="loginMessageLabel" alignment="CENTER_RIGHT" layoutX="182.0" layoutY="317.0" prefHeight="17.0" prefWidth="252.0" />
         </children>
     </AnchorPane>
 </children>

@@ -3,6 +3,8 @@ package com.lms;
 import classes.LMS;
 import classes.Librarian;
 import com.jfoenix.controls.JFXButton;
+import javafx.animation.PauseTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -14,16 +16,19 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
+import javafx.util.Duration;
 import jdk.jfr.Description;
 import org.controlsfx.control.action.Action;
 import services.GoogleBooksAPIClient;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.concurrent.Callable;
 
@@ -34,6 +39,9 @@ public class SearchController implements Initializable {
     private String publisher;
     private String descriptionText;
     private String isbn_13;
+
+    @FXML
+    private StackPane searchScreen;
 
     @FXML
     private ScrollPane searchScrollPane;
@@ -75,6 +83,8 @@ public class SearchController implements Initializable {
             GoogleBooksAPIClient apiClient = task.getValue();
             Platform.runLater(() -> updateUI(apiClient));
 
+            searchButton.setDisable(false);
+
             // Enable add button
             if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
                 addButton.setDisable(false);
@@ -88,9 +98,14 @@ public class SearchController implements Initializable {
             Platform.runLater(() -> {
                 // Handle the failure (show error message, etc.)
                 vbox.getChildren().clear();
-                Label errorLabel = new Label("Failed to load data.");
-                vbox.getChildren().add(errorLabel);
+                /*Label errorLabel = new Label("Failed to load data.");
+                vbox.getChildren().add(errorLabel);*/
+                showNotFoundNotification();
             });
+            addButton.setVisible(false);
+            addButton.setDisable(true);
+            numberSpinner.setDisable(true);
+            numberSpinner.setVisible(false);
         });
 
         Thread thread = new Thread(task);
@@ -102,6 +117,7 @@ public class SearchController implements Initializable {
     private void addBookToDatabase(ActionEvent event) {
         if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
             ((Librarian) LMS.getInstance().getCurrentUser()).addBook(bookTitle, authors, isbn_13, descriptionText, numberSpinner.getValue());
+            showAddedBookNotification();
         }
     }
 
@@ -183,23 +199,114 @@ public class SearchController implements Initializable {
         vbox.getChildren().add(descriptionFlow);
     }
 
+    private void showAddedBookNotification() {
+        // Create the notification label
+        Label notificationLabel = new Label("Book added successfully!");
+        notificationLabel.setPrefHeight(37.0);
+        notificationLabel.setPrefWidth(175.0);
+        notificationLabel.setStyle("-fx-background-color: #73B573; -fx-text-fill: white; -fx-padding: 10px; -fx-background-radius: 0.5em;");
+        notificationLabel.setVisible(false);
+
+        // Load the image and set it as the graphic
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/add-book-checked-icon.png")));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(17.0);
+        imageView.setFitWidth(17.0);
+        imageView.setPickOnBounds(true);
+        imageView.setPreserveRatio(true);
+        notificationLabel.setGraphic(imageView);
+
+        // Add the notification label to the scene
+        searchScreen.getChildren().add(notificationLabel);
+        notificationLabel.setVisible(true);
+
+        // Animation for sliding in
+        TranslateTransition slideIn = new TranslateTransition(Duration.seconds(0.5), notificationLabel);
+        ControllerUtils.fadeTransition(notificationLabel, 0, 1, 0.5);
+        slideIn.setFromX(400); // Start from the right
+        slideIn.setFromY(-230); // Start above the screen
+        slideIn.setToX(320); // Slide to the center
+
+        slideIn.setOnFinished(slideInEvent -> {
+            PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
+            delay.setOnFinished(delayEvent -> {
+                // Animation for sliding up to disappear
+                TranslateTransition slideUp = new TranslateTransition(Duration.seconds(0.8), notificationLabel);
+                ControllerUtils.fadeTransition(notificationLabel, 1, 0, 0.8);
+                slideUp.setToY(-250); // Slide up
+                slideUp.setOnFinished(event1 -> searchScreen.getChildren().remove(notificationLabel));
+                slideUp.play();
+            });
+            delay.play();
+        });
+
+        slideIn.play();
+    }
+
+    private void showNotFoundNotification() {
+        // Create the notification label with text and styling
+        Label notFoundNotification = new Label("Cannot find book with provided ISBN.");
+        notFoundNotification.setPrefHeight(37.0);
+        notFoundNotification.setPrefWidth(244.0);
+        notFoundNotification.setStyle("-fx-background-color: #FE7156; -fx-text-fill: white; -fx-padding: 10px; -fx-background-radius: 0.5em;");
+        notFoundNotification.setVisible(false); // Initially not visible
+
+        // Load the image and create an ImageView
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/not-found-icon.png")));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(17.0);
+        imageView.setFitWidth(17.0);
+        imageView.setPickOnBounds(true);
+        imageView.setPreserveRatio(true);
+
+        // Set the ImageView as the graphic for the label
+        notFoundNotification.setGraphic(imageView);
+
+        // Add the label to the scene
+        searchScreen.getChildren().add(notFoundNotification);
+        notFoundNotification.setVisible(true); // Make the label visible
+
+        // Create and configure the slide-in animation
+        TranslateTransition slideIn = new TranslateTransition(Duration.seconds(0.5), notFoundNotification);
+        ControllerUtils.fadeTransition(notFoundNotification, 0, 1, 0.5); // Apply fade transition
+        slideIn.setFromX(330); // Start from the right
+        slideIn.setFromY(-230); // Start above the screen
+        slideIn.setToX(280); // Slide to the center
+
+        // Set the action to perform after the slide-in animation is finished
+        slideIn.setOnFinished(slideInEvent -> {
+            PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
+            delay.setOnFinished(delayEvent -> {
+                // Create and configure the slide-up animation
+                TranslateTransition slideUp = new TranslateTransition(Duration.seconds(0.5), notFoundNotification);
+                ControllerUtils.fadeTransition(notFoundNotification, 1, 0, 0.5); // Apply fade transition
+                slideUp.setToY(-250); // Slide up
+                slideUp.setOnFinished(event1 -> {
+                    // Remove the label from the scene
+                    searchScreen.getChildren().remove(notFoundNotification);
+                });
+                slideUp.play(); // Play the slide-up animation
+            });
+            delay.play(); // Play the delay
+        });
+
+        slideIn.play(); // Play the slide-in animation
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         searchScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         searchScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        search.setOnAction(event -> {
-            try {
-                clicked(event);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory =
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1); // Min: 0, Max: 100, Initial: 0
+                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1); // Min: 1, Max: 100, Initial: 1
         numberSpinner.setValueFactory(valueFactory);
         addButton.setVisible(false);
         addButton.setDisable(true);
         numberSpinner.setDisable(true);
         numberSpinner.setVisible(false);
+        searchButton.setDisable(true);
+        search.textProperty().addListener((observable, oldValue, newValue) -> {
+            searchButton.setDisable(newValue == null || newValue.length() < 10 || newValue.length() > 13 || newValue.trim().isEmpty());
+        });
     }
 }

@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.Stack;
 
 public class MenuController implements Initializable {
 
@@ -51,7 +52,7 @@ public class MenuController implements Initializable {
     private AnchorPane feature3Pane;
 
     @FXML
-    private AnchorPane searchPane;
+    private StackPane searchPane;
 
     @FXML
     private HBox headerBar;
@@ -80,7 +81,7 @@ public class MenuController implements Initializable {
         return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Feature3.fxml")));
     }
 
-    private AnchorPane createSearchScreen() throws IOException {
+    private StackPane createSearchScreen() throws IOException {
         return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SearchBook.fxml")));
     }
 

@@ -14,11 +14,13 @@ import java.util.Scanner;
 
 public class GoogleBooksAPIClient {
     private final JSONObject volumeInfo;
+    private String searchedISBN;
 
     public GoogleBooksAPIClient(String isbn) throws Exception {
         JSONArray itemsArray = getJsonArray(isbn);
         JSONObject itemsObject = (JSONObject) itemsArray.get(0);
         volumeInfo = (JSONObject) itemsObject.get("volumeInfo");
+        searchedISBN = isbn;
     }
 
     public String getTitle() {
@@ -62,7 +64,7 @@ public class GoogleBooksAPIClient {
                 return (String) identifier.get("identifier");
             }
         }
-        return null;
+        return searchedISBN;
     }
 
     private static JSONArray getJsonArray(String isbn) throws IOException, ParseException {
