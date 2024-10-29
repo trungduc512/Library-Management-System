@@ -62,19 +62,28 @@ public class SignupController implements Initializable {
         String password = passwordField.getText();
         String confirmedPassword = confirmPasswordField.getText();
         String fullname = fullnameField.getText();
+
+        // Show loading indicator
+        ProgressIndicator loadingIndicator = new ProgressIndicator();
+        loadingIndicator.setMaxSize(20, 20); // Set the size for better placement
+        signupMessageLabel.setText(""); // Clear any previous text
+        signupMessageLabel.setGraphic(loadingIndicator);
+
         if (!confirmedPassword.equals(password)) {
             signupMessageLabel.setText("Password does not match.");
             signupMessageLabel.setTextFill(Color.web("#E4404E"));
+            signupMessageLabel.setGraphic(null); // Hide loading indicator
             return;
         }
         if (password.length() < 8) {
             signupMessageLabel.setText("Password must be at least 8 characters.");
             signupMessageLabel.setTextFill(Color.web("#E4404E"));
+            signupMessageLabel.setGraphic(null); // Hide loading indicator
             return;
         }
+
         new Thread(() -> {
             boolean success = Borrower.register(fullname, username, password);
-
             // Update the UI based on the registration result
             Platform.runLater(() -> {
                 if (!success) {
@@ -84,9 +93,11 @@ public class SignupController implements Initializable {
                     signupMessageLabel.setText("Your registration has been successful!");
                     signupMessageLabel.setTextFill(Color.web("#8CC24A")); // Set message color to green when successful
                 }
+                signupMessageLabel.setGraphic(null); // Hide loading indicator
             });
         }).start();
     }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         ControllerUtils.fadeTransition(signupScreen, 0.6, 1, 0.3);

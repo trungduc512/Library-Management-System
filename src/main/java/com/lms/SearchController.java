@@ -18,12 +18,14 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 import jdk.jfr.Description;
 import org.controlsfx.control.action.Action;
+import javafx.scene.shape.Rectangle;
 import services.GoogleBooksAPIClient;
 
 import java.net.URL;
@@ -42,6 +44,9 @@ public class SearchController implements Initializable {
 
     @FXML
     private StackPane searchScreen;
+
+    @FXML
+    private StackPane displayStackPane;
 
     @FXML
     private ScrollPane searchScrollPane;
@@ -79,7 +84,25 @@ public class SearchController implements Initializable {
             }
         };
 
+        // Add progress indicator
+        Rectangle overlay = new Rectangle(displayStackPane.getWidth(), displayStackPane.getHeight(), Color.rgb(0, 0, 0, 0.1));
+        overlay.setDisable(true); // Make sure the overlay doesn't block interactions
+
+        ProgressIndicator loadingIndicator = new ProgressIndicator();
+        loadingIndicator.setMaxSize(50, 50); // Adjust size if needed
+
+        StackPane stackPane = new StackPane(overlay, loadingIndicator);
+        stackPane.setAlignment(Pos.CENTER);
+        displayStackPane.getChildren().add(stackPane);
+
+        // Disable add button if visible
+        addButton.setDisable(true);
+
+        // Disable search button
+        searchButton.setDisable(true);
+
         task.setOnSucceeded(event -> {
+            displayStackPane.getChildren().remove(stackPane); // Remove the overlay and indicator
             GoogleBooksAPIClient apiClient = task.getValue();
             if (apiClient.getISBN() == null || !Objects.equals(apiClient.getISBN(), search.getText())) {
                 vbox.getChildren().clear();
@@ -95,6 +118,7 @@ public class SearchController implements Initializable {
                     numberSpinner.setVisible(true);
                 }
             }
+            searchButton.setDisable(false);
         });
 
         task.setOnFailed(event -> {
@@ -102,10 +126,12 @@ public class SearchController implements Initializable {
                 vbox.getChildren().clear();
                 showNotFoundNotification();
             });
+            displayStackPane.getChildren().remove(stackPane); // Remove the overlay and indicator
             addButton.setVisible(false);
             addButton.setDisable(true);
             numberSpinner.setDisable(true);
             numberSpinner.setVisible(false);
+            searchButton.setDisable(false);
         });
 
         Thread thread = new Thread(task);
