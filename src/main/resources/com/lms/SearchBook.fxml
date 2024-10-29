@@ -16,7 +16,7 @@
    <children>
       <AnchorPane>
          <children>
-            <TextField fx:id="search" focusTraversable="false" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="186.0" promptText="Search book by ISBN" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
+            <TextField fx:id="search" focusTraversable="false" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="186.0" promptText="Search book by ISBN_13" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
             <ScrollPane fx:id="searchScrollPane" focusTraversable="false" layoutY="45.0" prefHeight="556.0" prefWidth="840.0">
                <content>
                   <VBox fx:id="vbox" prefHeight="555.0" prefWidth="840.0" />

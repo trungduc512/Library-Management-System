@@ -81,25 +81,25 @@ public class SearchController implements Initializable {
 
         task.setOnSucceeded(event -> {
             GoogleBooksAPIClient apiClient = task.getValue();
-            Platform.runLater(() -> updateUI(apiClient));
-
-            searchButton.setDisable(false);
-
-            // Enable add button
-            if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
-                addButton.setDisable(false);
-                numberSpinner.setDisable(false);
-                addButton.setVisible(true);
-                numberSpinner.setVisible(true);
+            if (apiClient.getISBN() == null || !Objects.equals(apiClient.getISBN(), search.getText())) {
+                vbox.getChildren().clear();
+                showNotFoundNotification();
+            } else {
+                Platform.runLater(() -> updateUI(apiClient));
+                searchButton.setDisable(false);
+                if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
+                    // Enable add button
+                    addButton.setDisable(false);
+                    numberSpinner.setDisable(false);
+                    addButton.setVisible(true);
+                    numberSpinner.setVisible(true);
+                }
             }
         });
 
         task.setOnFailed(event -> {
             Platform.runLater(() -> {
-                // Handle the failure (show error message, etc.)
                 vbox.getChildren().clear();
-                /*Label errorLabel = new Label("Failed to load data.");
-                vbox.getChildren().add(errorLabel);*/
                 showNotFoundNotification();
             });
             addButton.setVisible(false);
@@ -306,7 +306,7 @@ public class SearchController implements Initializable {
         numberSpinner.setVisible(false);
         searchButton.setDisable(true);
         search.textProperty().addListener((observable, oldValue, newValue) -> {
-            searchButton.setDisable(newValue == null || newValue.length() < 10 || newValue.length() > 13 || newValue.trim().isEmpty());
+            searchButton.setDisable(newValue == null || newValue.length() != 13 || newValue.trim().isEmpty());
         });
     }
 }
