@@ -11,7 +11,6 @@ public class LMS {
     private List<Borrower> borrowerList;
     private List<Librarian> librarianList;
     private List<Book> bookList;
-    private User currentUser;
 
     private static LMS instance = null;
 
@@ -19,7 +18,6 @@ public class LMS {
         borrowerList = null;
         bookList = null;
         librarianList = null;
-        currentUser = null;
     }
 
     // Get the singleton instance of LMS
@@ -28,11 +26,6 @@ public class LMS {
             instance = new LMS();
         }
         return instance;
-    }
-
-    //get current user
-    public User getCurrentUser() {
-        return currentUser;
     }
 
     // Getter for borrower list
@@ -126,7 +119,7 @@ public class LMS {
         this.librarianList = librarians;
     }
 
-    public boolean loginBorrower(String userName, String password) {
+    public Borrower loginBorrower(String userName, String password) {
         String sql = "SELECT * FROM Borrowers  WHERE ten_tai_khoan = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -140,8 +133,7 @@ public class LMS {
                     int userId = rs.getInt("id");
                     String fullName = rs.getString("ho_ten");
                     System.out.println("Đăng nhập thành công");
-                    currentUser = new Borrower(userId, fullName, userName, storedPassword);
-                    return true;  // Đăng nhập thành công
+                    return new Borrower(userId, fullName, userName, storedPassword);  // Đăng nhập thành công
                 } else {
                     System.out.println("Sai mật khẩu");
                 }
@@ -151,10 +143,10 @@ public class LMS {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;  // Đăng nhập thất bại
+        return null;  // Đăng nhập thất bại
     }
 
-    public boolean loginLibrarian(String userName, String password) {
+    public Librarian loginLibrarian(String userName, String password) {
         String sql = "SELECT * FROM Librarians  WHERE ten_tai_khoan = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -169,8 +161,7 @@ public class LMS {
                     int userId = rs.getInt("id");
                     String fullName = rs.getString("ho_ten");
                     System.out.println("Đăng nhập thành công");
-                    currentUser = new Librarian(userId, fullName, userName, storedPassword);
-                    return true; // Đăng nhập thành công
+                    return new Librarian(userId, fullName, userName, storedPassword);  // Đăng nhập thành công
                 } else {
                     System.out.println("Sai mật khẩu");
                 }
@@ -180,7 +171,7 @@ public class LMS {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return false;  // Đăng nhập thất bại
+        return null;  // Đăng nhập thất bại
     }
 
     // Hàm đăng xuất (logout)
@@ -196,9 +187,5 @@ public class LMS {
         if (librarian != null) {
             librarian = null;
         }
-    }
-
-    public void logoutCurrentUser() {
-        currentUser = null;
     }
 }

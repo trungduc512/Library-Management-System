@@ -72,21 +72,21 @@ public class Librarian extends User {
         Book FindBook = User.getBookByIsbn(isbn);
         if (FindBook != null) {
             System.out.println("Sách đã có sẵn trong thư viện");
-            updateBook(isbn, totalBooks);
             return;
         }
         Book newBook = new Book(title, author, isbn, description, totalBooks, 0);
         save(newBook); // Lưu vào cơ sở dữ liệu
-        System.out.println("Thêm sách với tiêu đề: " + title + " thành công");
+        System.out.println("Thêm sách với tiêu đề: " + title + "thành công");
+
     }
 
     // Hàm sửa số lượng sách
     public void updateBook(String isbn,
-                           int increaseQuantity) {
+                           int incretotalBooks) {
         Book book = User.getBookByIsbn(isbn);
         if (book != null) {
             book.setTotalBooks(
-                    book.getTotalBooks() + increaseQuantity); // Cập nhật thông tin sách vào cơ sở dữ liệu
+                    book.getTotalBooks() + incretotalBooks); // Cập nhật thông tin sách vào cơ sở dữ liệu
             // Cập nhật thông tin sách vào cơ sở dữ liệu
             updateTotalBook(book);
             System.out.println("Updated book: " + book.getTitle());
