@@ -11,6 +11,8 @@ module com.lms {
     requires eu.hansolo.tilesfx;
     requires java.sql;
 
+    opens com.lms to javafx.fxml;
+    exports com.lms;
 
     opens classes to javafx.fxml;
     exports classes;

@@ -15,7 +15,6 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class SearchBookController implements Initializable {
-
     @FXML
     private TableView<Book> bookTableView;
     @FXML
