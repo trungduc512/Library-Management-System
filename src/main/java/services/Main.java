@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        String isbn = "1984801813";
+        String isbn = "9781402097164";
         GoogleBooksAPIClient apiClient = new GoogleBooksAPIClient(isbn);
         ArrayList<String> authorList = apiClient.getAuthors();
         String title = apiClient.getTitle();
@@ -33,6 +33,8 @@ public class Main {
         System.out.println(publishedDate);
         System.out.println("Description:");
         System.out.println(description);
+        System.out.println("ISBN: ");
+        System.out.println(apiClient.getISBN());
     }
 }
 

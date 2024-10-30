@@ -2,36 +2,67 @@ package classes;
 
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.scene.control.ComboBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 public class test extends Application {
+    public static class Person {
+        private String name;
+        private int age;
+
+        public Person(String name, int age) {
+            this.name = name;
+            this.age = age;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public int getAge() {
+            return age;
+        }
+    }
 
     @Override
-    public void start(Stage primaryStage) {
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.setEditable(true);
-        ObservableList<String> items = FXCollections.observableArrayList();
-        // Fetch data from database and add to items list
-        items.add("Item 1");
-        items.add("Item 2");
-        items.add("Item 3");
-        comboBox.setItems(items);
-        comboBox.show();
+    public void start(Stage stage) {
+        TableView<Person> tableView = new TableView<>();
 
-        VBox vbox = new VBox();
-        vbox.getChildren().add(comboBox);
+        TableColumn<Person, String> nameColumn = new TableColumn<>("Name");
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        Scene scene = new Scene(vbox, 300, 200);
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        TableColumn<Person, Integer> ageColumn = new TableColumn<>("Age");
+        ageColumn.setCellValueFactory(new PropertyValueFactory<>("age"));
+
+        tableView.getColumns().add(nameColumn);
+        tableView.getColumns().add(ageColumn);
+
+        tableView.getItems().add(new Person("Alice", 25));
+        tableView.getItems().add(new Person("Bob", 30));
+
+        tableView.setRowFactory(tv -> {
+            TableRow<Person> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (!row.isEmpty()) {
+                    Person person = row.getItem();
+                    System.out.println("Clicked on: " + person.getName() + ", " + person.getAge());
+                }
+            });
+            return row;
+        });
+
+        StackPane root = new StackPane(tableView);
+        Scene scene = new Scene(root, 400, 300);
+        stage.setScene(scene);
+        stage.setTitle("Clickable TableView Example");
+        stage.show();
     }
 
     public static void main(String[] args) {
         launch(args);
     }
 }
-

@@ -18,12 +18,14 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
 import jdk.jfr.Description;
 import org.controlsfx.control.action.Action;
+import javafx.scene.shape.Rectangle;
 import services.GoogleBooksAPIClient;
 
 import java.net.URL;
@@ -42,6 +44,9 @@ public class SearchController implements Initializable {
 
     @FXML
     private StackPane searchScreen;
+
+    @FXML
+    private StackPane displayStackPane;
 
     @FXML
     private ScrollPane searchScrollPane;
@@ -79,33 +84,54 @@ public class SearchController implements Initializable {
             }
         };
 
+        // Add progress indicator
+        Rectangle overlay = new Rectangle(displayStackPane.getWidth(), displayStackPane.getHeight(), Color.rgb(0, 0, 0, 0.1));
+        overlay.setDisable(true); // Make sure the overlay doesn't block interactions
+
+        ProgressIndicator loadingIndicator = new ProgressIndicator();
+        loadingIndicator.setMaxSize(50, 50); // Adjust size if needed
+
+        StackPane stackPane = new StackPane(overlay, loadingIndicator);
+        stackPane.setAlignment(Pos.CENTER);
+        displayStackPane.getChildren().add(stackPane);
+
+        // Disable add button if visible
+        addButton.setDisable(true);
+
+        // Disable search button
+        searchButton.setDisable(true);
+
         task.setOnSucceeded(event -> {
+            displayStackPane.getChildren().remove(stackPane); // Remove the overlay and indicator
             GoogleBooksAPIClient apiClient = task.getValue();
-            Platform.runLater(() -> updateUI(apiClient));
-
-            searchButton.setDisable(false);
-
-            // Enable add button
-            if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
-                addButton.setDisable(false);
-                numberSpinner.setDisable(false);
-                addButton.setVisible(true);
-                numberSpinner.setVisible(true);
+            if (apiClient.getISBN() == null || !Objects.equals(apiClient.getISBN(), search.getText())) {
+                vbox.getChildren().clear();
+                showNotFoundNotification();
+            } else {
+                Platform.runLater(() -> updateUI(apiClient));
+                searchButton.setDisable(false);
+                if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
+                    // Enable add button
+                    addButton.setDisable(false);
+                    numberSpinner.setDisable(false);
+                    addButton.setVisible(true);
+                    numberSpinner.setVisible(true);
+                }
             }
+            searchButton.setDisable(false);
         });
 
         task.setOnFailed(event -> {
             Platform.runLater(() -> {
-                // Handle the failure (show error message, etc.)
                 vbox.getChildren().clear();
-                /*Label errorLabel = new Label("Failed to load data.");
-                vbox.getChildren().add(errorLabel);*/
                 showNotFoundNotification();
             });
+            displayStackPane.getChildren().remove(stackPane); // Remove the overlay and indicator
             addButton.setVisible(false);
             addButton.setDisable(true);
             numberSpinner.setDisable(true);
             numberSpinner.setVisible(false);
+            searchButton.setDisable(false);
         });
 
         Thread thread = new Thread(task);
@@ -306,7 +332,7 @@ public class SearchController implements Initializable {
         numberSpinner.setVisible(false);
         searchButton.setDisable(true);
         search.textProperty().addListener((observable, oldValue, newValue) -> {
-            searchButton.setDisable(newValue == null || newValue.length() < 10 || newValue.length() > 13 || newValue.trim().isEmpty());
+            searchButton.setDisable(newValue == null || newValue.length() != 13 || newValue.trim().isEmpty());
         });
     }
 }

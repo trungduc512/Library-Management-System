@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -62,6 +63,12 @@ public class LoginController implements Initializable {
         String password = passwordField.getText();
         String username = usernameField.getText();
 
+        // Show loading indicator
+        ProgressIndicator loadingIndicator = new ProgressIndicator();
+        loadingIndicator.setMaxSize(20, 20);
+        loginMessageLabel.setText("");
+        loginMessageLabel.setGraphic(loadingIndicator);
+
         // Run in a background thread
         new Thread(() -> {
             if (password.length() < 8) {
@@ -69,10 +76,10 @@ public class LoginController implements Initializable {
                 Platform.runLater(() -> {
                     loginMessageLabel.setText("Password must be at least 8 characters.");
                     loginMessageLabel.setTextFill(Color.web("#E4404E"));
+                    loginMessageLabel.setGraphic(null); // Hide loading indicator
                 });
                 return;
             }
-
             boolean loginSuccess;
             if (!adminCheckBox.isSelected()) {
                 loginSuccess = LMS.getInstance().loginBorrower(username, password);
@@ -92,9 +99,12 @@ public class LoginController implements Initializable {
                         throw new RuntimeException(e);
                     }
                 }
+                loginMessageLabel.setGraphic(null); // Hide loading indicator
             });
         }).start();
     }
+
+
 
 
     @Override

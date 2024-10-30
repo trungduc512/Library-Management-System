@@ -2,7 +2,6 @@
 
 <?import com.jfoenix.controls.JFXButton?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
@@ -16,12 +15,7 @@
    <children>
       <AnchorPane>
          <children>
-            <TextField fx:id="search" focusTraversable="false" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="186.0" promptText="Search book by ISBN" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
-            <ScrollPane fx:id="searchScrollPane" focusTraversable="false" layoutY="45.0" prefHeight="556.0" prefWidth="840.0">
-               <content>
-                  <VBox fx:id="vbox" prefHeight="555.0" prefWidth="840.0" />
-               </content>
-            </ScrollPane>
+            <TextField fx:id="search" focusTraversable="false" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="186.0" promptText="Search book by ISBN_13" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
             <JFXButton fx:id="addButton" layoutX="669.0" layoutY="14.0" onAction="#addBookToDatabase" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #54BE41;" styleClass="addBookButton" text="Add to library" textFill="WHITE" />
             <Spinner fx:id="numberSpinner" layoutX="758.0" layoutY="14.0" prefHeight="25.0" prefWidth="59.0" />
             <JFXButton fx:id="searchButton" ellipsisString="" layoutX="162.0" layoutY="14.0" onAction="#clicked" prefHeight="25.0" prefWidth="38.0" style="-fx-background-color: #6487fa; -fx-background-radius: 3em;">
@@ -36,6 +30,15 @@
                   </ImageView>
                </graphic>
             </JFXButton>
+            <StackPane fx:id="displayStackPane" layoutY="46.0" prefHeight="556.0" prefWidth="840.0">
+               <children>
+                  <ScrollPane fx:id="searchScrollPane" focusTraversable="false" prefHeight="556.0" prefWidth="840.0">
+                     <content>
+                        <VBox fx:id="vbox" prefHeight="555.0" prefWidth="840.0" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </StackPane>
          </children>
       </AnchorPane>
    </children>
