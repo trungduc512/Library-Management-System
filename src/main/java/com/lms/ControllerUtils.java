@@ -6,9 +6,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.management.Notification;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -23,15 +25,15 @@ public class ControllerUtils {
         stage.show();
     }
 
-    public static void fadeTransition(Node node, double fromOpacity, double toOpacity, double second) {
-        FadeTransition transition = new FadeTransition(Duration.seconds(second), node);
+    public static void fadeTransition(Node node, double fromOpacity, double toOpacity, double duration) {
+        FadeTransition transition = new FadeTransition(Duration.seconds(duration), node);
         transition.setFromValue(fromOpacity);
         transition.setToValue(toOpacity);
         transition.setCycleCount(1);
         transition.play();
     }
 
-    public static void slideTransition (Node node, double fromX, double toX, double second) {
+    public static void slideTransition(Node node, double fromX, double toX, double second) {
         node.setTranslateX(fromX);
         TranslateTransition slide = new TranslateTransition();
         slide.setDuration(Duration.seconds(second));
@@ -40,4 +42,11 @@ public class ControllerUtils {
         slide.play();
     }
 
+    public static void showErrorAlert(String title, String content) {
+        System.out.println(title);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setContentText(content);
+        alert.setHeaderText(title);
+        alert.show();
+    }
 }

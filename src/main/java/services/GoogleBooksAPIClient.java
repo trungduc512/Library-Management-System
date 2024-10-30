@@ -17,7 +17,7 @@ public class GoogleBooksAPIClient {
 
     public GoogleBooksAPIClient(String isbn) throws Exception {
         JSONArray itemsArray = getJsonArray(isbn);
-        JSONObject itemsObject = (JSONObject) itemsArray.get(0);
+        JSONObject itemsObject = (JSONObject) itemsArray.getFirst();
         volumeInfo = (JSONObject) itemsObject.get("volumeInfo");
     }
 
@@ -28,6 +28,10 @@ public class GoogleBooksAPIClient {
     public ArrayList<String> getAuthors() {
         JSONArray authorArray = (JSONArray) volumeInfo.get("authors");
         ArrayList<String> authorList = new ArrayList<>();
+        if (authorArray == null) {
+            authorList.add("N/A");
+            return authorList;
+        }
         for (Object object : authorArray) {
             String author = (String) object;
             authorList.add(author);
@@ -36,7 +40,8 @@ public class GoogleBooksAPIClient {
     }
 
     public String getPublisher() {
-        return (String) volumeInfo.get("publisher");
+        String result = (String) volumeInfo.get("publisher");
+        return (result != null) ? result : "N/A" ;
     }
 
     public String getPublishedDate() {
@@ -44,12 +49,24 @@ public class GoogleBooksAPIClient {
     }
 
     public String getDescription() {
-        return (String) volumeInfo.get("description");
+        String result = (String) volumeInfo.get("description");
+        return (result != null) ? result : "N/A";
     }
 
     public String getThumbnailURL() {
         JSONObject imageLinks = (JSONObject) volumeInfo.get("imageLinks");
         return (String) imageLinks.get("thumbnail");
+    }
+
+    public String getISBN() {
+        JSONArray ISBNList = (JSONArray) volumeInfo.get("industryIdentifiers");
+        for (Object obj : ISBNList) {
+            JSONObject identifier = (JSONObject) obj;
+            if ("ISBN_13".equals(identifier.get("type"))) {
+                return (String) identifier.get("identifier");
+            }
+        }
+        return null;
     }
 
     private static JSONArray getJsonArray(String isbn) throws IOException, ParseException {

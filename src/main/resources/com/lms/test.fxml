@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.Pane?>
 
-<AnchorPane prefHeight="600.0" prefWidth="840.0" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.lms.SearchController" stylesheets="@Style.css">
-    <TextField fx:id="search" layoutX="14.0" layoutY="18.0" promptText="Search book here"/>
-    <Button fx:id="searchButton" layoutX="200.0" layoutY="18.0" mnemonicParsing="false" onAction="#clicked"
-            text="Search"/>
-    <ScrollPane layoutY="60.0" prefHeight="540.0" prefWidth="840.0">
-        <VBox fx:id="vbox" prefHeight="555.0" prefWidth="840.0"/>
-    </ScrollPane>
-</AnchorPane>
-
+<StackPane xmlns:fx="http://javafx.com/fxml" >
+    <Pane>
+        <Button id="addButton" text="Add Book" layoutX="150" layoutY="130"/>
+    </Pane>
+</StackPane>
