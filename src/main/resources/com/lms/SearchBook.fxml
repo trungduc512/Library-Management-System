@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="searchScreen" prefHeight="600.0" prefWidth="840.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.SearchController">
+   <children>
+      <AnchorPane>
+         <children>
+            <TextField fx:id="search" focusTraversable="false" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="186.0" promptText="Search book by ISBN_13" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
+            <JFXButton fx:id="addButton" layoutX="669.0" layoutY="14.0" onAction="#addBookToDatabase" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #54BE41;" styleClass="addBookButton" text="Add to library" textFill="WHITE" />
+            <Spinner fx:id="numberSpinner" layoutX="758.0" layoutY="14.0" prefHeight="25.0" prefWidth="59.0" />
+            <JFXButton fx:id="searchButton" ellipsisString="" layoutX="162.0" layoutY="14.0" onAction="#clicked" prefHeight="25.0" prefWidth="38.0" style="-fx-background-color: #6487fa; -fx-background-radius: 3em;">
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+               <graphic>
+                  <ImageView fitHeight="15.0" fitWidth="15.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@Images/search-icon.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </JFXButton>
+            <StackPane fx:id="displayStackPane" layoutY="46.0" prefHeight="556.0" prefWidth="840.0">
+               <children>
+                  <ScrollPane fx:id="searchScrollPane" focusTraversable="false" prefHeight="556.0" prefWidth="840.0">
+                     <content>
+                        <VBox fx:id="vbox" prefHeight="555.0" prefWidth="840.0" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </StackPane>
+         </children>
+      </AnchorPane>
+   </children>
+</StackPane>
