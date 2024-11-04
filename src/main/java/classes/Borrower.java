@@ -92,7 +92,7 @@ public class Borrower extends User {
     // Hàm mượn sách từ danh sách đã tìm kiếm
     // Kết hợp trong main lấy isbn từ bảng searchBook
     // Hàm mượn sách từ danh sách đã tìm kiếm
-    public void borrowBookByIsbn(String isbn, int quantity) {
+    public boolean borrowBookByIsbn(String isbn, int quantity) {
         // Tìm sách trong danh sách đã tìm kiếm
         Book book = getBookByIsbn(isbn);
         assert book != null;
@@ -104,8 +104,10 @@ public class Borrower extends User {
                 // Cập nhật số lượng sách trong đối tượng classes.Book
                 incrementBorrowedBooks(book.getIsbn(), quantity); // Tăng số lượng sách đã mượn
             }
+            return true;
         } else {
             System.out.println("Không đủ sách để mượn. Tổng số sách có sẵn: " + book.getTotalBooks());
+            return false;
         }
     }
 

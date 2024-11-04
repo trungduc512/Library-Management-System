@@ -127,8 +127,8 @@ public class MenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ControllerUtils.fadeTransition(slidePane,0.6, 1, 0.5);
-        ControllerUtils.slideTransition(slidePane, -100, 0, 0.3);
+        //ControllerUtils.fadeTransition(slidePane,0.6, 1, 0.5);
+        //ControllerUtils.slideTransition(slidePane, -100, 0, 0.3);
         headerBar.getChildren().add(createWelcomeLabel());
         headerBar.setAlignment(Pos.CENTER_RIGHT);
         headerBar.setPadding(new Insets(10));
