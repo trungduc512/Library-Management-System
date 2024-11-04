@@ -39,12 +39,12 @@ public class Borrower extends User {
     private void incrementBorrowedBooks(String isbn, int quantity) {
         Book book = User.getBookByIsbn(isbn);
         if (book != null) {
-            String sql = "UPDATE Books SET quantity = ? WHERE isbn = ?";
+            String sql = "UPDATE Books SET borrowed_books = ? WHERE isbn = ?";
             try (Connection conn = DatabaseHelper.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
                 // Thêm borrowed_books
                 stmt.setInt(1, book.getBorrowedBooks() + quantity);
-                stmt.setString(6, isbn);
+                stmt.setString(2, isbn);
                 stmt.executeUpdate();
                 System.out.println("classes.Book updated in database.");
             } catch (SQLException e) {
@@ -64,7 +64,7 @@ public class Borrower extends User {
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
                 // Trừ borrowed_books
                 stmt.setInt(1, book.getBorrowedBooks() - quantity);
-                stmt.setString(6, isbn);
+                stmt.setString(2, isbn);
                 stmt.executeUpdate();
                 System.out.println("classes.Book updated in database.");
             } catch (SQLException e) {
@@ -92,36 +92,28 @@ public class Borrower extends User {
     // Hàm mượn sách từ danh sách đã tìm kiếm
     // Kết hợp trong main lấy isbn từ bảng searchBook
     // Hàm mượn sách từ danh sách đã tìm kiếm
-    public boolean borrowBookByIsbn(String isbn, int quantity) {
+    public void borrowBookByIsbn(String isbn, int quantity) {
         // Tìm sách trong danh sách đã tìm kiếm
-        for (Book book : searchedBooks) {
-            if (book.getIsbn().equals(isbn)) {
-                if (quantity <= book.getTotalBooks() - book.getBorrowedBooks()) {
-                    System.out.println("Mượn sách: " + book.getTitle());
+        Book book = getBookByIsbn(isbn);
+        assert book != null;
+        if (quantity <= book.getTotalBooks() - book.getBorrowedBooks()) {
+            System.out.println("Mượn sách: " + book.getTitle());
 
-                    // Gọi hàm để thêm bản ghi mượn sách
-                    if (addBorrowedBookRecord(this.getId(), book.getTitle(), book.getIsbn(), quantity)) {
-                        // Cập nhật số lượng sách trong đối tượng classes.Book
-
-                        incrementBorrowedBooks(book.getIsbn(), quantity); // Tăng số lượng sách đã mượn
-
-                        return true;
-                    }
-                } else {
-                    System.out.println("Không đủ sách để mượn. Tổng số sách có sẵn: " + book.getTotalBooks());
-                    return false;
-                }
+            // Gọi hàm để thêm bản ghi mượn sách
+            if (addBorrowedBookRecord(this.getId(), book.getTitle(), book.getIsbn(), quantity)) {
+                // Cập nhật số lượng sách trong đối tượng classes.Book
+                incrementBorrowedBooks(book.getIsbn(), quantity); // Tăng số lượng sách đã mượn
             }
+        } else {
+            System.out.println("Không đủ sách để mượn. Tổng số sách có sẵn: " + book.getTotalBooks());
         }
-        System.out.println("Sách không có trong danh sách đã tìm kiếm.");
-        return false;
     }
 
 
     // Thêm bản ghi vào bảng classes.BorrowedBookRecord
     private boolean addBorrowedBookRecord(int borrowerId, String title, String isbn, int quantity) {
-        String sql = "INSERT INTO BorrowedBookRecord (borrower_id,title, isbn, quantity, borrowed_date) "
-                       + "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO BorrowedBookRecord (borrower_id, title, isbn, quantity, borrowed_date) "
+                       + "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
