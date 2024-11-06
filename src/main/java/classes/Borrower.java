@@ -59,7 +59,7 @@ public class Borrower extends User {
     private void reduceBorrowedBooks(String isbn, int quantity) {
         Book book = User.getBookByIsbn(isbn);
         if (book != null) {
-            String sql = "UPDATE Books SET quantity = ? WHERE isbn = ?";
+            String sql = "UPDATE Books SET borrowed_books = ? WHERE isbn = ?";
             try (Connection conn = DatabaseHelper.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
                 // Trừ borrowed_books
@@ -177,12 +177,10 @@ public class Borrower extends User {
         if (book != null) {
             // Giảm số lượng sách đã được mượn
             reduceBorrowedBooks(book.getIsbn(), record.getQuantity());
-            return true;
         }
 
         // Xóa bản ghi
-        // return deleteBorrowedBookRecord(recordId);
-        return false;
+        return deleteBorrowedBookRecord(recordId);
     }
 
     // Hàm xóa bản ghi mượn sách khỏi BorrowedBookRecord

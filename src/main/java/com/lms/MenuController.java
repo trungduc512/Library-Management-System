@@ -52,6 +52,9 @@ public class MenuController implements Initializable {
     private AnchorPane feature3Pane;
 
     @FXML
+    private AnchorPane borrowHistoryPane;
+
+    @FXML
     private StackPane searchPane;
 
     @FXML
@@ -85,6 +88,11 @@ public class MenuController implements Initializable {
         return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SearchBook.fxml")));
     }
 
+    private AnchorPane createBorrowHistoryScreen() throws IOException {
+        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("history.fxml")));
+    }
+
+
     private Label createWelcomeLabel() {
         String fullName = LMS.getInstance().getCurrentUser().getFullName();
 
@@ -105,6 +113,11 @@ public class MenuController implements Initializable {
     @FXML
     private void useFeature2() {
         switchNode(feature2Pane);
+    }
+
+    @FXML
+    private void useHistoryScreen() {
+        switchNode(borrowHistoryPane);
     }
 
     private void useFeature3() {
@@ -137,6 +150,7 @@ public class MenuController implements Initializable {
             feature2Pane = createFeature2Pane();
             feature3Pane = createFeature3Pane();
             searchPane = createSearchScreen();
+            borrowHistoryPane = createBorrowHistoryScreen();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
