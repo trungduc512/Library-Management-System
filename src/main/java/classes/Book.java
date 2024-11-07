@@ -60,7 +60,7 @@ public class Book {
     }
 
     public void setTotalBooks(int totalBooks) {
-      this.totalBooks = totalBooks;
+        this.totalBooks = totalBooks;
     }
 
     public int getBorrowedBooks() {
@@ -87,6 +87,7 @@ public class Book {
         System.out.println("Description: " + description);
         System.out.println("Total Books: " + totalBooks);
         System.out.println("Borrowed Books: " + borrowedBooks);
+        System.out.println("Thumbnail URL: " + thumbnailURL);
     }
 }
 

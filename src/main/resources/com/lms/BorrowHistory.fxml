@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<StackPane fx:id="borrowHistoryPane" prefHeight="600.0" prefWidth="840.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.BorrowHistoryController">
+    <AnchorPane prefHeight="600.0" prefWidth="840.0">
+        <VBox spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <Label fx:id="noBooksLabel" text="You haven't borrowed any book yet." visible="false" />
+            <TableView fx:id="borrowHistoryTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="recordIdColumn" prefWidth="39.19998013973236" text="ID">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="borrowerId" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn fx:id="titleColumn" prefWidth="225.60001373291016" text="Title">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="title" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn fx:id="isbnColumn" prefWidth="153.5999755859375" text="ISBN">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="isbn" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn fx:id="borrowedDateColumn" prefWidth="129.60000610351562" text="Borrowed Date">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="borrowedDate" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn fx:id="returnDateColumn" minWidth="0.0" prefWidth="119.99993896484375" text="Return Date">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="returnDate" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn fx:id="statusColumn" maxWidth="381.5999450683594" prefWidth="79.20001220703125" resizable="false" text="Status">
+                        <cellValueFactory>
+                            <PropertyValueFactory property="status" />
+                        </cellValueFactory>
+                    </TableColumn>
+                    <TableColumn fx:id="returnColumn" prefWidth="71.199951171875" resizable="false" text="Return" />
+                </columns>
+            </TableView>
+        </VBox>
+    </AnchorPane>
+</StackPane>
