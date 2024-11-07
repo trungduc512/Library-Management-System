@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class BorrowedBookRecord {
 
+    private int id;
     private int borrowerId;
     private String isbn;
     private int quantity;
@@ -24,6 +25,10 @@ public class BorrowedBookRecord {
     }
 
     // Getters và Setters
+    public int getId() {return this.id; }
+
+    public void setId(int id) { this.id = id; }
+
     public int getBorrowerId() {
         return borrowerId;
     }

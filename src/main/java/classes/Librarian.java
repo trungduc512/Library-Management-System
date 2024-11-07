@@ -39,6 +39,35 @@ public class Librarian extends User {
         }
     }
 
+    // Hàm thêm sách
+    public void addBook(String title, String author, String isbn, String description,
+                        int totalBooks, String thumbnailURL) {
+        Book FindBook = User.getBookByIsbn(isbn);
+        if (FindBook != null) {
+            System.out.println("Sách đã có sẵn trong thư viện");
+            return;
+        }
+        Book newBook = new Book(title, author, isbn, description, totalBooks, 0, thumbnailURL);
+        save(newBook); // Lưu vào cơ sở dữ liệu
+        System.out.println("Thêm sách với tiêu đề: " + title + "thành công");
+
+    }
+
+    // Hàm sửa số lượng sách
+    public void updateBook(String isbn,
+                           int incretotalBooks) {
+        Book book = User.getBookByIsbn(isbn);
+        if (book != null) {
+            book.setTotalBooks(
+                    book.getTotalBooks() + incretotalBooks); // Cập nhật thông tin sách vào cơ sở dữ liệu
+            // Cập nhật thông tin sách vào cơ sở dữ liệu
+            updateTotalBook(book);
+            System.out.println("Updated book: " + book.getTitle());
+        } else {
+            System.out.println("Book not found");
+        }
+    }
+
     // Hàm cập nhật sách trong database
     public void updateTotalBook(Book book) {
         String sql = "UPDATE Books SET totalBooks = ? WHERE isbn = ?";
@@ -51,6 +80,17 @@ public class Librarian extends User {
             System.out.println("Update book successfully.");
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+
+    // Hàm xóa sách
+    public void deleteBook(String isbn) {
+        Book book = User.getBookByIsbn(isbn);
+        if (book != null) {
+            deleteBook(book.getIsbn()); // Xóa sách khỏi cơ sở dữ liệu
+            System.out.println("Deleted book: " + book.getTitle());
+        } else {
+            System.out.println("Book not found");
         }
     }
 
@@ -136,8 +176,6 @@ public class Librarian extends User {
             return false;
         }
 
-        String hashedPassword = hashPassword(password);  // Mã hóa mật khẩu
-
         String sql = "INSERT INTO Librarians (fullName, userName, password) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql,
@@ -167,12 +205,6 @@ public class Librarian extends User {
             e.printStackTrace();
         }
         return false;
-    }
-
-    // Mã hóa mật khẩu (hash password)
-    private static String hashPassword(String password) {
-        // Ở đây bạn có thể sử dụng thư viện mã hóa mạnh như BCrypt hoặc SHA-256
-        return password;  // Trong ví dụ này, trả về mật khẩu như cũ (cần thay bằng mã hóa thực sự)
     }
 }
 

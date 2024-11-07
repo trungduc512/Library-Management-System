@@ -2,23 +2,21 @@ package com.lms;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.util.Objects;
 
-public class LibraryApplication extends Application {
+public class SearchBookApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Login.fxml")));
-        Scene scene = new Scene(root);
+        FXMLLoader fxmlLoader = new FXMLLoader(SearchBookApplication.class.getResource("search-view.fxml"));
+        Scene scene = new Scene(fxmlLoader.load(), 800, 600);
+        stage.setTitle("LMS");
         stage.setScene(scene);
-        stage.setTitle("Login");
-        stage.setResizable(false);
         stage.show();
     }
+
     public static void main(String[] args) {
         launch();
     }

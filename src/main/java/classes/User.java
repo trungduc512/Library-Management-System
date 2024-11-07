@@ -72,9 +72,9 @@ public abstract class User {
                 String description = rs.getString("description");
                 int totalBook = rs.getInt("totalBooks");
                 int borrowedBook = rs.getInt("borrowedBooks");
-                String thumbnailURl = rs.getString("thumbnailURL");
+                String thumbnailURL = rs.getString("thumbnailURL");
 
-                books.add(new Book(bookTitle, author, isbn, description, totalBook, borrowedBook, thumbnailURl));
+                books.add(new Book(bookTitle, author, isbn, description, totalBook, borrowedBook, thumbnailURL));
             }
         } catch (SQLException e) {
             e.printStackTrace();
