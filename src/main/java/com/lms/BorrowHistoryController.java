@@ -137,7 +137,7 @@ public class BorrowHistoryController implements Initializable {
 
     private void showReturnBookNotification() {
         // Create the notification label
-        Label notificationLabel = new Label("Return book added successfully!");
+        Label notificationLabel = new Label("Return book successfully!");
         notificationLabel.setPrefHeight(37.0);
         notificationLabel.setPrefWidth(230.0);
         notificationLabel.setStyle("-fx-background-color: #73B573; -fx-text-fill: white; -fx-padding: 10px; -fx-background-radius: 0.5em;");
