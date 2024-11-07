@@ -1,7 +1,6 @@
 package com.lms;
 
-import classes.LMS;
-import classes.Librarian;
+import classes.*;
 import com.jfoenix.controls.JFXButton;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
@@ -36,11 +35,13 @@ import java.util.concurrent.Callable;
 
 public class SearchController implements Initializable {
 
+
     private String bookTitle;
     private String authors;
-    private String publisher;
     private String descriptionText;
     private String isbn_13;
+    private String publisher;
+    private String thumbnailURL;
 
     @FXML
     private StackPane searchScreen;
@@ -68,6 +69,9 @@ public class SearchController implements Initializable {
 
     @FXML
     private JFXButton addButton;
+
+    @FXML
+    private JFXButton borrowButton;
 
     @FXML
     private void clicked(ActionEvent event) {
@@ -116,6 +120,16 @@ public class SearchController implements Initializable {
                     numberSpinner.setDisable(false);
                     addButton.setVisible(true);
                     numberSpinner.setVisible(true);
+                } else {
+                    Book book = User.getBookByIsbn(search.getText());
+                    if (book != null) {
+                        // Enable borrow button
+                        borrowButton.setVisible(true);
+                        borrowButton.setDisable(false);
+                    } else {
+                        borrowButton.setVisible(false);
+                        borrowButton.setDisable(true);
+                    }
                 }
             }
             searchButton.setDisable(false);
@@ -132,6 +146,8 @@ public class SearchController implements Initializable {
             numberSpinner.setDisable(true);
             numberSpinner.setVisible(false);
             searchButton.setDisable(false);
+            borrowButton.setVisible(false);
+            borrowButton.setDisable(true);
         });
 
         Thread thread = new Thread(task);
@@ -142,8 +158,19 @@ public class SearchController implements Initializable {
     @FXML
     private void addBookToDatabase(ActionEvent event) {
         if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
-            ((Librarian) LMS.getInstance().getCurrentUser()).addBook(bookTitle, authors, isbn_13, descriptionText, numberSpinner.getValue());
+            ((Librarian) LMS.getInstance().getCurrentUser()).addBook(bookTitle, authors, isbn_13, descriptionText, numberSpinner.getValue(), thumbnailURL);
             showAddedBookNotification();
+        }
+    }
+
+    @FXML
+    private void borrowBook(ActionEvent event) {
+        if (LMS.getInstance().getCurrentUser() instanceof Borrower) {
+            if (((Borrower) LMS.getInstance().getCurrentUser()).borrowBookByIsbn(isbn_13, 1)) {
+                showBorrowedBookNotification();
+            } else {
+                showNotEnoughBookNotification();
+            }
         }
     }
 
@@ -152,7 +179,7 @@ public class SearchController implements Initializable {
         vbox.getChildren().clear();
 
         // Add Thumbnail on top
-        String thumbnailURL = apiClient.getThumbnailURL();
+        thumbnailURL = apiClient.getThumbnailURL();
         if (!thumbnailURL.isEmpty()) {
             Image thumbnail = new Image(thumbnailURL);
             ImageView thumbnailView = new ImageView(thumbnail);
@@ -223,6 +250,9 @@ public class SearchController implements Initializable {
         descriptionFlow.setMaxWidth(Double.MAX_VALUE); // Allow full width
         descriptionFlow.setStyle("-fx-padding: 0 20px 10px 20px;"); // Adjusted padding for spacing
         vbox.getChildren().add(descriptionFlow);
+
+        // Save thumbnail URL
+        thumbnailURL = apiClient.getThumbnailURL();
     }
 
     private void showAddedBookNotification() {
@@ -268,6 +298,95 @@ public class SearchController implements Initializable {
 
         slideIn.play();
     }
+
+    private void showBorrowedBookNotification() {
+        // Create the notification label
+        Label notificationLabel = new Label("Book borrowed successfully!");
+        notificationLabel.setPrefHeight(37.0);
+        notificationLabel.setPrefWidth(200.0);
+        notificationLabel.setStyle("-fx-background-color: #73B573; -fx-text-fill: white; -fx-padding: 10px; -fx-background-radius: 0.5em;");
+        notificationLabel.setVisible(false);
+
+        // Load the image and set it as the graphic
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/add-book-checked-icon.png")));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(17.0);
+        imageView.setFitWidth(17.0);
+        imageView.setPickOnBounds(true);
+        imageView.setPreserveRatio(true);
+        notificationLabel.setGraphic(imageView);
+
+        // Add the notification label to the scene
+        searchScreen.getChildren().add(notificationLabel);
+        notificationLabel.setVisible(true);
+
+        // Animation for sliding in
+        TranslateTransition slideIn = new TranslateTransition(Duration.seconds(0.5), notificationLabel);
+        ControllerUtils.fadeTransition(notificationLabel, 0, 1, 0.5);
+        slideIn.setFromX(400); // Start from the right
+        slideIn.setFromY(-230); // Start above the screen
+        slideIn.setToX(300); // Slide to the center
+
+        slideIn.setOnFinished(slideInEvent -> {
+            PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
+            delay.setOnFinished(delayEvent -> {
+                // Animation for sliding up to disappear
+                TranslateTransition slideUp = new TranslateTransition(Duration.seconds(0.8), notificationLabel);
+                ControllerUtils.fadeTransition(notificationLabel, 1, 0, 0.8);
+                slideUp.setToY(-250); // Slide up
+                slideUp.setOnFinished(event1 -> searchScreen.getChildren().remove(notificationLabel));
+                slideUp.play();
+            });
+            delay.play();
+        });
+
+        slideIn.play();
+    }
+
+    private void showNotEnoughBookNotification() {
+        // Create the notification label
+        Label notificationLabel = new Label("Not enough books available!");
+        notificationLabel.setPrefHeight(37.0);
+        notificationLabel.setPrefWidth(200.0);
+        notificationLabel.setStyle("-fx-background-color: #FE7156; -fx-text-fill: white; -fx-padding: 10px; -fx-background-radius: 0.5em;");
+        notificationLabel.setVisible(false);
+
+        // Load the image and set it as the graphic
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/not-found-icon.png")));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(17.0);
+        imageView.setFitWidth(17.0);
+        imageView.setPickOnBounds(true);
+        imageView.setPreserveRatio(true);
+        notificationLabel.setGraphic(imageView);
+
+        // Add the notification label to the scene
+        searchScreen.getChildren().add(notificationLabel);
+        notificationLabel.setVisible(true);
+
+        // Animation for sliding in
+        TranslateTransition slideIn = new TranslateTransition(Duration.seconds(0.5), notificationLabel);
+        ControllerUtils.fadeTransition(notificationLabel, 0, 1, 0.5);
+        slideIn.setFromX(400); // Start from the right
+        slideIn.setFromY(-230); // Start above the screen
+        slideIn.setToX(300); // Slide to the center
+
+        slideIn.setOnFinished(slideInEvent -> {
+            PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
+            delay.setOnFinished(delayEvent -> {
+                // Animation for sliding up to disappear
+                TranslateTransition slideUp = new TranslateTransition(Duration.seconds(0.8), notificationLabel);
+                ControllerUtils.fadeTransition(notificationLabel, 1, 0, 0.8);
+                slideUp.setToY(-250); // Slide up
+                slideUp.setOnFinished(event1 -> searchScreen.getChildren().remove(notificationLabel));
+                slideUp.play();
+            });
+            delay.play();
+        });
+
+        slideIn.play();
+    }
+
 
     private void showNotFoundNotification() {
         // Create the notification label with text and styling
@@ -331,6 +450,8 @@ public class SearchController implements Initializable {
         numberSpinner.setDisable(true);
         numberSpinner.setVisible(false);
         searchButton.setDisable(true);
+        borrowButton.setDisable(true);
+        borrowButton.setVisible(false);
         search.textProperty().addListener((observable, oldValue, newValue) -> {
             searchButton.setDisable(newValue == null || newValue.length() != 13 || newValue.trim().isEmpty());
         });

@@ -70,10 +70,11 @@ public abstract class User {
                 String author = rs.getString("author");
                 String isbn = rs.getString("isbn");
                 String description = rs.getString("description");
-                int totalBook = rs.getInt("total_books");
-                int borrowedBook = rs.getInt("borrowed_books");
+                int totalBook = rs.getInt("totalBooks");
+                int borrowedBook = rs.getInt("borrowedBooks");
+                String thumbnailURl = rs.getString("thumbnailURL");
 
-                books.add(new Book(bookTitle, author, isbn, description, totalBook, borrowedBook));
+                books.add(new Book(bookTitle, author, isbn, description, totalBook, borrowedBook, thumbnailURl));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -96,10 +97,11 @@ public abstract class User {
                 String author = rs.getString("author");
                 String isbn = rs.getString("isbn");
                 String description = rs.getString("description");
-                int totalBooks = rs.getInt("total_books");
-                int borrowedBooks = rs.getInt("borrowed_books");
+                String thumbnailURL = rs.getString("thumbnailURL");
+                int totalBooks = rs.getInt("totalBooks");
+                int borrowedBooks = rs.getInt("borrowedBooks");
 
-                books.add(new Book(title, author, isbn, description, totalBooks, borrowedBooks));
+                books.add(new Book(title, author, isbn, description, totalBooks, borrowedBooks, thumbnailURL));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -122,10 +124,11 @@ public abstract class User {
                 String title = rs.getString("title");
                 String author = rs.getString("author");
                 String description = rs.getString("description");
-                int totalBooks = rs.getInt("total_books");
-                int borrowedBooks = rs.getInt("borrowed_books");
+                String thumbnailURL = rs.getString("thumbnailURL");
+                int totalBooks = rs.getInt("totalBooks");
+                int borrowedBooks = rs.getInt("borrowedBooks");
 
-                return new Book(title, author, isbn, description, totalBooks, borrowedBooks);
+                return new Book(title, author, isbn, description, totalBooks, borrowedBooks, thumbnailURL);
             }
         } catch (SQLException e) {
             e.printStackTrace();

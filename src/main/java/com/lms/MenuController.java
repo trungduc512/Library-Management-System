@@ -52,6 +52,9 @@ public class MenuController implements Initializable {
     private AnchorPane feature3Pane;
 
     @FXML
+    private StackPane borrowHistoryPane;
+
+    @FXML
     private StackPane searchPane;
 
     @FXML
@@ -85,6 +88,11 @@ public class MenuController implements Initializable {
         return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SearchBook.fxml")));
     }
 
+    private StackPane createBorrowHistoryScreen() throws IOException {
+        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("BorrowHistory.fxml")));
+    }
+
+
     private Label createWelcomeLabel() {
         String fullName = LMS.getInstance().getCurrentUser().getFullName();
 
@@ -107,6 +115,11 @@ public class MenuController implements Initializable {
         switchNode(feature2Pane);
     }
 
+    @FXML
+    private void useHistoryScreen() {
+        switchNode(borrowHistoryPane);
+    }
+
     private void useFeature3() {
         switchNode(feature3Pane);
     }
@@ -127,8 +140,8 @@ public class MenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ControllerUtils.fadeTransition(slidePane,0.6, 1, 0.5);
-        ControllerUtils.slideTransition(slidePane, -100, 0, 0.3);
+        //ControllerUtils.fadeTransition(slidePane,0.6, 1, 0.5);
+        //ControllerUtils.slideTransition(slidePane, -100, 0, 0.3);
         headerBar.getChildren().add(createWelcomeLabel());
         headerBar.setAlignment(Pos.CENTER_RIGHT);
         headerBar.setPadding(new Insets(10));
@@ -137,6 +150,7 @@ public class MenuController implements Initializable {
             feature2Pane = createFeature2Pane();
             feature3Pane = createFeature3Pane();
             searchPane = createSearchScreen();
+            borrowHistoryPane = createBorrowHistoryScreen();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

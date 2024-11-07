@@ -10,17 +10,17 @@ public class BorrowedBookRecord {
     private LocalDate borrowedDate;
     private LocalDate returnDate;
     private String title;
+    private String status;
 
     // Constructor
     public BorrowedBookRecord(int borrowerId, String title, String isbn, int quantity,
-                              LocalDate borrowedDate) {
+                              LocalDate borrowedDate, LocalDate returnDate) {
         this.borrowerId = borrowerId;
         this.isbn = isbn;
         this.quantity = quantity;
         this.borrowedDate = borrowedDate;
-        this.returnDate = null;
+        this.returnDate = returnDate;
         this.title = title;
-        // Ngày mượn là ngày hiện tại
     }
 
     // Getters và Setters
@@ -51,6 +51,20 @@ public class BorrowedBookRecord {
     public LocalDate getBorrowedDate() {
         return borrowedDate;
     }
+
+    public LocalDate getReturnDate() {
+        return returnDate;
+    }
+
+    public String getStatus() {
+        if (returnDate.isBefore(LocalDate.now())) {
+            return "Overdue";
+        } else {
+            return "Borrowing";
+        }
+    }
+
+
 
     public String getTitle() {
         return title;
