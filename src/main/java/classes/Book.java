@@ -8,16 +8,18 @@ public class Book {
     private String description;
     private int totalBooks;
     private int borrowedBooks;
+    private String thumbnailURL;
 
     // Constructor
     public Book(String title, String author, String isbn, String description, int totalBooks,
-        int borrowedBooks) {
+        int borrowedBooks, String thumbnailURL) {
         this.title = title;
         this.author = author;
         this.isbn = isbn;
         this.description = description;
         this.totalBooks = totalBooks;
         this.borrowedBooks = borrowedBooks;
+        this.thumbnailURL = thumbnailURL;
     }
 
     // Getters và Setters
@@ -67,6 +69,14 @@ public class Book {
 
     public void setBorrowedBooks(int borrowedBooks) {
       this.borrowedBooks = borrowedBooks;
+    }
+
+    public String getThumbnailURL() {
+        return thumbnailURL;
+    }
+
+    public void setThumbnailURL(String thumbnailURL) {
+        this.thumbnailURL = thumbnailURL;
     }
 
     // Hàm in ra thông tin sách

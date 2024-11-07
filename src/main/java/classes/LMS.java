@@ -30,14 +30,13 @@ public class LMS {
 
     // Getter for borrower list
     public List<Borrower> getBorrowerList() {
-        if (this.borrowerList == null) {
-            this.setBorrowerList();
-        }
+        this.setBorrowerList();
         return borrowerList;
     }
 
     // Getter for librarian list
     public List<Librarian> getLibrarianList() {
+        this.setLibrarianList();
         return librarianList;
     }
 
@@ -59,8 +58,8 @@ public class LMS {
 
             while (rs.next()) {
                 int id = rs.getInt("id");
-                String fullName = rs.getString("ho_ten");
-                String userName = rs.getString("ten_tai_khoan");
+                String fullName = rs.getString("fullName");
+                String userName = rs.getString("userName");
                 String password = rs.getString("password");
                 borrowers.add(new Borrower(id, fullName, userName, password));
                 System.out.println("ID: " + id + ", Họ tên: " + fullName + ", Tên tài khoản: " + userName);
@@ -85,10 +84,11 @@ public class LMS {
                 String author = rs.getString("author");
                 String isbn = rs.getString("isbn");
                 String description = rs.getString("description");
-                int totalBooks = rs.getInt("total_books");
-                int borrowedBooks = rs.getInt("borrowed_books");
+                int totalBooks = rs.getInt("totalBooks");
+                int borrowedBooks = rs.getInt("borrowedBooks");
+                String thumbnailURL = rs.getString("thumbnailURL");
 
-                books.add(new Book(title, author, isbn, description, totalBooks, borrowedBooks));
+                books.add(new Book(title, author, isbn, description, totalBooks, borrowedBooks, thumbnailURL));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -107,8 +107,8 @@ public class LMS {
 
             while (rs.next()) {
                 int id = rs.getInt("id");
-                String fullName = rs.getString("ho_ten");
-                String userName = rs.getString("ten_tai_khoan");
+                String fullName = rs.getString("fullName");
+                String userName = rs.getString("userName");
                 String password = rs.getString("password");
                 librarians.add(new Librarian(id, fullName, userName, password));
             }
@@ -120,7 +120,7 @@ public class LMS {
     }
 
     public Borrower loginBorrower(String userName, String password) {
-        String sql = "SELECT * FROM Borrowers  WHERE ten_tai_khoan = ?";
+        String sql = "SELECT * FROM Borrowers  WHERE userName = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, userName);
@@ -131,7 +131,7 @@ public class LMS {
 
                 if (password.equals(storedPassword)) {
                     int userId = rs.getInt("id");
-                    String fullName = rs.getString("ho_ten");
+                    String fullName = rs.getString("fullName");
                     System.out.println("Đăng nhập thành công");
                     return new Borrower(userId, fullName, userName, storedPassword);  // Đăng nhập thành công
                 } else {
@@ -147,7 +147,7 @@ public class LMS {
     }
 
     public Librarian loginLibrarian(String userName, String password) {
-        String sql = "SELECT * FROM Librarians  WHERE ten_tai_khoan = ?";
+        String sql = "SELECT * FROM Librarians  WHERE userName = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, userName);
@@ -159,7 +159,7 @@ public class LMS {
                 // Kiểm tra mật khẩu có khớp hay không
                 if (password.equals(storedPassword)) {
                     int userId = rs.getInt("id");
-                    String fullName = rs.getString("ho_ten");
+                    String fullName = rs.getString("fullName");
                     System.out.println("Đăng nhập thành công");
                     return new Librarian(userId, fullName, userName, storedPassword);  // Đăng nhập thành công
                 } else {

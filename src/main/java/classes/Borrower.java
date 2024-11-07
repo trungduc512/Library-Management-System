@@ -23,7 +23,7 @@ public class Borrower extends User {
     // Hàm cập nhật hồ sơ
     public void updateProfile(String fullName) {
         this.setFullName(fullName);
-        String sql = "UPDATE Users SET ho_ten = ? WHERE id = ?";
+        String sql = "UPDATE Borrowers SET fullName = ? WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, fullName);
@@ -46,7 +46,7 @@ public class Borrower extends User {
                 stmt.setInt(1, book.getBorrowedBooks() + quantity);
                 stmt.setString(6, isbn);
                 stmt.executeUpdate();
-                System.out.println("classes.Book updated in database.");
+                System.out.println("Đã update trong database");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -64,9 +64,9 @@ public class Borrower extends User {
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
                 // Trừ borrowed_books
                 stmt.setInt(1, book.getBorrowedBooks() - quantity);
-                stmt.setString(6, isbn);
+                stmt.setString(2, isbn);
                 stmt.executeUpdate();
-                System.out.println("classes.Book updated in database.");
+                System.out.println("Đã cập nhật trong database");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -120,8 +120,8 @@ public class Borrower extends User {
 
     // Thêm bản ghi vào bảng classes.BorrowedBookRecord
     private boolean addBorrowedBookRecord(int borrowerId, String title, String isbn, int quantity) {
-        String sql = "INSERT INTO BorrowedBookRecord (borrower_id,title, isbn, quantity, borrowed_date) "
-                       + "VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO BorrowedBookRecord (borrowerId,title, isbn, quantity, borrowedDate) "
+                       + "VALUES (?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -142,7 +142,7 @@ public class Borrower extends User {
     // Hàm liệt kê các bản mượn
     public List<BorrowedBookRecord> listBorrowedBooks() {
         List<BorrowedBookRecord> records = new ArrayList<>();
-        String sql = "SELECT * FROM BorrowedBookRecord WHERE borrower_id = ?";
+        String sql = "SELECT * FROM BorrowedBookRecord WHERE borrowerId = ?";
 
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -155,8 +155,10 @@ public class Borrower extends User {
                 String title = rs.getString("title");
                 String isbn = rs.getString("isbn");
                 int quantity = rs.getInt("quantity");
-                LocalDate borrowedDate = rs.getDate("borrowed_date").toLocalDate();
-                records.add(new BorrowedBookRecord(recordId, title, isbn, quantity, borrowedDate));
+                LocalDate borrowedDate = rs.getDate("borrowedDate").toLocalDate();
+                LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
+
+                records.add(new BorrowedBookRecord(recordId, title, isbn, quantity, borrowedDate, returnDate));
                 System.out.println(
                         "ID Bản ghi: " + recordId + ", ISBN: " + isbn + ", Số lượng: " + quantity
                                 + ", Ngày mượn: "
@@ -167,6 +169,33 @@ public class Borrower extends User {
         }
 
         return records;
+    }
+
+    // Hàm tìm bản ghi mượn sách theo ID
+    BorrowedBookRecord findBorrowedRecordById(int recordId) {
+        String sql = "SELECT * FROM BorrowedBookRecord WHERE id = ?";
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, recordId);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int borrowerId = rs.getInt("borrowerId");
+                String title = rs.getString("title");
+                String isbn = rs.getString("isbn");
+                int quantity = rs.getInt("quantity");
+                LocalDate borrowedDate = rs.getDate("borrowedDate").toLocalDate();
+                LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
+
+                BorrowedBookRecord record = new BorrowedBookRecord(borrowerId, title, isbn, quantity, borrowedDate, returnDate);
+                record.setId(rs.getInt("id"));
+
+                return record;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     // Hàm trả sách
@@ -183,11 +212,21 @@ public class Borrower extends User {
         if (book != null) {
             // Giảm số lượng sách đã được mượn
             reduceBorrowedBooks(book.getIsbn(), record.getQuantity());
+
+            String sql = "UPDATE BorrowedBookRecord SET returnDate = ? WHERE id = ?";
+            try (Connection conn = DatabaseHelper.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setDate(1, java.sql.Date.valueOf(LocalDate.now()));
+                stmt.setInt(2, recordId);
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
             return true;
         }
 
         // Xóa bản ghi
-        // return deleteBorrowedBookRecord(recordId);
         return false;
     }
 
@@ -206,27 +245,6 @@ public class Borrower extends User {
         return false;
     }
 
-    // Hàm tìm bản ghi mượn sách theo ID
-    private BorrowedBookRecord findBorrowedRecordById(int recordId) {
-        String sql = "SELECT * FROM BorrowedBookRecord WHERE id = ?";
-        try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, recordId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                String title = rs.getString("title");
-                String isbn = rs.getString("isbn");
-                int quantity = rs.getInt("quantity");
-                LocalDate borrowedDate = rs.getDate("borrowed_date").toLocalDate();
-                return new BorrowedBookRecord(recordId, title, isbn, quantity, borrowedDate);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     // Hàm đăng ký (register)
     public static boolean register(String fullName, String userName, String password) {
         // Kiểm tra nếu tên tài khoản đã tồn tại
@@ -235,9 +253,7 @@ public class Borrower extends User {
             return false;
         }
 
-        String hashedPassword = hashPassword(password);  // Mã hóa mật khẩu
-
-        String sql = "INSERT INTO Borrowers (ho_ten, ten_tai_khoan, password) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Borrowers (fullName, userName, password) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql,
                      PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -256,7 +272,7 @@ public class Borrower extends User {
 
     // Hàm kiểm tra tên tài khoản đã tồn tại chưa
     public static boolean userExists(String userName) {
-        String sql = "SELECT * FROM Borrowers  WHERE ten_tai_khoan = ?";
+        String sql = "SELECT * FROM Borrowers  WHERE userName = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -267,12 +283,6 @@ public class Borrower extends User {
             e.printStackTrace();
         }
         return false;
-    }
-
-    // Mã hóa mật khẩu (hash password)
-    private static String hashPassword(String password) {
-        // Ở đây bạn có thể sử dụng thư viện mã hóa mạnh như BCrypt hoặc SHA-256
-        return password;  // Trong ví dụ này, trả về mật khẩu như cũ (cần thay bằng mã hóa thực sự)
     }
 }
 

@@ -22,7 +22,7 @@ public class Librarian extends User {
 
     // Hàm lưu sách vào database
     public void save(Book book) {
-        String sql = "INSERT INTO Books (title, author, isbn, description, total_books, borrowed_books) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Books (title, author, isbn, description, totalBooks, borrowedBooks, thumbnailURL) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -31,36 +31,9 @@ public class Librarian extends User {
             stmt.setString(3, book.getIsbn());
             stmt.setString(4, book.getDescription());
             stmt.setInt(5, book.getTotalBooks());
-            stmt.setInt(6, book.getBorrowedBooks());  // Thêm borrowed_books
+            stmt.setInt(6, book.getBorrowedBooks());
+            stmt.setString(7, book.getThumbnailURL());
             stmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Hàm cập nhật sách trong database
-    public void updateTotalBook(Book book) {
-        String sql = "UPDATE Books SET  total_books = ? WHERE isbn = ?";
-        try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, book.getTotalBooks());
-            stmt.setString(2, book.getIsbn());
-            stmt.executeUpdate();
-            System.out.println("Cập nhật sách thành công");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // Hàm xóa sách khỏi database
-    public void delete(String isbn) {
-        String sql = "DELETE FROM Books WHERE isbn = ?";
-        try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, isbn);
-            stmt.executeUpdate();
-            System.out.println("Xóa sách thành công");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -68,13 +41,13 @@ public class Librarian extends User {
 
     // Hàm thêm sách
     public void addBook(String title, String author, String isbn, String description,
-                        int totalBooks) {
+                        int totalBooks, String thumbnailURL) {
         Book FindBook = User.getBookByIsbn(isbn);
         if (FindBook != null) {
             System.out.println("Sách đã có sẵn trong thư viện");
             return;
         }
-        Book newBook = new Book(title, author, isbn, description, totalBooks, 0);
+        Book newBook = new Book(title, author, isbn, description, totalBooks, 0, thumbnailURL);
         save(newBook); // Lưu vào cơ sở dữ liệu
         System.out.println("Thêm sách với tiêu đề: " + title + "thành công");
 
@@ -91,7 +64,22 @@ public class Librarian extends User {
             updateTotalBook(book);
             System.out.println("Updated book: " + book.getTitle());
         } else {
-            System.out.println("classes.Book not found.");
+            System.out.println("Book not found");
+        }
+    }
+
+    // Hàm cập nhật sách trong database
+    public void updateTotalBook(Book book) {
+        String sql = "UPDATE Books SET  totalBooks = ? WHERE isbn = ?";
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, book.getTotalBooks());
+            stmt.setString(2, book.getIsbn());
+            stmt.executeUpdate();
+            System.out.println("Cập nhật sách thành công");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -102,7 +90,20 @@ public class Librarian extends User {
             deleteBook(book.getIsbn()); // Xóa sách khỏi cơ sở dữ liệu
             System.out.println("Deleted book: " + book.getTitle());
         } else {
-            System.out.println("classes.Book not found.");
+            System.out.println("Book not found");
+        }
+    }
+
+    // Hàm xóa sách khỏi database
+    public void delete(String isbn) {
+        String sql = "DELETE FROM Books WHERE isbn = ?";
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, isbn);
+            stmt.executeUpdate();
+            System.out.println("Xóa sách thành công");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
@@ -115,8 +116,8 @@ public class Librarian extends User {
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 int id = rs.getInt("id");
-                String fullName = rs.getString("ho_ten");
-                String userName = rs.getString("ten_tai_khoan");
+                String fullName = rs.getString("fullName");
+                String userName = rs.getString("userName");
                 String password = rs.getString("password");
                 borrowers.add(new Borrower(id, fullName, userName, password));
                 System.out.println("ID: " + id + ", Họ tên: " + fullName + ", Tên tài khoản: " + userName);
@@ -135,9 +136,7 @@ public class Librarian extends User {
             return false;
         }
 
-        String hashedPassword = hashPassword(password);  // Mã hóa mật khẩu
-
-        String sql = "INSERT INTO Librarians (ho_ten, ten_tai_khoan, password) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Librarians (fullName, userName, password) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql,
                      PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -155,7 +154,7 @@ public class Librarian extends User {
 
     // Hàm kiểm tra tên tài khoản đã tồn tại chưa
     public static boolean userExists(String userName) {
-        String sql = "SELECT * FROM Librarians  WHERE ten_tai_khoan = ?";
+        String sql = "SELECT * FROM Librarians  WHERE userName = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -166,12 +165,6 @@ public class Librarian extends User {
             e.printStackTrace();
         }
         return false;
-    }
-
-    // Mã hóa mật khẩu (hash password)
-    private static String hashPassword(String password) {
-        // Ở đây bạn có thể sử dụng thư viện mã hóa mạnh như BCrypt hoặc SHA-256
-        return password;  // Trong ví dụ này, trả về mật khẩu như cũ (cần thay bằng mã hóa thực sự)
     }
 }
 

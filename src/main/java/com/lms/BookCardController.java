@@ -5,21 +5,17 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import classes.Book;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import java.util.Objects;
 
 public class BookCardController {
 
     @FXML
-    private HBox box;
+    private VBox box;
 
     @FXML
     private Label bookAuthor;
-
-    @FXML
-    private Label bookAvailability;
 
     @FXML
     private Label bookISBN;
@@ -34,15 +30,34 @@ public class BookCardController {
 
     public void setData(Book book) {
         this.book = book;
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/images/book_cover.jpeg")));
-        bookImage.setImage(image);
 
-        bookTitle.setText(book.getTitle());
-        bookAuthor.setText(book.getAuthor());
-        bookISBN.setText("ISBN: " + book.getIsbn());
-        bookAvailability.setText("Availability: " + Integer.toString(book.getTotalBooks()));
+        try {
+            //bookImage.setImage(new Image("http://books.google.com/books/content?id=nDcGAQAAIAAJ&printsec=frontcover&img=1&zoom=1&source=gbs_api"));
+            String url;
+            if (book.getThumbnailURL() != null) {
+                url = book.getThumbnailURL();
+            } else {
+                url = "/com/lms/images/no_cover_available.png";
+            }
+            bookImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(url))));
+
+            bookTitle.setText(book.getTitle());
+            bookTitle.setWrapText(true);
+            bookTitle.setMaxWidth(200);
+
+            bookAuthor.setText(book.getAuthor());
+            bookISBN.setText("ISBN: " + book.getIsbn());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+            bookTitle.setText(book.getTitle());
+            bookAuthor.setText(book.getAuthor());
+            bookISBN.setText("ISBN: " + book.getIsbn());
+        }
     }
 
+    // hàm chuyển sang isbn search khi nhấn vào book card
     @FXML
     public void handleCardClick() {
         System.out.println("Clicked on: " + book.getTitle());

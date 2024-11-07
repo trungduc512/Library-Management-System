@@ -3,33 +3,26 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<HBox fx:id="box" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#handleCardClick" prefHeight="160.0" prefWidth="283.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.BookCardController">
+<VBox fx:id="box" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#handleCardClick" prefHeight="450.0" prefWidth="175.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.BookCardController">
    <children>
-      <ImageView fx:id="bookImage" fitHeight="148.0" fitWidth="110.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="bookImage" fitHeight="270.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@images/book_cover.jpeg" />
+            <Image url="@images/no_cover_available.png" />
          </image>
       </ImageView>
-      <VBox prefHeight="170.0" prefWidth="190.0">
-         <children>
-            <Label fx:id="bookTitle" prefHeight="65.0" prefWidth="174.0" text="  BOOK s" VBox.vgrow="ALWAYS">
-               <font>
-                  <Font name="Arial Black" size="18.0" />
-               </font>
-            </Label>
-            <Label fx:id="bookAuthor" prefHeight="24.0" prefWidth="174.0" text=" Author">
-               <font>
-                  <Font name="Arial" size="12.0" />
-               </font>
-            </Label>
-            <Label fx:id="bookISBN" prefHeight="26.0" prefWidth="204.0" text=" ISBN: 123456789" />
-            <Label fx:id="bookAvailability" prefHeight="32.0" prefWidth="174.0" text=" Availability: 10" />
-         </children>
-      </VBox>
+      <Label fx:id="bookTitle" prefHeight="118.0" prefWidth="175.0" text="Title">
+         <font>
+            <Font name="Arial Black" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="bookAuthor" prefHeight="30.0" prefWidth="175.0" text=" Author">
+         <font>
+            <Font name="Arial" size="12.0" />
+         </font>
+      </Label>
+      <Label fx:id="bookISBN" prefHeight="38.0" prefWidth="175.0" text=" ISBN: 123456789" />
    </children>
-</HBox>
+</VBox>

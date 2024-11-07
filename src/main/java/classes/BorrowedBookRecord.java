@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class BorrowedBookRecord {
 
+    private int id;
     private int borrowerId;
     private String isbn;
     private int quantity;
@@ -13,17 +14,21 @@ public class BorrowedBookRecord {
 
     // Constructor
     public BorrowedBookRecord(int borrowerId, String title, String isbn, int quantity,
-                              LocalDate borrowedDate) {
+                              LocalDate borrowedDate, LocalDate returnDate) {
         this.borrowerId = borrowerId;
         this.isbn = isbn;
         this.quantity = quantity;
         this.borrowedDate = borrowedDate;
-        this.returnDate = null;
+        this.returnDate = returnDate;
         this.title = title;
         // Ngày mượn là ngày hiện tại
     }
 
     // Getters và Setters
+    public int getId() {return this.id; }
+
+    public void setId(int id) { this.id = id; }
+
     public int getBorrowerId() {
         return borrowerId;
     }
@@ -51,6 +56,8 @@ public class BorrowedBookRecord {
     public LocalDate getBorrowedDate() {
         return borrowedDate;
     }
+
+    public LocalDate getReturnDate() { return this.returnDate; }
 
     public String getTitle() {
         return title;
