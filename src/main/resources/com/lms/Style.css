@@ -44,5 +44,14 @@
     -fx-cursor: hand;
 }
 
+.table-view .column-header-background .label {
+    -fx-alignment: CENTER;
+}
+
+.table-view .table-cell {
+    -fx-alignment: CENTER;
+}
+
+
 .header {
 }

@@ -66,11 +66,11 @@ public class LMS {
 
             while (rs.next()) {
                 int id = rs.getInt("id");
-                String fullName = rs.getString("ho_ten");
-                String userName = rs.getString("ten_tai_khoan");
+                String fullName = rs.getString("fullName");
+                String userName = rs.getString("userName");
                 String password = rs.getString("password");
                 borrowers.add(new Borrower(id, fullName, userName, password));
-                System.out.println("ID: " + id + ", Họ tên: " + fullName + ", Tên tài khoản: " + userName);
+                System.out.println("ID: " + id + ", fullname: " + fullName + ", username: " + userName);
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -92,10 +92,11 @@ public class LMS {
                 String author = rs.getString("author");
                 String isbn = rs.getString("isbn");
                 String description = rs.getString("description");
-                int totalBooks = rs.getInt("total_books");
-                int borrowedBooks = rs.getInt("borrowed_books");
+                String thumbnailURL = rs.getString("thumbnailURL");
+                int totalBooks = rs.getInt("totalBooks");
+                int borrowedBooks = rs.getInt("borrowedBooks");
 
-                books.add(new Book(title, author, isbn, description, totalBooks, borrowedBooks));
+                books.add(new Book(title, author, isbn, description, totalBooks, borrowedBooks, thumbnailURL));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -114,8 +115,8 @@ public class LMS {
 
             while (rs.next()) {
                 int id = rs.getInt("id");
-                String fullName = rs.getString("ho_ten");
-                String userName = rs.getString("ten_tai_khoan");
+                String fullName = rs.getString("fullName");
+                String userName = rs.getString("userName");
                 String password = rs.getString("password");
                 librarians.add(new Librarian(id, fullName, userName, password));
             }
@@ -127,7 +128,7 @@ public class LMS {
     }
 
     public boolean loginBorrower(String userName, String password) {
-        String sql = "SELECT * FROM Borrowers  WHERE ten_tai_khoan = ?";
+        String sql = "SELECT * FROM Borrowers WHERE userName = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, userName);
@@ -138,15 +139,15 @@ public class LMS {
 
                 if (password.equals(storedPassword)) {
                     int userId = rs.getInt("id");
-                    String fullName = rs.getString("ho_ten");
-                    System.out.println("Đăng nhập thành công");
+                    String fullName = rs.getString("fullName");
+                    System.out.println("Login successfully.");
                     currentUser = new Borrower(userId, fullName, userName, storedPassword);
                     return true;  // Đăng nhập thành công
                 } else {
-                    System.out.println("Sai mật khẩu");
+                    System.out.println("Wrong password.");
                 }
             } else {
-                System.out.println("Không tìm thấy người dùng");
+                System.out.println("User not exists.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -155,7 +156,7 @@ public class LMS {
     }
 
     public boolean loginLibrarian(String userName, String password) {
-        String sql = "SELECT * FROM Librarians  WHERE ten_tai_khoan = ?";
+        String sql = "SELECT * FROM Librarians WHERE userName = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, userName);
@@ -167,15 +168,15 @@ public class LMS {
                 // Kiểm tra mật khẩu có khớp hay không
                 if (password.equals(storedPassword)) {
                     int userId = rs.getInt("id");
-                    String fullName = rs.getString("ho_ten");
-                    System.out.println("Đăng nhập thành công");
+                    String fullName = rs.getString("userName");
+                    System.out.println("Login successfully.");
                     currentUser = new Librarian(userId, fullName, userName, storedPassword);
                     return true; // Đăng nhập thành công
                 } else {
-                    System.out.println("Sai mật khẩu");
+                    System.out.println("Wrong password.");
                 }
             } else {
-                System.out.println("Không tìm thấy người dùng");
+                System.out.println("User not exists.");
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -185,14 +186,14 @@ public class LMS {
 
     // Hàm đăng xuất (logout)
     public void logoutBorrower(Borrower borrower) {
-        System.out.println("Đăng xuất thành công");
+        System.out.println("Log out successfully.");
         if (borrower != null) {
             borrower = null;
         }
     }
 
     public void logoutLibrarian(Librarian librarian) {
-        System.out.println("Đăng xuất thành công");
+        System.out.println("Log out successfully.");
         if (librarian != null) {
             librarian = null;
         }

@@ -38,9 +38,10 @@ public class SearchController implements Initializable {
 
     private String bookTitle;
     private String authors;
-    private String publisher;
     private String descriptionText;
     private String isbn_13;
+    private String publisher;
+    private String thumbnailURL;
 
     @FXML
     private StackPane searchScreen;
@@ -157,7 +158,7 @@ public class SearchController implements Initializable {
     @FXML
     private void addBookToDatabase(ActionEvent event) {
         if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
-            ((Librarian) LMS.getInstance().getCurrentUser()).addBook(bookTitle, authors, isbn_13, descriptionText, numberSpinner.getValue());
+            ((Librarian) LMS.getInstance().getCurrentUser()).addBook(bookTitle, authors, isbn_13, descriptionText, numberSpinner.getValue(), thumbnailURL);
             showAddedBookNotification();
         }
     }
@@ -178,7 +179,7 @@ public class SearchController implements Initializable {
         vbox.getChildren().clear();
 
         // Add Thumbnail on top
-        String thumbnailURL = apiClient.getThumbnailURL();
+        thumbnailURL = apiClient.getThumbnailURL();
         if (!thumbnailURL.isEmpty()) {
             Image thumbnail = new Image(thumbnailURL);
             ImageView thumbnailView = new ImageView(thumbnail);
@@ -249,6 +250,9 @@ public class SearchController implements Initializable {
         descriptionFlow.setMaxWidth(Double.MAX_VALUE); // Allow full width
         descriptionFlow.setStyle("-fx-padding: 0 20px 10px 20px;"); // Adjusted padding for spacing
         vbox.getChildren().add(descriptionFlow);
+
+        // Save thumbnail URL
+        thumbnailURL = apiClient.getThumbnailURL();
     }
 
     private void showAddedBookNotification() {

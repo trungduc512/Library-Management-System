@@ -52,7 +52,7 @@ public class MenuController implements Initializable {
     private AnchorPane feature3Pane;
 
     @FXML
-    private AnchorPane borrowHistoryPane;
+    private StackPane borrowHistoryPane;
 
     @FXML
     private StackPane searchPane;
@@ -88,8 +88,8 @@ public class MenuController implements Initializable {
         return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SearchBook.fxml")));
     }
 
-    private AnchorPane createBorrowHistoryScreen() throws IOException {
-        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("history.fxml")));
+    private StackPane createBorrowHistoryScreen() throws IOException {
+        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("BorrowHistory.fxml")));
     }
 
 

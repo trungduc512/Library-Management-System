@@ -14,7 +14,7 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String[] args) throws Exception {
-        String isbn = "9781402097164";
+        String isbn = "9781525950858";
         GoogleBooksAPIClient apiClient = new GoogleBooksAPIClient(isbn);
         ArrayList<String> authorList = apiClient.getAuthors();
         String title = apiClient.getTitle();
