@@ -129,10 +129,11 @@ public class BorrowHistoryController implements Initializable {
     }
 
     private void populateTableView() {
-        Borrower borrower = (Borrower) LMS.getInstance().getCurrentUser();
-        List<BorrowedBookRecord> borrowedBooks = borrower.listBorrowedBooks();
-        ObservableList<BorrowedBookRecord> borrowList = FXCollections.observableArrayList(borrowedBooks);
-        borrowHistoryTable.setItems(borrowList);
+        if (LMS.getInstance().getCurrentUser() instanceof Borrower borrower) {
+            List<BorrowedBookRecord> borrowedBooks = borrower.listBorrowedBooks();
+            ObservableList<BorrowedBookRecord> borrowList = FXCollections.observableArrayList(borrowedBooks);
+            borrowHistoryTable.setItems(borrowList);
+        }
     }
 
     private void showReturnBookNotification() {

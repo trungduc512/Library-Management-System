@@ -80,7 +80,7 @@ public class MenuController implements Initializable {
         return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Feature2.fxml")));
     }
 
-    private AnchorPane createFeature3Pane() throws IOException {
+    private StackPane createFeature3Pane() throws IOException {
         return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Feature3.fxml")));
     }
 
@@ -148,7 +148,7 @@ public class MenuController implements Initializable {
         try {
             feature1Pane = createFeature1Pane();
             feature2Pane = createFeature2Pane();
-            feature3Pane = createFeature3Pane();
+            //feature3Pane = createFeature3Pane();
             searchPane = createSearchScreen();
             borrowHistoryPane = createBorrowHistoryScreen();
         } catch (IOException e) {

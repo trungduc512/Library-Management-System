@@ -1,8 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.layout.AnchorPane?>
+<StackPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.TestController">
+    <VBox>
+        <!-- Table View for displaying book details -->
+        <TableView fx:id="bookTableView" prefWidth="600" prefHeight="400">
+            <columns>
+                <TableColumn fx:id="titleColumn" text="Title" prefWidth="150"/>
+                <TableColumn fx:id="authorColumn" text="Author" prefWidth="150"/>
+                <TableColumn fx:id="isbnColumn" text="ISBN" prefWidth="100"/>
+                <TableColumn fx:id="descriptionColumn" text="Description" prefWidth="300"/>
+                <TableColumn fx:id="imageColumn" text="Image" prefWidth="80"/>
+            </columns>
+        </TableView>
 
-
-<AnchorPane prefHeight="510.0" prefWidth="840.0" style="-fx-background-color: #7461E5;" xmlns="http://javafx.com/javafx/23" xmlns:fx="http://javafx.com/fxml/1">
-
-</AnchorPane>
+        <!-- Pagination Buttons -->
+        <HBox spacing="10" alignment="center">
+            <Button fx:id="prevButton" text="Previous" />
+            <Button fx:id="nextButton" text="Next" />
+        </HBox>
+    </VBox>
+</StackPane>

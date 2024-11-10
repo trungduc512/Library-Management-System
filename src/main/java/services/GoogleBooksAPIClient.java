@@ -55,7 +55,18 @@ public class GoogleBooksAPIClient {
 
     public String getThumbnailURL() {
         JSONObject imageLinks = (JSONObject) volumeInfo.get("imageLinks");
-        return (String) imageLinks.get("thumbnail");
+
+        if (imageLinks == null) {
+            return "https://tinyurl.com/bdcvmdny";
+        }
+
+        String thumbnail = (String) imageLinks.get("thumbnail");
+
+        if (thumbnail == null || thumbnail.trim().isEmpty()) {
+            return "https://tinyurl.com/bdcvmdny";
+        }
+
+        return thumbnail;
     }
 
     public String getISBN() {
