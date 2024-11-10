@@ -39,12 +39,12 @@ public class Borrower extends User {
     private void incrementBorrowedBooks(String isbn, int quantity) {
         Book book = User.getBookByIsbn(isbn);
         if (book != null) {
-            String sql = "UPDATE Books SET quantity = ? WHERE isbn = ?";
+            String sql = "UPDATE Books SET borrowedBooks = ? WHERE isbn = ?";
             try (Connection conn = DatabaseHelper.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
                 // Thêm borrowed_books
                 stmt.setInt(1, book.getBorrowedBooks() + quantity);
-                stmt.setString(6, isbn);
+                stmt.setString(2, isbn);
                 stmt.executeUpdate();
                 System.out.println("Đã update trong database");
             } catch (SQLException e) {
@@ -59,7 +59,7 @@ public class Borrower extends User {
     private void reduceBorrowedBooks(String isbn, int quantity) {
         Book book = User.getBookByIsbn(isbn);
         if (book != null) {
-            String sql = "UPDATE Books SET quantity = ? WHERE isbn = ?";
+            String sql = "UPDATE Books SET borrowedBooks = ? WHERE isbn = ?";
             try (Connection conn = DatabaseHelper.getConnection();
                  PreparedStatement stmt = conn.prepareStatement(sql)) {
                 // Trừ borrowed_books

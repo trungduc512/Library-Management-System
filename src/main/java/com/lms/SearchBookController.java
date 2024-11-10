@@ -26,7 +26,6 @@ public class SearchBookController implements Initializable {
 
     public static class BookItem {
         private String title;
-        private String author;
         private String iconPath;
 
         public BookItem(String title, String iconPath) {
@@ -45,11 +44,10 @@ public class SearchBookController implements Initializable {
 
     @FXML
     private GridPane bookContainer;
-
-    @FXML
-    private VBox bookListVBox;
     @FXML
     private TextField keywordTextField;
+
+    // list view display suggestion
     @FXML
     private ListView<BookItem> suggestionListView;
 
@@ -100,6 +98,7 @@ public class SearchBookController implements Initializable {
         }
     }
 
+    // handle suggestion list view
     @FXML
     private void handleKeyReleased() {
         String searchKeyWord = keywordTextField.getText().toLowerCase();
@@ -144,11 +143,11 @@ public class SearchBookController implements Initializable {
         }
     }
 
+    // hàm search
     @FXML
     private void handleSearch() throws Exception {
         // turn off suggestion list view
         suggestionListView.setVisible(false);
-        bookContainer.getChildren().clear();
 
         String searchKeyWord = keywordTextField.getText().toLowerCase();
         filteredList.setPredicate(book -> {
@@ -164,6 +163,8 @@ public class SearchBookController implements Initializable {
             return matches;
         });
 
+        // từ đây là gridpane display sách lấy từ filteredList
+        bookContainer.getChildren().clear();
         int column = 0;
         int row = 1;
         for (Book book : filteredList) {
