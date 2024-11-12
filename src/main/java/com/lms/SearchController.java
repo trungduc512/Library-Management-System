@@ -438,6 +438,12 @@ public class SearchController implements Initializable {
         slideIn.play(); // Play the slide-in animation
     }
 
+    public void showBookInfo(Book book) {
+        search.setText(book.getIsbn());
+        loadDataInBackground(book.getIsbn());
+    }
+
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         searchScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);

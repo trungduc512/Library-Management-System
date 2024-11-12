@@ -147,8 +147,7 @@ public class SearchBookController implements Initializable {
 
                 boolean matches = book.getTitle().toLowerCase().contains(searchKeyWord) ||
                         book.getAuthor().toLowerCase().contains(searchKeyWord) ||
-                        book.getIsbn().toLowerCase().contains(searchKeyWord) ||
-                        Integer.toString(book.getTotalBooks()).contains(searchKeyWord);
+                        book.getIsbn().toLowerCase().contains(searchKeyWord);
 
                 return matches;
             });
@@ -204,8 +203,7 @@ public class SearchBookController implements Initializable {
 
             boolean matches = book.getTitle().toLowerCase().contains(searchKeyWord) ||
                     book.getAuthor().toLowerCase().contains(searchKeyWord) ||
-                    book.getIsbn().toLowerCase().contains(searchKeyWord) ||
-                    Integer.toString(book.getTotalBooks()).contains(searchKeyWord);
+                    book.getIsbn().toLowerCase().contains(searchKeyWord);
 
             return matches;
         });

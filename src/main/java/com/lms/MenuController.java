@@ -1,10 +1,8 @@
 package com.lms;
 
+import classes.Book;
 import classes.LMS;
 import classes.Librarian;
-import com.jfoenix.controls.JFXButton;
-import javafx.animation.FadeTransition;
-import javafx.animation.TranslateTransition;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,26 +10,22 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
-import javafx.stage.Stage;
-import javafx.util.Duration;
-import org.w3c.dom.html.HTMLAnchorElement;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.Stack;
 
 public class MenuController implements Initializable {
+
+    private AvailableBooksController availableBooksController;
+    private SearchController searchController;
 
     @FXML
     private BorderPane coverPane;
@@ -46,7 +40,7 @@ public class MenuController implements Initializable {
     private AnchorPane feature1Pane;
 
     @FXML
-    private AnchorPane feature2Pane;
+    private StackPane availableBooks;
 
     @FXML
     private AnchorPane feature3Pane;
@@ -76,16 +70,19 @@ public class MenuController implements Initializable {
         return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Feature1.fxml")));
     }
 
-    private AnchorPane createFeature2Pane() throws IOException {
-        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Feature2.fxml")));
-    }
-
-    private StackPane createFeature3Pane() throws IOException {
-        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Feature3.fxml")));
+    private StackPane createAvailableBooksScreen() throws IOException {
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("AvailableBooks-view.fxml")));
+        StackPane pane = loader.load();
+        availableBooksController = loader.getController();
+        availableBooksController.setMenuController(this);
+        return pane;
     }
 
     private StackPane createSearchScreen() throws IOException {
-        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("SearchBook.fxml")));
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("SearchBook.fxml")));
+        StackPane pane = loader.load();
+        searchController = loader.getController();
+        return pane;
     }
 
     private StackPane createBorrowHistoryScreen() throws IOException {
@@ -111,12 +108,14 @@ public class MenuController implements Initializable {
     }
 
     @FXML
-    private void useFeature2() {
-        switchNode(feature2Pane);
+    public void useFeature2() throws IOException {
+        availableBooks = createAvailableBooksScreen();
+        switchNode(availableBooks);
     }
 
     @FXML
-    private void useHistoryScreen() {
+    private void useHistoryScreen() throws IOException {
+        borrowHistoryPane = createBorrowHistoryScreen();
         switchNode(borrowHistoryPane);
     }
 
@@ -125,8 +124,14 @@ public class MenuController implements Initializable {
     }
 
     @FXML
-    private void toSearchScreen() {
+    public void toSearchScreen() throws IOException {
+        searchPane = createSearchScreen();
         switchNode(searchPane);
+    }
+
+    public void toSearchScreen(Book book) {
+        switchNode(searchPane);
+        searchController.showBookInfo(book);
     }
 
     public void toHomeScreen() {
@@ -147,8 +152,8 @@ public class MenuController implements Initializable {
         headerBar.setPadding(new Insets(10));
         try {
             feature1Pane = createFeature1Pane();
-            feature2Pane = createFeature2Pane();
-            //feature3Pane = createFeature3Pane();
+            availableBooks = createAvailableBooksScreen();
+
             searchPane = createSearchScreen();
             borrowHistoryPane = createBorrowHistoryScreen();
         } catch (IOException e) {
