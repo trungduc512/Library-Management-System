@@ -46,7 +46,7 @@ public class Borrower extends User {
                 stmt.setInt(1, book.getBorrowedBooks() + quantity);
                 stmt.setString(2, isbn);
                 stmt.executeUpdate();
-                System.out.println("Đã update trong database");
+                System.out.println("classes.Book updated in database.");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -66,7 +66,7 @@ public class Borrower extends User {
                 stmt.setInt(1, book.getBorrowedBooks() - quantity);
                 stmt.setString(2, isbn);
                 stmt.executeUpdate();
-                System.out.println("Đã cập nhật trong database");
+                System.out.println("classes.Book updated in database.");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -168,33 +168,6 @@ public class Borrower extends User {
         return records;
     }
 
-    // Hàm tìm bản ghi mượn sách theo ID
-    BorrowedBookRecord findBorrowedRecordById(int recordId) {
-        String sql = "SELECT * FROM BorrowedBookRecord WHERE id = ?";
-        try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, recordId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                int borrowerId = rs.getInt("borrowerId");
-                String title = rs.getString("title");
-                String isbn = rs.getString("isbn");
-                int quantity = rs.getInt("quantity");
-                LocalDate borrowedDate = rs.getDate("borrowedDate").toLocalDate();
-                LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
-
-                BorrowedBookRecord record = new BorrowedBookRecord(borrowerId, title, isbn, quantity, borrowedDate, returnDate);
-                record.setId(rs.getInt("id"));
-
-                return record;
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     // Hàm trả sách
     public boolean returnBook(int recordId) {
         // Tìm bản ghi trong BorrowedBookRecord
@@ -260,6 +233,8 @@ public class Borrower extends User {
             return false;
         }
 
+        String hashedPassword = hashPassword(password);  // Mã hóa mật khẩu
+
         String sql = "INSERT INTO Borrowers (fullName, userName, password) VALUES (?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql,
@@ -290,6 +265,12 @@ public class Borrower extends User {
             e.printStackTrace();
         }
         return false;
+    }
+
+    // Mã hóa mật khẩu (hash password)
+    private static String hashPassword(String password) {
+        // Ở đây bạn có thể sử dụng thư viện mã hóa mạnh như BCrypt hoặc SHA-256
+        return password;  // Trong ví dụ này, trả về mật khẩu như cũ (cần thay bằng mã hóa thực sự)
     }
 }
 

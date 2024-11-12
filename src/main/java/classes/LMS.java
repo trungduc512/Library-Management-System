@@ -11,6 +11,7 @@ public class LMS {
     private List<Borrower> borrowerList;
     private List<Librarian> librarianList;
     private List<Book> bookList;
+    private User currentUser;
 
     private static LMS instance = null;
 
@@ -18,6 +19,7 @@ public class LMS {
         borrowerList = null;
         bookList = null;
         librarianList = null;
+        currentUser = null;
     }
 
     // Get the singleton instance of LMS
@@ -28,15 +30,21 @@ public class LMS {
         return instance;
     }
 
+    //get current user
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
     // Getter for borrower list
     public List<Borrower> getBorrowerList() {
-        this.setBorrowerList();
+        if (this.borrowerList == null) {
+            this.setBorrowerList();
+        }
         return borrowerList;
     }
 
     // Getter for librarian list
     public List<Librarian> getLibrarianList() {
-        this.setLibrarianList();
         return librarianList;
     }
 
@@ -144,7 +152,7 @@ public class LMS {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;  // Đăng nhập thất bại
+        return false;  // Đăng nhập thất bại
     }
 
     public boolean loginLibrarian(String userName, String password) {
@@ -173,7 +181,7 @@ public class LMS {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;  // Đăng nhập thất bại
+        return false;  // Đăng nhập thất bại
     }
 
     // Hàm đăng xuất (logout)
@@ -189,5 +197,9 @@ public class LMS {
         if (librarian != null) {
             librarian = null;
         }
+    }
+
+    public void logoutCurrentUser() {
+        currentUser = null;
     }
 }

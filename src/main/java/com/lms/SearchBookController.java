@@ -95,6 +95,10 @@ public class SearchBookController implements Initializable {
         }
     }
 
+    @FXML
+    private void handleKeyReleased() {
+        String searchKeyWord = keywordTextField.getText().toLowerCase();
+
         if (searchKeyWord.isEmpty()) {
             suggestionListView.setVisible(false);
         } else {
