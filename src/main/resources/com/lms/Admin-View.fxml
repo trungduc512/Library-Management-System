@@ -40,7 +40,7 @@
                         <Font size="16.0" />
                      </font>
                   </JFXButton>
-                  <JFXButton alignment="BASELINE_LEFT" focusTraversable="false" onAction="#useFeature2" prefHeight="41.0" prefWidth="202.0" styleClass="dashboardItem" text="Available books" textFill="WHITE">
+                  <JFXButton alignment="BASELINE_LEFT" focusTraversable="false" onAction="#toAvailableBooksScreen" prefHeight="41.0" prefWidth="202.0" styleClass="dashboardItem" text="Available books" textFill="WHITE">
                      <graphic>
                         <ImageView fitHeight="18.0" fitWidth="18.0" pickOnBounds="true" preserveRatio="true">
                            <image>
