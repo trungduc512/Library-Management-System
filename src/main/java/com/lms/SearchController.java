@@ -101,7 +101,9 @@ public class SearchController implements Initializable {
         displayStackPane.getChildren().add(stackPane);
 
         // Disable add button if visible
-        addButton.setDisable(true);
+        if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
+            addButton.setDisable(true);
+        }
 
         // Disable search button
         searchButton.setDisable(true);
@@ -142,13 +144,19 @@ public class SearchController implements Initializable {
                 showNotFoundNotification();
             });
             displayStackPane.getChildren().remove(stackPane); // Remove the overlay and indicator
-            addButton.setVisible(false);
-            addButton.setDisable(true);
-            numberSpinner.setDisable(true);
-            numberSpinner.setVisible(false);
+
+            if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
+                addButton.setVisible(false);
+                addButton.setDisable(true);
+                numberSpinner.setDisable(true);
+                numberSpinner.setVisible(false);
+            } else {
+                borrowButton.setVisible(false);
+                borrowButton.setDisable(true);
+            }
+
             searchButton.setDisable(false);
-            borrowButton.setVisible(false);
-            borrowButton.setDisable(true);
+
         });
 
         Thread thread = new Thread(task);
@@ -524,16 +532,22 @@ public class SearchController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         searchScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         searchScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory =
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1); // Min: 1, Max: 100, Initial: 1
-        numberSpinner.setValueFactory(valueFactory);
-        addButton.setVisible(false);
-        addButton.setDisable(true);
-        numberSpinner.setDisable(true);
-        numberSpinner.setVisible(false);
+
+        if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
+            SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory =
+                    new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1); // Min: 1, Max: 100, Initial: 1
+            numberSpinner.setValueFactory(valueFactory);
+            addButton.setVisible(false);
+            addButton.setDisable(true);
+            numberSpinner.setDisable(true);
+            numberSpinner.setVisible(false);
+        } else {
+            borrowButton.setDisable(true);
+            borrowButton.setVisible(false);
+        }
+
         searchButton.setDisable(true);
-        borrowButton.setDisable(true);
-        borrowButton.setVisible(false);
+
         search.textProperty().addListener((observable, oldValue, newValue) -> {
             searchButton.setDisable(newValue == null || newValue.length() != 13 || newValue.trim().isEmpty());
         });
