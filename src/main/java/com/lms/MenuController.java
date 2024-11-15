@@ -1,6 +1,7 @@
 package com.lms;
 
 import classes.Book;
+import classes.Borrower;
 import classes.LMS;
 import classes.Librarian;
 import javafx.event.ActionEvent;
@@ -79,7 +80,13 @@ public class MenuController implements Initializable {
     }
 
     private StackPane createSearchScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("SearchBook.fxml")));
+        FXMLLoader loader;
+        if (LMS.getInstance().getCurrentUser() instanceof Borrower) {
+            loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("Borrower-SearchView.fxml")));
+        } else {
+            loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("Admin-SearchView.fxml")));
+        }
+
         StackPane pane = loader.load();
         searchController = loader.getController();
         return pane;

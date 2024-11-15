@@ -1,5 +1,6 @@
 package com.lms;
 
+import classes.Borrower;
 import classes.LMS;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
@@ -55,7 +56,11 @@ public class LoginController implements Initializable {
     }
 
     private void toMainMenu() throws IOException {
-        ControllerUtils.switchSceneWithinStage(toSignupButton, "Menu.fxml");
+        if (LMS.getInstance().getCurrentUser() instanceof Borrower) {
+            ControllerUtils.switchSceneWithinStage(toSignupButton, "Borrower-View.fxml");
+        } else {
+            ControllerUtils.switchSceneWithinStage(toSignupButton, "Admin-View.fxml");
+        }
     }
 
     @FXML
