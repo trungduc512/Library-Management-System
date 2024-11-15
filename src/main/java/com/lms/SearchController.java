@@ -2,6 +2,7 @@ package com.lms;
 
 import classes.*;
 import com.jfoenix.controls.JFXButton;
+import dao.BookReviewDAO;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -9,29 +10,26 @@ import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
-import jdk.jfr.Description;
-import org.controlsfx.control.action.Action;
 import javafx.scene.shape.Rectangle;
 import services.GoogleBooksAPIClient;
 
 import java.net.URL;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
-import java.util.concurrent.Callable;
 
 public class SearchController implements Initializable {
 
@@ -72,6 +70,9 @@ public class SearchController implements Initializable {
 
     @FXML
     private JFXButton borrowButton;
+
+    // new feature
+    List<BookReview> bookReviewList;
 
     @FXML
     private void clicked(ActionEvent event) {
@@ -253,6 +254,81 @@ public class SearchController implements Initializable {
 
         // Save thumbnail URL
         thumbnailURL = apiClient.getThumbnailURL();
+
+        // Update book review list
+        BookReviewDAO brDao = new BookReviewDAO();
+        bookReviewList = brDao.getReviews(this.isbn_13);
+        displayBookReview(bookReviewList);
+    }
+
+    private void displayBookReview(List<BookReview> reviews) {
+        if (reviews != null && !reviews.isEmpty()) {
+            BookReviewDAO dao = new BookReviewDAO();
+
+            // Add Reviews Section Title
+            VBox reviewRateBox = new VBox();
+            Label reviewsSectionTitle = new Label("Reviews");
+            reviewsSectionTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 50px 20px 5px 20px;");
+            reviewRateBox.getChildren().add(reviewsSectionTitle);
+
+            Label rate = new Label(Double.toString(dao.getAverageRating(this.isbn_13)) + " out of 5");
+            rate.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 20px 20px 5px 10px");
+            reviewRateBox.getChildren().add(rate);
+
+            Label ratingNumber = new Label(Integer.toString(dao.getNumberOfReview(this.isbn_13)) + " ratings");
+            rate.setStyle("-fx-font-size: 14px; -fx-padding: 20px 20px 5px 10px");
+            reviewRateBox.getChildren().add(ratingNumber);
+
+            vbox.getChildren().add(reviewRateBox);
+
+            // Iterate through each review and add it to the VBox
+            for (BookReview review : reviews) {
+
+                VBox reviewContainer = new VBox();
+                VBox.setMargin(reviewContainer, new Insets(10, 10, 0, 10));
+                reviewContainer.setStyle("-fx-border-color: #ccc; -fx-border-width: 1; -fx-padding: 10px; -fx-background-color: #f9f9f9; -fx-margin-bottom: 10px;");
+
+                // Add user icon
+                HBox user = new HBox();
+                user.setSpacing(2);
+                ImageView usericon = new ImageView(new Image(String.valueOf(getClass().getResource("/com/lms/Images/user-top-icon.png"))));
+                usericon.setFitWidth(32); // Adjust the width as needed
+                usericon.setPreserveRatio(true);
+                VBox imageContainer = new VBox(usericon);
+                user.getChildren().add(imageContainer);
+                // Add user name
+                Label userNameLabel = new Label(review.getReviewerName());
+                userNameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+                user.getChildren().add(userNameLabel);
+
+                reviewContainer.getChildren().add(user);
+
+                // Add Rating (as stars)
+                HBox ratingBox = new HBox();
+                ratingBox.setSpacing(2); // Space between stars
+                for (int i = 0; i < 5; i++) {
+                    Label star = new Label(i < review.getRating() ? "★" : "☆");
+                    star.setStyle("-fx-font-size: 14px; -fx-text-fill: gold;");
+                    ratingBox.getChildren().add(star);
+                }
+
+                // Add Review Time
+                Label reviewTimeLabel = new Label("   Reviewed on " + new Date(review.getCreatedAt().getTime()));
+                reviewTimeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
+                ratingBox.getChildren().add(reviewTimeLabel);
+
+                reviewContainer.getChildren().add(ratingBox);
+
+                // Add Review Text
+                Label reviewTextLabel = new Label(review.getReviewText());
+                reviewTextLabel.setWrapText(true); // Allow text to wrap
+                reviewTextLabel.setStyle("-fx-font-size: 16px; -fx-padding: 5px 0;");
+                reviewContainer.getChildren().add(reviewTextLabel);
+
+                // Add the review container to the VBox
+                vbox.getChildren().add(reviewContainer);
+            }
+        }
     }
 
     private void showAddedBookNotification() {

@@ -10,7 +10,7 @@
    <children>
       <ImageView fx:id="bookImage" fitHeight="270.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="@images/no_cover_available.png" />
+            <Image url="@Images/no_cover_available.png" />
          </image>
       </ImageView>
       <Label fx:id="bookTitle" prefHeight="118.0" prefWidth="175.0" text="Title">

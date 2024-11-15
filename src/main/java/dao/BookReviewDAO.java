@@ -10,7 +10,7 @@ public class BookReviewDAO {
 
     public List<BookReview> getReviews(String bookISBN) {
         List<BookReview> reviews = new ArrayList<>();
-        String query = "SELECT bookISBN, reviewerId, rating, reviewText, createdAt FROM BookReview WHERE bookISBN = ?";
+        String query = "SELECT bookISBN, reviewerId, rating, reviewerName, reviewText, createdAt FROM BookReview WHERE bookISBN = ?";
 
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement statement = conn.prepareStatement(query)) {
@@ -24,6 +24,7 @@ public class BookReviewDAO {
                 review.setBookISBN(rs.getString("bookISBN"));
                 review.setReviewerId(rs.getInt("reviewerId"));
                 review.setRating(rs.getInt("rating"));
+                review.setReviewerName(rs.getString("reviewerName"));
                 review.setReviewText(rs.getString("reviewText"));
                 review.setCreatedAt(rs.getTimestamp("createdAt"));
 
@@ -80,7 +81,7 @@ public class BookReviewDAO {
     }
 
     // mỗi độc giả được nhận xét tối đa 1 lần với mỗi cuốn sách họ mượn
-    public boolean addReview(int reviewerId, String bookISBN, int rating, String reviewText, Timestamp timestamp) {
+    public boolean addReview(int reviewerId, String bookISBN, int rating, String reviewerName, String reviewText, Timestamp timestamp) {
         if (hasAlreadyReviewed(reviewerId, bookISBN)) {
             System.out.println("You have already reviewed this book before!");
             return false;
@@ -91,7 +92,7 @@ public class BookReviewDAO {
             return false;
         }
 
-        return insertReview(reviewerId, bookISBN, rating, reviewText, timestamp);
+        return insertReview(reviewerId, bookISBN, rating, reviewerName, reviewText, timestamp);
     }
 
     private boolean hasAlreadyReviewed(int reviewerId, String bookISBN) {
@@ -128,8 +129,8 @@ public class BookReviewDAO {
         return false;
     }
 
-    private boolean insertReview(int reviewerId, String bookISBN, int rating, String reviewText, Timestamp timestamp) {
-        String insertQuery = "INSERT INTO BookReview (reviewerId, bookISBN, rating, reviewText, createdAt) VALUES (?, ?, ?, ?, ?)";
+    private boolean insertReview(int reviewerId, String bookISBN, int rating, String reviewerName, String reviewText, Timestamp timestamp) {
+        String insertQuery = "INSERT INTO BookReview (reviewerId, bookISBN, rating, reviewerName, reviewText, createdAt) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(insertQuery)) {
@@ -137,8 +138,9 @@ public class BookReviewDAO {
             stmt.setInt(1, reviewerId);
             stmt.setString(2, bookISBN);
             stmt.setInt(3, rating);
-            stmt.setString(4, reviewText);
-            stmt.setTimestamp(5, timestamp);
+            stmt.setString(4, reviewerName);
+            stmt.setString(5, reviewText);
+            stmt.setTimestamp(6, timestamp);
 
             return stmt.executeUpdate() > 0;
 
