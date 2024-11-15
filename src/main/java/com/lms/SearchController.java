@@ -451,6 +451,11 @@ public class SearchController implements Initializable {
         loadDataInBackground(book.getIsbn());
     }
 
+    public void showBookInfo(String isbn) {
+        search.setText(isbn);
+        loadDataInBackground(isbn);
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

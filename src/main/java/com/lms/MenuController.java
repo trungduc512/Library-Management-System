@@ -4,6 +4,7 @@ import classes.Book;
 import classes.Borrower;
 import classes.LMS;
 import classes.Librarian;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,11 +13,13 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.concurrent.Task;
 
 import java.io.IOException;
 import java.net.URL;
@@ -58,7 +61,7 @@ public class MenuController implements Initializable {
     //sub feature: 840 x 510
     @FXML
     private void backToHome (ActionEvent event) throws Exception {
-        ControllerUtils.switchSceneWithinStage(coverPane, "Menu.fxml");
+        //ControllerUtils.switchSceneWithinStage(coverPane, "Menu.fxml");
     }
 
     @FXML
@@ -115,16 +118,87 @@ public class MenuController implements Initializable {
     }
 
     @FXML
-    public void useFeature2() throws IOException {
-        availableBooks = createAvailableBooksScreen();
-        switchNode(availableBooks);
+    public void toAvailableBooksScreen() {
+        createLoadingPane();
+        // Create a Task to load the screen in the background
+        Task<StackPane> loadScreenTask = new Task<>() {
+            @Override
+            protected StackPane call() throws IOException {
+                return createAvailableBooksScreen();
+            }
+        };
+
+        // Handle successful loading
+        loadScreenTask.setOnSucceeded(event -> {
+            StackPane availableBooksPane = loadScreenTask.getValue();
+            Platform.runLater(() -> switchNode(availableBooksPane));
+        });
+
+        // Handle loading errors
+        loadScreenTask.setOnFailed(event -> {
+            Throwable exception = loadScreenTask.getException();
+            exception.printStackTrace();
+            // Optionally: Display an error message to the user
+        });
+
+        // Start the task in a separate thread
+        Thread thread = new Thread(loadScreenTask);
+        thread.setDaemon(true);
+        thread.start();
     }
 
-    @FXML
-    private void useHistoryScreen() throws IOException {
-        borrowHistoryPane = createBorrowHistoryScreen();
-        switchNode(borrowHistoryPane);
+    private void createLoadingPane() {
+        // Create a ProgressIndicator
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+
+        // Create a StackPane to center the ProgressIndicator
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(progressIndicator);
+
+        // Apply optional styling if needed
+        stackPane.setStyle("-fx-background-color: rgba(255, 255, 255, 1);");
+        stackPane.setPrefSize(600, 840); // Set a preferred size for the pane
+
+        switchNode(stackPane);
     }
+
+
+    @FXML
+    private void useHistoryScreen() {
+        // Create and add the loading pane on the JavaFX Application Thread
+        createLoadingPane();
+
+        // Create a Task to load the BorrowHistory screen in the background
+        Task<StackPane> loadHistoryTask = new Task<>() {
+            @Override
+            protected StackPane call() throws IOException {
+                return createBorrowHistoryScreen(); // Load the borrow history screen
+            }
+        };
+
+        // Handle successful loading
+        loadHistoryTask.setOnSucceeded(event -> {
+            StackPane borrowHistoryScreen = loadHistoryTask.getValue();
+
+            // Remove the loading pane and switch to the borrow history screen on the JavaFX Application Thread
+            Platform.runLater(() -> {
+                switchNode(borrowHistoryScreen); // Switch to the loaded borrow history screen
+            });
+        });
+
+        // Handle loading errors
+        loadHistoryTask.setOnFailed(event -> {
+            Throwable exception = loadHistoryTask.getException();
+            exception.printStackTrace();
+            // Optionally: Display an error message to the user
+        });
+
+        // Start the background task to load the screen
+        Thread thread = new Thread(loadHistoryTask);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
 
     private void useFeature3() {
         switchNode(feature3Pane);
@@ -139,6 +213,11 @@ public class MenuController implements Initializable {
     public void toSearchScreen(Book book) {
         switchNode(searchPane);
         searchController.showBookInfo(book);
+    }
+
+    public void toSearchScreen(String isbn) {
+        switchNode(searchPane);
+        searchController.showBookInfo(isbn);
     }
 
     public void toHomeScreen() {
