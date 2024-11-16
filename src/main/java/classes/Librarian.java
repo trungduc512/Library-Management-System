@@ -97,6 +97,31 @@ public class Librarian extends User {
     }
   }
 
+  // Trả về lượng sách có thể xóa của sách đó
+  public int getDeleteQuantity(String isbn) {
+    Book book = User.getBookByIsbn(isbn);
+    if (book != null) {
+      return book.getTotalBooks() - book.getBorrowedBooks();
+    } else {
+      System.out.println("Book not found.");
+    }
+    return 0;
+  }
+
+  // Hàm giảm số lượng sách
+  public void decreaseBook(String isbn, int decreaseQuantity) {
+    Book book = User.getBookByIsbn(isbn);
+    if (book != null) {
+      book.setTotalBooks(
+          book.getTotalBooks() - decreaseQuantity); // Cập nhật thông tin sách vào cơ sở dữ liệu
+      // Cập nhật thông tin sách vào cơ sở dữ liệu
+      updateTotalBook(book);
+      System.out.println("Updated book: " + book.getTitle());
+    } else {
+      System.out.println("Book not found.");
+    }
+  }
+
   // Hàm xóa sách
   public void deleteBook(String isbn) {
     Book book = User.getBookByIsbn(isbn);
