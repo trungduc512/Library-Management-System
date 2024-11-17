@@ -53,6 +53,9 @@ public class MenuController implements Initializable {
     private StackPane borrowHistoryPane;
 
     @FXML
+    private StackPane borrowerListPane;
+
+    @FXML
     private StackPane searchPane;
 
     @FXML
@@ -80,6 +83,10 @@ public class MenuController implements Initializable {
         availableBooksController = loader.getController();
         availableBooksController.setMenuController(this);
         return pane;
+    }
+
+    private StackPane createBorrowerListPane() throws IOException {
+        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("BorrowerList-View.fxml")));
     }
 
     private StackPane createSearchScreen() throws IOException {
@@ -111,6 +118,44 @@ public class MenuController implements Initializable {
         return new Label("", textFlow);
     }
 
+    @FXML
+    private void toBorrowerListScreen() throws IOException {
+        createLoadingPane();
+
+        // Create a Task to load the Borrower List screen in the background
+        Task<StackPane> loadScreenTask = new Task<>() {
+            @Override
+            protected StackPane call() throws Exception {
+                // Add a brief delay for better UX
+                try {
+                    Thread.sleep(500); // 500ms delay
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // Restore the interrupted status
+                }
+                return createBorrowerListPane(); // Load the borrower list screen
+            }
+        };
+
+        // Handle successful loading
+        loadScreenTask.setOnSucceeded(event -> {
+            StackPane borrowerListPane = loadScreenTask.getValue();
+            Platform.runLater(() -> switchNode(borrowerListPane));
+        });
+
+        // Handle loading errors
+        loadScreenTask.setOnFailed(event -> {
+            Throwable exception = loadScreenTask.getException();
+            exception.printStackTrace();
+            // Optionally: Display an error message to the user
+        });
+
+        // Start the task in a separate thread
+        Thread thread = new Thread(loadScreenTask);
+        thread.setDaemon(true);
+        thread.start();
+    }
+
+
 
     @FXML
     private void useFeature1() {
@@ -120,10 +165,17 @@ public class MenuController implements Initializable {
     @FXML
     public void toAvailableBooksScreen() {
         createLoadingPane();
+
         // Create a Task to load the screen in the background
         Task<StackPane> loadScreenTask = new Task<>() {
             @Override
             protected StackPane call() throws IOException {
+                // Add a brief delay for better UX
+                try {
+                    Thread.sleep(500); // 500ms delay
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // Restore the interrupted status
+                }
                 return createAvailableBooksScreen();
             }
         };
@@ -147,6 +199,7 @@ public class MenuController implements Initializable {
         thread.start();
     }
 
+
     private void createLoadingPane() {
         // Create a ProgressIndicator
         ProgressIndicator progressIndicator = new ProgressIndicator();
@@ -156,7 +209,7 @@ public class MenuController implements Initializable {
         stackPane.getChildren().add(progressIndicator);
 
         // Apply optional styling if needed
-        stackPane.setStyle("-fx-background-color: rgba(255, 255, 255, 1);");
+        stackPane.setStyle("-fx-background-color: #f4f4f4;");
         stackPane.setPrefSize(600, 840); // Set a preferred size for the pane
 
         switchNode(stackPane);
@@ -172,6 +225,12 @@ public class MenuController implements Initializable {
         Task<StackPane> loadHistoryTask = new Task<>() {
             @Override
             protected StackPane call() throws IOException {
+                // Add a brief delay for better UX
+                try {
+                    Thread.sleep(500); // 500ms delay
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt(); // Restore interrupted status
+                }
                 return createBorrowHistoryScreen(); // Load the borrow history screen
             }
         };
@@ -198,6 +257,7 @@ public class MenuController implements Initializable {
         thread.setDaemon(true);
         thread.start();
     }
+
 
 
     private void useFeature3() {
