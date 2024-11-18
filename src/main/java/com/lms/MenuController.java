@@ -30,6 +30,7 @@ public class MenuController implements Initializable {
 
     private AvailableBooksController availableBooksController;
     private SearchController searchController;
+    private BorrowHistoryController borrowerHistoryController;
 
     @FXML
     private BorderPane coverPane;
@@ -103,7 +104,11 @@ public class MenuController implements Initializable {
     }
 
     private StackPane createBorrowHistoryScreen() throws IOException {
-        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("BorrowHistory.fxml")));
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("BorrowHistory.fxml")));
+        StackPane pane = loader.load();
+        borrowerHistoryController = loader.getController();
+        borrowerHistoryController.setMenuController(this);
+        return pane;
     }
 
 
