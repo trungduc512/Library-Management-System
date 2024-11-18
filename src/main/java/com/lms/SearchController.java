@@ -6,6 +6,7 @@ import dao.BookReviewDAO;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,8 +14,10 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -24,8 +27,11 @@ import javafx.util.Duration;
 import javafx.scene.shape.Rectangle;
 import services.GoogleBooksAPIClient;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Date;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -40,6 +46,19 @@ public class SearchController implements Initializable {
     private String isbn_13;
     private String publisher;
     private String thumbnailURL;
+
+    // book review properties
+    private static final int ITEMS_PER_REVIEW_UPDATE_ATTEMPT = 1;
+    private final GaussianBlur blurEffect = new GaussianBlur(10);
+
+    private int totalReview = 0;
+    private int rating = 0;
+    private int totalTimeBookReviewUpdate = 1;
+    private boolean isDisplayReview = false;
+    private boolean isLoadingReview = false;
+
+    @FXML
+    private Label star1, star2, star3, star4, star5;
 
     @FXML
     private StackPane searchScreen;
@@ -71,8 +90,27 @@ public class SearchController implements Initializable {
     @FXML
     private JFXButton borrowButton;
 
-    // new feature
+    // book review
+    @FXML
+    private JFXButton showReviewButton;
+
+    @FXML
+    private JFXButton addReviewButton;
+
+    @FXML
+    private JFXButton submitReviewButton;
+
+    @FXML
+    private VBox addReviewContainer;
+
+    @FXML
+    private TextArea reviewText;
+
+    @FXML
+    private Label addReviewStatusText;
+
     List<BookReview> bookReviewList;
+    List<BookReview> currentBookReviewList;
 
     @FXML
     private void clicked(ActionEvent event) {
@@ -100,6 +138,11 @@ public class SearchController implements Initializable {
         stackPane.setAlignment(Pos.CENTER);
         displayStackPane.getChildren().add(stackPane);
 
+        bookReviewList = new ArrayList<BookReview>();
+        totalTimeBookReviewUpdate = 1;
+        isDisplayReview = false;
+        isLoadingReview = false;
+
         // Disable add button if visible
         if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
             addButton.setDisable(true);
@@ -107,6 +150,7 @@ public class SearchController implements Initializable {
 
         // Disable search button
         searchButton.setDisable(true);
+        showReviewButton.setDisable(true);
 
         task.setOnSucceeded(event -> {
             displayStackPane.getChildren().remove(stackPane); // Remove the overlay and indicator
@@ -121,17 +165,27 @@ public class SearchController implements Initializable {
                     // Enable add button
                     addButton.setDisable(false);
                     numberSpinner.setDisable(false);
+                    showReviewButton.setDisable(false);
                     addButton.setVisible(true);
                     numberSpinner.setVisible(true);
+                    showReviewButton.setVisible(true);
                 } else {
                     Book book = User.getBookByIsbn(search.getText());
                     if (book != null) {
                         // Enable borrow button
                         borrowButton.setVisible(true);
+                        showReviewButton.setVisible(true);
+                        addReviewButton.setVisible(true);
                         borrowButton.setDisable(false);
+                        showReviewButton.setDisable(false);
+                        addReviewButton.setDisable(false);
                     } else {
                         borrowButton.setVisible(false);
+                        showReviewButton.setVisible(false);
+                        addReviewButton.setVisible(false);
                         borrowButton.setDisable(true);
+                        showReviewButton.setDisable(true);
+                        addReviewButton.setDisable(true);
                     }
                 }
             }
@@ -265,38 +319,42 @@ public class SearchController implements Initializable {
 
         // Update book review list
         BookReviewDAO brDao = new BookReviewDAO();
-        bookReviewList = brDao.getReviews(this.isbn_13);
-        displayBookReview(bookReviewList);
+        double avg_rate = brDao.getAverageRating(this.isbn_13);
+
+        VBox reviewRateBox = new VBox();
+        Label reviewsSectionTitle = new Label("Reviews");
+        reviewsSectionTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 30px 20px 0px 20px;");
+        reviewRateBox.getChildren().add(reviewsSectionTitle);
+
+        HBox avgRatingBox = new HBox();
+        avgRatingBox.setSpacing(2); // Space between stars
+        for (int i = 0; i < 5; i++) {
+            Label star = new Label(i < (int) avg_rate ? "★" : "☆");
+            star.setStyle("-fx-font-size: 20px; -fx-text-fill: gold;");
+            avgRatingBox.getChildren().add(star);
+        }
+        Label rate = new Label(Double.toString(avg_rate) + " out of 5");
+        rate.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 2px 20px 0px 10px;");
+        avgRatingBox.getChildren().add(rate);
+        avgRatingBox.setStyle("-fx-padding: 0px 0px 0px 20px;");
+        reviewRateBox.getChildren().add(avgRatingBox);
+
+        this.totalReview = brDao.getNumberOfReview(this.isbn_13);
+        Label ratingNumber = new Label(Integer.toString(this.totalReview) + " ratings");
+        ratingNumber.setStyle("-fx-font-size: 14px; -fx-padding: 0px 20px 30px 20px;");
+        reviewRateBox.getChildren().add(ratingNumber);
+
+        vbox.getChildren().add(reviewRateBox);
     }
 
     private void displayBookReview(List<BookReview> reviews) {
         if (reviews != null && !reviews.isEmpty()) {
-            BookReviewDAO dao = new BookReviewDAO();
 
-            // Add Reviews Section Title
-            VBox reviewRateBox = new VBox();
-            Label reviewsSectionTitle = new Label("Reviews");
-            reviewsSectionTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-padding: 50px 20px 5px 20px;");
-            reviewRateBox.getChildren().add(reviewsSectionTitle);
-
-            Label rate = new Label(Double.toString(dao.getAverageRating(this.isbn_13)) + " out of 5");
-            rate.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 20px 20px 5px 10px");
-            reviewRateBox.getChildren().add(rate);
-
-            Label ratingNumber = new Label(Integer.toString(dao.getNumberOfReview(this.isbn_13)) + " ratings");
-            rate.setStyle("-fx-font-size: 14px; -fx-padding: 20px 20px 5px 10px");
-            reviewRateBox.getChildren().add(ratingNumber);
-
-            vbox.getChildren().add(reviewRateBox);
-
-            // Iterate through each review and add it to the VBox
             for (BookReview review : reviews) {
-
                 VBox reviewContainer = new VBox();
-                VBox.setMargin(reviewContainer, new Insets(10, 10, 0, 10));
-                reviewContainer.setStyle("-fx-border-color: #ccc; -fx-border-width: 1; -fx-padding: 10px; -fx-background-color: #f9f9f9; -fx-margin-bottom: 10px;");
+                VBox.setMargin(reviewContainer, new Insets(0, 10, 10, 10));
+                reviewContainer.setStyle("-fx-border-color: #ccc; -fx-border-width: 1; -fx-padding: 0px 0px 10px ; -fx-background-color: #f9f9f9; -fx-margin-bottom: 10px;");
 
-                // Add user icon
                 HBox user = new HBox();
                 user.setSpacing(2);
                 ImageView usericon = new ImageView(new Image(String.valueOf(getClass().getResource("/com/lms/Images/user-top-icon.png"))));
@@ -304,14 +362,13 @@ public class SearchController implements Initializable {
                 usericon.setPreserveRatio(true);
                 VBox imageContainer = new VBox(usericon);
                 user.getChildren().add(imageContainer);
-                // Add user name
+
                 Label userNameLabel = new Label(review.getReviewerName());
                 userNameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
                 user.getChildren().add(userNameLabel);
 
                 reviewContainer.getChildren().add(user);
 
-                // Add Rating (as stars)
                 HBox ratingBox = new HBox();
                 ratingBox.setSpacing(2); // Space between stars
                 for (int i = 0; i < 5; i++) {
@@ -320,23 +377,185 @@ public class SearchController implements Initializable {
                     ratingBox.getChildren().add(star);
                 }
 
-                // Add Review Time
                 Label reviewTimeLabel = new Label("   Reviewed on " + new Date(review.getCreatedAt().getTime()));
                 reviewTimeLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
-                ratingBox.getChildren().add(reviewTimeLabel);
 
+                ratingBox.getChildren().add(reviewTimeLabel);
+                ratingBox.setStyle("-fx-padding: 0px 0px 0px 5px;");
                 reviewContainer.getChildren().add(ratingBox);
 
-                // Add Review Text
                 Label reviewTextLabel = new Label(review.getReviewText());
-                reviewTextLabel.setWrapText(true); // Allow text to wrap
-                reviewTextLabel.setStyle("-fx-font-size: 16px; -fx-padding: 5px 0;");
+                reviewTextLabel.setWrapText(true);
+                reviewTextLabel.setStyle("-fx-font-size: 16px; -fx-padding: 5px 0px 0px 5px;");
                 reviewContainer.getChildren().add(reviewTextLabel);
 
-                // Add the review container to the VBox
                 vbox.getChildren().add(reviewContainer);
             }
         }
+    }
+
+    private void updateCurrentBookReview() {
+
+        int startIndex = (totalTimeBookReviewUpdate - 1) * ITEMS_PER_REVIEW_UPDATE_ATTEMPT;
+
+        BookReviewDAO dao = new BookReviewDAO();
+
+        if (startIndex + ITEMS_PER_REVIEW_UPDATE_ATTEMPT <= this.totalReview) {
+            Rectangle overlay = new Rectangle(displayStackPane.getWidth(), 80, Color.rgb(0, 0, 0, 0.1));
+            overlay.setDisable(true);
+
+            ProgressIndicator loadingIndicator = new ProgressIndicator();
+            loadingIndicator.setMaxSize(30, 30);
+
+            StackPane stackPane = new StackPane(overlay, loadingIndicator);
+            stackPane.setAlignment(Pos.CENTER);
+            vbox.getChildren().add(stackPane);
+
+            Task<Void> loadReviewsTask = new Task<>() {
+
+                @Override
+                protected Void call() {
+                    try {
+                        isLoadingReview = true;
+                        currentBookReviewList = dao.getReviewsOffset(isbn_13, startIndex, ITEMS_PER_REVIEW_UPDATE_ATTEMPT);
+                        bookReviewList.addAll(currentBookReviewList);
+                        Thread.sleep(400);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    } finally {
+                        isLoadingReview = false;
+                    }
+                    return null;
+                }
+
+                @Override
+                protected void succeeded() {
+                    super.succeeded();
+
+                    vbox.getChildren().remove(stackPane);
+                    displayBookReview(currentBookReviewList);
+                    isLoadingReview = false;
+                }
+
+                @Override
+                protected void failed() {
+                    super.failed();
+                    isLoadingReview = false;
+                    vbox.getChildren().remove(stackPane);
+                }
+            };
+
+            new Thread(loadReviewsTask).start();
+        }
+    }
+
+    @FXML
+    private void toggleReviewVisibility() {
+        if (!isDisplayReview) {
+            isDisplayReview = true;
+            updateCurrentBookReview();
+        }
+    }
+
+    @FXML
+    private void toggleAddReviewVisibility() {
+        boolean isVisibleBefore = addReviewContainer.isVisible();
+        addReviewContainer.setVisible(!isVisibleBefore);
+
+        if (isVisibleBefore == false) {
+            searchScrollPane.setDisable(true);
+            searchScrollPane.setEffect(blurEffect);
+
+            showReviewButton.setVisible(false);
+            addReviewButton.setVisible(false);
+
+            if (numberSpinner != null) {
+                numberSpinner.setVisible(false);
+                addButton.setVisible(false);
+            } else {
+                borrowButton.setVisible(false);
+            }
+        } else {
+            searchScrollPane.setDisable(false);
+            searchScrollPane.setEffect(null);
+
+            showReviewButton.setVisible(true);
+            addReviewButton.setVisible(true);
+            if (numberSpinner != null) {
+                numberSpinner.setVisible(true);
+                addButton.setVisible(true);
+            } else {
+                borrowButton.setVisible(true);
+            }
+        }
+    }
+
+    @FXML
+    private void submitReview() {
+        String text = reviewText.getText();
+
+        BookReviewDAO dao = new BookReviewDAO();
+
+        if (text.isEmpty() || this.rating == 0) {
+            addReviewStatusText.setText("Please finish your review!");
+            addReviewStatusText.setVisible(true);
+            return;
+        }
+
+        int reviewerId = LMS.getInstance().getCurrentUser().getId();
+        String bookISBN = this.isbn_13;
+        String reviewerName = LMS.getInstance().getCurrentUser().getFullName();
+        Timestamp ts = new Timestamp(System.currentTimeMillis());
+
+        BookReview newReview = new BookReview(reviewerId, bookISBN, this.rating, reviewerName, text, ts);
+        BookReviewDAO.ReviewStatus result = dao.addReview(reviewerId, bookISBN, this.rating, reviewerName, text, ts);
+
+        if (result == BookReviewDAO.ReviewStatus.APPROVED) {
+            bookReviewList.add(newReview);
+            updateCurrentBookReview();
+
+            addReviewStatusText.setStyle("-fx-text-fill: green; -fx-font-size: 14px;");
+        } else {
+            addReviewStatusText.setStyle("-fx-text-fill: red; -fx-font-size: 14px;");
+        }
+        addReviewStatusText.setText(result.getDescription());
+        addReviewStatusText.setVisible(true);
+
+        reviewText.clear();
+        addReviewButton.setVisible(false);
+    }
+
+    @FXML
+    private void rateBook(MouseEvent event) {
+
+        Label clickedStar = (Label) event.getSource();
+        String starId = clickedStar.getId();
+
+        switch (starId) {
+            case "star1":
+                rating = 1;
+                break;
+            case "star2":
+                rating = 2;
+                break;
+            case "star3":
+                rating = 3;
+                break;
+            case "star4":
+                rating = 4;
+                break;
+            case "star5":
+                rating = 5;
+                break;
+        }
+
+        star1.setText(rating >= 1 ? "★" : "☆");
+        star2.setText(rating >= 2 ? "★" : "☆");
+        star3.setText(rating >= 3 ? "★" : "☆");
+        star4.setText(rating >= 4 ? "★" : "☆");
+        star5.setText(rating >= 5 ? "★" : "☆");
     }
 
     private void showAddedBookNotification() {
@@ -532,6 +751,20 @@ public class SearchController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         searchScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         searchScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+        searchScrollPane.vvalueProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.doubleValue() == 1.0 && isDisplayReview && !isLoadingReview) {
+                if ((totalTimeBookReviewUpdate * ITEMS_PER_REVIEW_UPDATE_ATTEMPT) <= this.totalReview) {
+                    totalTimeBookReviewUpdate++;
+                    updateCurrentBookReview();
+                }
+            }
+        });
+
+        showReviewButton.setVisible(false);
+        showReviewButton.setDisable(true);
+        addReviewButton.setVisible(false);
+        addReviewButton.setDisable(true);
 
         if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
             SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory =
