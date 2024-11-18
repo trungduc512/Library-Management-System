@@ -60,13 +60,19 @@ public class AvailableBooksController implements Initializable {  // Implement I
 
     public static class BookItem {
         private String title;
+        private String isbn;
 
-        public BookItem(String title) {
+        public BookItem(String title, String isbn) {
+            this.isbn = isbn;
             this.title = title;
         }
 
         public String getTitle() {
             return title;
+        }
+
+        public String getIsbn() {
+            return isbn;
         }
     }
 
@@ -87,6 +93,16 @@ public class AvailableBooksController implements Initializable {  // Implement I
         });
 
         populateSuggestions();
+
+        // Handle double-click on suggestionListView items
+        suggestionListView.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2) { // Detect double-click
+                BookItem selectedItem = suggestionListView.getSelectionModel().getSelectedItem();
+                if (selectedItem != null) {
+                    menuController.toSearchScreen(selectedItem.getIsbn());
+                }
+            }
+        });
 
         // Set custom cell factory for ListView to display book info and images
         listView.setCellFactory(new Callback<ListView<Book>, ListCell<Book>>() {
@@ -181,6 +197,10 @@ public class AvailableBooksController implements Initializable {  // Implement I
         menuController.toSearchScreen(selectedBook);
     }
 
+    private void handleSuggestionListViewDoubleClick(BookItem selectedBook) throws IOException {
+        menuController.toSearchScreen(selectedBook.getIsbn());
+    }
+
     private void loadBooksFromDatabase() {
         String url = "jdbc:mysql://localhost:3306/library_db";
         String user = "root";
@@ -260,7 +280,7 @@ public class AvailableBooksController implements Initializable {  // Implement I
                 filteredSuggestionList = FXCollections.observableArrayList(filteredSuggestionList.subList(0, maxResults));
             } else if (filteredSuggestionList.size() < minResults) {
                 while (filteredSuggestionList.size() < minResults) {
-                    filteredSuggestionList.add(new BookItem("")); // Add empty results
+                    filteredSuggestionList.add(new BookItem("","")); // Add empty results
                 }
             }
 
@@ -294,7 +314,7 @@ public class AvailableBooksController implements Initializable {  // Implement I
     @FXML
     private void populateSuggestions() {
         for (Book book : bookObservableList) {
-            suggestions.add(new BookItem(book.getTitle()));
+            suggestions.add(new BookItem(book.getTitle(), book.getIsbn()));
         }
     }
 }

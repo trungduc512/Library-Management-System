@@ -272,6 +272,38 @@ public class Borrower extends User {
         // Ở đây bạn có thể sử dụng thư viện mã hóa mạnh như BCrypt hoặc SHA-256
         return password;  // Trong ví dụ này, trả về mật khẩu như cũ (cần thay bằng mã hóa thực sự)
     }
+
+    // Hàmm returnStatusBorrower trả về trạng thái người mượn sách
+    public String returnStatus() {
+        String sql = "SELECT returnDate FROM BorrowedBookRecord WHERE borrowerId = ?";
+        LocalDate today = LocalDate.now();
+        boolean hasBorrowed = false;
+        boolean hasOverdue = false;
+
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                hasBorrowed = true;
+                LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
+                if (returnDate.isBefore(today)) {
+                    hasOverdue = true;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        if (!hasBorrowed) {
+            return "No active loans";
+        }
+        if (hasOverdue) {
+            return "Has overdue loans";
+        }
+        return "In good standing";
+    }
 }
 
 
