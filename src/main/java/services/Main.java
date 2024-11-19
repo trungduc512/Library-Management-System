@@ -44,7 +44,7 @@ public class Main {
                 Timestamp.valueOf(LocalDateTime.now()));
         d.addReview(1, "9780760349632", 5, "hehe", "this is a masterpiece",
                 Timestamp.valueOf(LocalDateTime.now()));
-        d.addReview(5, "9780760349632", 4, "dangzz", "this is a alo",
+        d.addReview(3, "9780760349632", 4, "dangzz", "this is a alo",
                 Timestamp.valueOf(LocalDateTime.now()));
     }
 }

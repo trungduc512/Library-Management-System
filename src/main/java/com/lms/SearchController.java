@@ -3,8 +3,7 @@ package com.lms;
 import classes.*;
 import com.jfoenix.controls.JFXButton;
 import dao.BookReviewDAO;
-import javafx.animation.PauseTransition;
-import javafx.animation.TranslateTransition;
+import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -48,7 +47,7 @@ public class SearchController implements Initializable {
     private String thumbnailURL;
 
     // book review properties
-    private static final int ITEMS_PER_REVIEW_UPDATE_ATTEMPT = 1;
+    private static final int ITEMS_PER_REVIEW_UPDATE_ATTEMPT = 3;
     private final GaussianBlur blurEffect = new GaussianBlur(10);
 
     private int totalReview = 0;
@@ -56,6 +55,12 @@ public class SearchController implements Initializable {
     private int totalTimeBookReviewUpdate = 1;
     private boolean isDisplayReview = false;
     private boolean isLoadingReview = false;
+
+    @FXML 
+    private VBox reviewBox;
+
+    @FXML
+    private VBox reviewContainer;
 
     @FXML
     private Label star1, star2, star3, star4, star5;
@@ -83,6 +88,12 @@ public class SearchController implements Initializable {
 
     @FXML
     private Spinner<Integer> numberSpinner;
+
+    @FXML
+    private Spinner<Integer> numberSpinner1;
+
+    @FXML
+    private JFXButton reduceButton;
 
     @FXML
     private JFXButton addButton;
@@ -140,17 +151,23 @@ public class SearchController implements Initializable {
 
         bookReviewList = new ArrayList<BookReview>();
         totalTimeBookReviewUpdate = 1;
+        reviewContainer.setVisible(false);
         isDisplayReview = false;
         isLoadingReview = false;
+        addReviewStatusText.setVisible(false);
 
         // Disable add button if visible
         if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
             addButton.setDisable(true);
+            reduceButton.setDisable(true);
+        } else {
+            borrowButton.setDisable(true);
+            addReviewButton.setDisable(true);
         }
 
-        // Disable search button
-        searchButton.setDisable(true);
+        // Disable button
         showReviewButton.setDisable(true);
+        searchButton.setDisable(true);
 
         task.setOnSucceeded(event -> {
             displayStackPane.getChildren().remove(stackPane); // Remove the overlay and indicator
@@ -164,27 +181,26 @@ public class SearchController implements Initializable {
                 if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
                     // Enable add button
                     addButton.setDisable(false);
+                    reduceButton.setDisable(false);
                     numberSpinner.setDisable(false);
-                    showReviewButton.setDisable(false);
+                    numberSpinner1.setDisable(false);
+
+                    reduceButton.setVisible(true);
                     addButton.setVisible(true);
                     numberSpinner.setVisible(true);
-                    showReviewButton.setVisible(true);
+                    numberSpinner1.setVisible(true);
                 } else {
                     Book book = User.getBookByIsbn(search.getText());
                     if (book != null) {
                         // Enable borrow button
                         borrowButton.setVisible(true);
-                        showReviewButton.setVisible(true);
                         addReviewButton.setVisible(true);
                         borrowButton.setDisable(false);
-                        showReviewButton.setDisable(false);
                         addReviewButton.setDisable(false);
                     } else {
                         borrowButton.setVisible(false);
-                        showReviewButton.setVisible(false);
                         addReviewButton.setVisible(false);
                         borrowButton.setDisable(true);
-                        showReviewButton.setDisable(true);
                         addReviewButton.setDisable(true);
                     }
                 }
@@ -202,15 +218,18 @@ public class SearchController implements Initializable {
             if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
                 addButton.setVisible(false);
                 addButton.setDisable(true);
+                reduceButton.setVisible(false);
+                reduceButton.setDisable(true);
                 numberSpinner.setDisable(true);
                 numberSpinner.setVisible(false);
+                numberSpinner1.setDisable(true);
+                numberSpinner1.setVisible(false);
             } else {
                 borrowButton.setVisible(false);
                 borrowButton.setDisable(true);
             }
 
             searchButton.setDisable(false);
-
         });
 
         Thread thread = new Thread(task);
@@ -223,6 +242,26 @@ public class SearchController implements Initializable {
         if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
             ((Librarian) LMS.getInstance().getCurrentUser()).addBook(bookTitle, authors, isbn_13, descriptionText, numberSpinner.getValue(), thumbnailURL);
             showAddedBookNotification();
+
+            int bookAvailable = ((Librarian) LMS.getInstance().getCurrentUser()).getDeleteQuantity(this.isbn_13);
+            SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory1 =
+                    new SpinnerValueFactory.IntegerSpinnerValueFactory(Math.min(1, bookAvailable),
+                            bookAvailable, Math.min(1, bookAvailable));
+            numberSpinner1.setValueFactory(valueFactory1);
+        }
+    }
+
+    @FXML
+    private void reduceBookFromDatabase(ActionEvent event) {
+        if (LMS.getInstance().getCurrentUser() instanceof  Librarian) {
+            ((Librarian) LMS.getInstance().getCurrentUser()).decreaseBook(this.isbn_13, numberSpinner1.getValue());
+            showDeletedBookNotification();
+
+            int bookAvailable = ((Librarian) LMS.getInstance().getCurrentUser()).getDeleteQuantity(this.isbn_13);
+            SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory1 =
+                    new SpinnerValueFactory.IntegerSpinnerValueFactory(Math.min(1, bookAvailable),
+                            bookAvailable, Math.min(1, bookAvailable));
+            numberSpinner1.setValueFactory(valueFactory1);
         }
     }
 
@@ -317,14 +356,34 @@ public class SearchController implements Initializable {
         // Save thumbnail URL
         thumbnailURL = apiClient.getThumbnailURL();
 
+        // update available quantity to delete
+        if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
+            int bookAvailable = ((Librarian) LMS.getInstance().getCurrentUser()).getDeleteQuantity(this.isbn_13);
+            SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory1 =
+                    new SpinnerValueFactory.IntegerSpinnerValueFactory(Math.min(1, bookAvailable),
+                            bookAvailable, Math.min(1, bookAvailable));
+            numberSpinner1.setValueFactory(valueFactory1);
+
+            if (numberSpinner1.getValue() == 0) {
+                reduceButton.setDisable(true);
+            } else {
+                reduceButton.setDisable(false);
+            }
+        }
+
+        updateReviewBookBox();
+    }
+    
+    private void updateReviewBookBox() {
         // Update book review list
         BookReviewDAO brDao = new BookReviewDAO();
         double avg_rate = brDao.getAverageRating(this.isbn_13);
+        reviewBox.getChildren().clear();
+        reviewContainer.getChildren().clear();
 
-        VBox reviewRateBox = new VBox();
         Label reviewsSectionTitle = new Label("Reviews");
         reviewsSectionTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 30px 20px 0px 20px;");
-        reviewRateBox.getChildren().add(reviewsSectionTitle);
+        reviewBox.getChildren().add(reviewsSectionTitle);
 
         HBox avgRatingBox = new HBox();
         avgRatingBox.setSpacing(2); // Space between stars
@@ -337,37 +396,38 @@ public class SearchController implements Initializable {
         rate.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 2px 20px 0px 10px;");
         avgRatingBox.getChildren().add(rate);
         avgRatingBox.setStyle("-fx-padding: 0px 0px 0px 20px;");
-        reviewRateBox.getChildren().add(avgRatingBox);
+        reviewBox.getChildren().add(avgRatingBox);
 
         this.totalReview = brDao.getNumberOfReview(this.isbn_13);
         Label ratingNumber = new Label(Integer.toString(this.totalReview) + " ratings");
         ratingNumber.setStyle("-fx-font-size: 14px; -fx-padding: 0px 20px 30px 20px;");
-        reviewRateBox.getChildren().add(ratingNumber);
+        reviewBox.getChildren().add(ratingNumber);
 
-        vbox.getChildren().add(reviewRateBox);
+        showReviewButton.setVisible(this.totalReview > 0 && !addReviewContainer.isVisible());
+        showReviewButton.setDisable(!(this.totalReview > 0 && !addReviewContainer.isVisible()));
     }
 
     private void displayBookReview(List<BookReview> reviews) {
         if (reviews != null && !reviews.isEmpty()) {
 
             for (BookReview review : reviews) {
-                VBox reviewContainer = new VBox();
-                VBox.setMargin(reviewContainer, new Insets(0, 10, 10, 10));
-                reviewContainer.setStyle("-fx-border-color: #ccc; -fx-border-width: 1; -fx-padding: 0px 0px 10px ; -fx-background-color: #f9f9f9; -fx-margin-bottom: 10px;");
+                VBox reviewContainer1 = new VBox();
+                VBox.setMargin(reviewContainer1, new Insets(0, 10, 10, 10));
+                reviewContainer1.setStyle("-fx-border-color: #ccc; -fx-border-width: 1; -fx-padding: 0px 0px 10px ; -fx-background-color: #f9f9f9; -fx-margin-bottom: 10px;");
 
                 HBox user = new HBox();
                 user.setSpacing(2);
-                ImageView usericon = new ImageView(new Image(String.valueOf(getClass().getResource("/com/lms/Images/user-top-icon.png"))));
-                usericon.setFitWidth(32); // Adjust the width as needed
-                usericon.setPreserveRatio(true);
-                VBox imageContainer = new VBox(usericon);
+                ImageView userIcon = new ImageView(new Image(String.valueOf(getClass().getResource("/com/lms/Images/user-top-icon.png"))));
+                userIcon.setFitWidth(32); // Adjust the width as needed
+                userIcon.setPreserveRatio(true);
+                VBox imageContainer = new VBox(userIcon);
                 user.getChildren().add(imageContainer);
 
                 Label userNameLabel = new Label(review.getReviewerName());
                 userNameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
                 user.getChildren().add(userNameLabel);
 
-                reviewContainer.getChildren().add(user);
+                reviewContainer1.getChildren().add(user);
 
                 HBox ratingBox = new HBox();
                 ratingBox.setSpacing(2); // Space between stars
@@ -382,14 +442,14 @@ public class SearchController implements Initializable {
 
                 ratingBox.getChildren().add(reviewTimeLabel);
                 ratingBox.setStyle("-fx-padding: 0px 0px 0px 5px;");
-                reviewContainer.getChildren().add(ratingBox);
+                reviewContainer1.getChildren().add(ratingBox);
 
                 Label reviewTextLabel = new Label(review.getReviewText());
                 reviewTextLabel.setWrapText(true);
                 reviewTextLabel.setStyle("-fx-font-size: 16px; -fx-padding: 5px 0px 0px 5px;");
-                reviewContainer.getChildren().add(reviewTextLabel);
+                reviewContainer1.getChildren().add(reviewTextLabel);
 
-                vbox.getChildren().add(reviewContainer);
+                this.reviewContainer.getChildren().add(reviewContainer1);
             }
         }
     }
@@ -400,8 +460,11 @@ public class SearchController implements Initializable {
 
         BookReviewDAO dao = new BookReviewDAO();
 
-        if (startIndex + ITEMS_PER_REVIEW_UPDATE_ATTEMPT <= this.totalReview) {
-            Rectangle overlay = new Rectangle(displayStackPane.getWidth(), 80, Color.rgb(0, 0, 0, 0.1));
+        if (startIndex < this.totalReview) {
+            showReviewButton.setDisable(true);
+
+            Rectangle overlay = new Rectangle(displayStackPane.getWidth(), 100, Color.rgb(0, 0, 0, 0.1));
+            overlay.setStyle("-fx-padding: 0px 0px 10px 0px;");
             overlay.setDisable(true);
 
             ProgressIndicator loadingIndicator = new ProgressIndicator();
@@ -409,20 +472,21 @@ public class SearchController implements Initializable {
 
             StackPane stackPane = new StackPane(overlay, loadingIndicator);
             stackPane.setAlignment(Pos.CENTER);
-            vbox.getChildren().add(stackPane);
+            reviewContainer.getChildren().add(stackPane);
 
             Task<Void> loadReviewsTask = new Task<>() {
 
                 @Override
                 protected Void call() {
                     try {
+                        Platform.runLater(() -> smoothScrollToBottom());
+
                         isLoadingReview = true;
                         currentBookReviewList = dao.getReviewsOffset(isbn_13, startIndex, ITEMS_PER_REVIEW_UPDATE_ATTEMPT);
                         bookReviewList.addAll(currentBookReviewList);
+
                         Thread.sleep(400);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    } catch (SQLException e) {
+                    } catch (InterruptedException | SQLException e) {
                         e.printStackTrace();
                     } finally {
                         isLoadingReview = false;
@@ -434,16 +498,18 @@ public class SearchController implements Initializable {
                 protected void succeeded() {
                     super.succeeded();
 
-                    vbox.getChildren().remove(stackPane);
+                    reviewContainer.getChildren().remove(stackPane);
                     displayBookReview(currentBookReviewList);
+                    showReviewButton.setDisable(false);
                     isLoadingReview = false;
                 }
 
                 @Override
                 protected void failed() {
                     super.failed();
+                    reviewContainer.getChildren().remove(stackPane);
+                    showReviewButton.setDisable(false);
                     isLoadingReview = false;
-                    vbox.getChildren().remove(stackPane);
                 }
             };
 
@@ -453,10 +519,28 @@ public class SearchController implements Initializable {
 
     @FXML
     private void toggleReviewVisibility() {
-        if (!isDisplayReview) {
-            isDisplayReview = true;
+        boolean currVisibility = reviewContainer.isVisible();
+
+        if (currVisibility) {
+            reviewContainer.getChildren().clear();
+            isDisplayReview = false;
+            reviewContainer.setVisible(false);
+            showReviewButton.setText("Hide Review");
+        } else {
+            totalTimeBookReviewUpdate = 1;
             updateCurrentBookReview();
+            isDisplayReview = true;
+            reviewContainer.setVisible(true);
+            showReviewButton.setText("Show Review");
         }
+    }
+
+    private void smoothScrollToBottom() {
+        Timeline timeline = new Timeline();
+        KeyValue keyValue = new KeyValue(searchScrollPane.vvalueProperty(), 1.0);
+        KeyFrame keyFrame = new KeyFrame(Duration.millis(300), keyValue);
+        timeline.getKeyFrames().add(keyFrame);
+        timeline.play();
     }
 
     @FXML
@@ -464,30 +548,48 @@ public class SearchController implements Initializable {
         boolean isVisibleBefore = addReviewContainer.isVisible();
         addReviewContainer.setVisible(!isVisibleBefore);
 
-        if (isVisibleBefore == false) {
+        if (!isVisibleBefore) {
             searchScrollPane.setDisable(true);
             searchScrollPane.setEffect(blurEffect);
 
             showReviewButton.setVisible(false);
-            addReviewButton.setVisible(false);
+            showReviewButton.setDisable(true);
+
+            search.setVisible(false);
+            searchButton.setVisible(false);
 
             if (numberSpinner != null) {
                 numberSpinner.setVisible(false);
+                numberSpinner1.setVisible(false);
                 addButton.setVisible(false);
+                reduceButton.setVisible(false);
             } else {
                 borrowButton.setVisible(false);
+                addReviewButton.setVisible(false);
             }
         } else {
             searchScrollPane.setDisable(false);
             searchScrollPane.setEffect(null);
 
-            showReviewButton.setVisible(true);
-            addReviewButton.setVisible(true);
+            addReviewStatusText.setVisible(false);
+            reviewText.clear();
+            rating = 0;
+
+            if (this.totalReview > 0) {
+                showReviewButton.setVisible(true);
+                showReviewButton.setDisable(false);
+            }
+
+            search.setVisible(true);
+            searchButton.setVisible(true);
             if (numberSpinner != null) {
                 numberSpinner.setVisible(true);
+                numberSpinner1.setVisible(true);
                 addButton.setVisible(true);
+                reduceButton.setVisible(true);
             } else {
                 borrowButton.setVisible(true);
+                addReviewButton.setVisible(true);
             }
         }
     }
@@ -500,6 +602,7 @@ public class SearchController implements Initializable {
 
         if (text.isEmpty() || this.rating == 0) {
             addReviewStatusText.setText("Please finish your review!");
+            addReviewStatusText.setStyle("-fx-text-fill: red; -fx-font-size: 14px;");
             addReviewStatusText.setVisible(true);
             return;
         }
@@ -514,7 +617,12 @@ public class SearchController implements Initializable {
 
         if (result == BookReviewDAO.ReviewStatus.APPROVED) {
             bookReviewList.add(newReview);
-            updateCurrentBookReview();
+
+            // modify review box
+            updateReviewBookBox();
+            isDisplayReview = false;
+            reviewContainer.setVisible(false);
+            reviewContainer.getChildren().clear();
 
             addReviewStatusText.setStyle("-fx-text-fill: green; -fx-font-size: 14px;");
         } else {
@@ -524,7 +632,16 @@ public class SearchController implements Initializable {
         addReviewStatusText.setVisible(true);
 
         reviewText.clear();
-        addReviewButton.setVisible(false);
+        rating = 0;
+        updateStar();
+    }
+
+    public void updateStar() {
+        star1.setText(rating >= 1 ? "★" : "☆");
+        star2.setText(rating >= 2 ? "★" : "☆");
+        star3.setText(rating >= 3 ? "★" : "☆");
+        star4.setText(rating >= 4 ? "★" : "☆");
+        star5.setText(rating >= 5 ? "★" : "☆");
     }
 
     @FXML
@@ -551,11 +668,7 @@ public class SearchController implements Initializable {
                 break;
         }
 
-        star1.setText(rating >= 1 ? "★" : "☆");
-        star2.setText(rating >= 2 ? "★" : "☆");
-        star3.setText(rating >= 3 ? "★" : "☆");
-        star4.setText(rating >= 4 ? "★" : "☆");
-        star5.setText(rating >= 5 ? "★" : "☆");
+        updateStar();
     }
 
     private void showAddedBookNotification() {
@@ -585,6 +698,50 @@ public class SearchController implements Initializable {
         slideIn.setFromX(400); // Start from the right
         slideIn.setFromY(-230); // Start above the screen
         slideIn.setToX(320); // Slide to the center
+
+        slideIn.setOnFinished(slideInEvent -> {
+            PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
+            delay.setOnFinished(delayEvent -> {
+                // Animation for sliding up to disappear
+                TranslateTransition slideUp = new TranslateTransition(Duration.seconds(0.8), notificationLabel);
+                ControllerUtils.fadeTransition(notificationLabel, 1, 0, 0.8);
+                slideUp.setToY(-250); // Slide up
+                slideUp.setOnFinished(event1 -> searchScreen.getChildren().remove(notificationLabel));
+                slideUp.play();
+            });
+            delay.play();
+        });
+
+        slideIn.play();
+    }
+
+    private void showDeletedBookNotification() {
+        // Create the notification label
+        Label notificationLabel = new Label("Book deleted successfully!");
+        notificationLabel.setPrefHeight(37.0);
+        notificationLabel.setPrefWidth(195.0);
+        notificationLabel.setStyle("-fx-background-color: #73B573; -fx-text-fill: white; -fx-padding: 10px; -fx-background-radius: 0.5em;");
+        notificationLabel.setVisible(false);
+
+        // Load the image and set it as the graphic
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/add-book-checked-icon.png")));
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(17.0);
+        imageView.setFitWidth(17.0);
+        imageView.setPickOnBounds(true);
+        imageView.setPreserveRatio(true);
+        notificationLabel.setGraphic(imageView);
+
+        // Add the notification label to the scene
+        searchScreen.getChildren().add(notificationLabel);
+        notificationLabel.setVisible(true);
+
+        // Animation for sliding in
+        TranslateTransition slideIn = new TranslateTransition(Duration.seconds(0.5), notificationLabel);
+        ControllerUtils.fadeTransition(notificationLabel, 0, 1, 0.5);
+        slideIn.setFromX(400); // Start from the right
+        slideIn.setFromY(-230); // Start above the screen
+        slideIn.setToX(305); // Slide to the center
 
         slideIn.setOnFinished(slideInEvent -> {
             PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
@@ -757,9 +914,15 @@ public class SearchController implements Initializable {
         searchScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         searchScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
+        final double SPEED = 0.003;
+        searchScrollPane.getContent().setOnScroll(scrollEvent -> {
+            double deltaY = scrollEvent.getDeltaY() * SPEED;
+            searchScrollPane.setVvalue(searchScrollPane.getVvalue() - deltaY);
+        });
+
         searchScrollPane.vvalueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue.doubleValue() == 1.0 && isDisplayReview && !isLoadingReview) {
-                if ((totalTimeBookReviewUpdate * ITEMS_PER_REVIEW_UPDATE_ATTEMPT) <= this.totalReview) {
+                if ((totalTimeBookReviewUpdate * ITEMS_PER_REVIEW_UPDATE_ATTEMPT) < this.totalReview) {
                     totalTimeBookReviewUpdate++;
                     updateCurrentBookReview();
                 }
@@ -768,20 +931,35 @@ public class SearchController implements Initializable {
 
         showReviewButton.setVisible(false);
         showReviewButton.setDisable(true);
-        addReviewButton.setVisible(false);
-        addReviewButton.setDisable(true);
 
         if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
             SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory =
                     new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 100, 1); // Min: 1, Max: 100, Initial: 1
             numberSpinner.setValueFactory(valueFactory);
+
+            SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory1 =
+                    new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0);
+            numberSpinner1.valueProperty().addListener((obs, oldValue, newValue) -> {
+                if (newValue == 0) {
+                    reduceButton.setDisable(true);
+                } else {
+                    reduceButton.setDisable(false);
+                }
+            });
+
             addButton.setVisible(false);
             addButton.setDisable(true);
+            reduceButton.setVisible(false);
+            reduceButton.setDisable(true);
             numberSpinner.setDisable(true);
             numberSpinner.setVisible(false);
+            numberSpinner1.setDisable(true);
+            numberSpinner1.setVisible(false);
         } else {
             borrowButton.setDisable(true);
             borrowButton.setVisible(false);
+            addReviewButton.setVisible(false);
+            addReviewButton.setDisable(true);
         }
 
         searchButton.setDisable(true);

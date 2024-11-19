@@ -23,12 +23,12 @@
 
             <HBox layoutX="220.0" layoutY="14.0" spacing="10">
                <JFXButton fx:id="showReviewButton" text="Show Review " onAction="#toggleReviewVisibility" style="-fx-background-color: #6487fa; -fx-text-fill: white;" />
-               <JFXButton fx:id="addReviewButton" text="Add Review" onAction="#toggleAddReviewVisibility" style="-fx-background-color: #54BE41; -fx-text-fill: white;" />
             </HBox>
 
-
+            <JFXButton fx:id="reduceButton" layoutX="480.0" layoutY="14.0" onAction="#reduceBookFromDatabase" prefHeight="25.0" prefWidth="110.0" style="-fx-background-color: #54BE41;" styleClass="addBookButton" text="Remove copies" textFill="WHITE" />
             <JFXButton fx:id="addButton" layoutX="669.0" layoutY="14.0" onAction="#addBookToDatabase" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #54BE41;" styleClass="addBookButton" text="Add to library" textFill="WHITE" />
             <Spinner fx:id="numberSpinner" layoutX="758.0" layoutY="14.0" prefHeight="25.0" prefWidth="59.0" />
+            <Spinner fx:id="numberSpinner1" layoutX="590.0" layoutY="14.0" prefHeight="25.0" prefWidth="59.0" />
             <JFXButton fx:id="searchButton" ellipsisString="" layoutX="162.0" layoutY="14.0" onAction="#clicked" prefHeight="25.0" prefWidth="38.0" style="-fx-background-color: #6487fa; -fx-background-radius: 3em;">
                <cursor>
                   <Cursor fx:constant="HAND" />
@@ -44,9 +44,11 @@
             <StackPane fx:id="displayStackPane" layoutY="46.0" prefHeight="556.0" prefWidth="840.0">
                <children>
                   <ScrollPane fx:id="searchScrollPane" focusTraversable="false" prefHeight="556.0" prefWidth="840.0">
-                     <content>
+                     <VBox prefHeight="555.0" prefWidth="840.0">
                         <VBox fx:id="vbox" prefHeight="555.0" prefWidth="840.0" />
-                     </content>
+                        <VBox fx:id="reviewBox" prefHeight="200.0" prefWidth="840.0"/>
+                        <VBox fx:id="reviewContainer" prefHeight="200.0" prefWidth="840.0"/>
+                     </VBox>
                   </ScrollPane>
 
                   <VBox fx:id="addReviewContainer" spacing="15" alignment="CENTER" layoutY="150.0" layoutX="200.0"
@@ -79,7 +81,7 @@
 
                      <VBox alignment="BASELINE_LEFT">
                         <Label fx:id="addReviewStatusText" text="Add review"
-                               style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: red;" visible="false"/>
+                               style="-fx-font-size: 14px; -fx-text-fill: red;" visible="false"/>
                      </VBox>
 
                      <HBox>

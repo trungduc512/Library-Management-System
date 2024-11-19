@@ -25,8 +25,8 @@
             <TextField fx:id="search" focusTraversable="false" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="186.0" promptText="Search book by ISBN_13" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
 
             <HBox layoutX="220.0" layoutY="14.0" spacing="10">
-               <JFXButton fx:id="showReviewButton" text="Show Review " onAction="#toggleReviewVisibility" style="-fx-background-color: #6487fa; -fx-text-fill: white;" />
                <JFXButton fx:id="addReviewButton" text="Add Review" onAction="#toggleAddReviewVisibility" style="-fx-background-color: #54BE41; -fx-text-fill: white;" />
+               <JFXButton fx:id="showReviewButton" text="Show Review " onAction="#toggleReviewVisibility" style="-fx-background-color: #6487fa; -fx-text-fill: white;" />
             </HBox>
 
             <JFXButton fx:id="searchButton" ellipsisString="" layoutX="162.0" layoutY="14.0" onAction="#clicked" prefHeight="25.0" prefWidth="38.0" style="-fx-background-color: #6487fa; -fx-background-radius: 3em;">
@@ -48,7 +48,11 @@
                <children>
                   <ScrollPane fx:id="searchScrollPane" focusTraversable="false" prefHeight="556.0" prefWidth="840.0">
                      <content>
-                        <VBox fx:id="vbox" prefHeight="555.0" prefWidth="840.0" />
+                        <VBox prefHeight="555.0" prefWidth="840.0">
+                           <VBox fx:id="vbox" prefHeight="555.0" prefWidth="840.0" />
+                           <VBox fx:id="reviewBox" prefHeight="200.0" prefWidth="840.0"/>
+                           <VBox fx:id="reviewContainer" prefHeight="200.0" prefWidth="840.0" visible="false"/>
+                        </VBox>
                      </content>
                   </ScrollPane>
 
@@ -81,8 +85,8 @@
                      </HBox>
 
                      <VBox alignment="BASELINE_LEFT">
-                        <Label fx:id="addReviewStatusText" text="Add review"
-                               style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: red;" visible="false"/>
+                        <Label fx:id="addReviewStatusText" text="Add Review"
+                               style="-fx-font-size: 14px; -fx-text-fill: red;" visible="false"/>
                      </VBox>
 
                      <HBox>
