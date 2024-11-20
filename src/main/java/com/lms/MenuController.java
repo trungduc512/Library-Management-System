@@ -14,6 +14,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -30,6 +31,8 @@ public class MenuController implements Initializable {
 
     private AvailableBooksController availableBooksController;
     private SearchController searchController;
+    private BorrowHistoryController borrowerHistoryController;
+    private HomeController homeController;
 
     @FXML
     private BorderPane coverPane;
@@ -56,6 +59,9 @@ public class MenuController implements Initializable {
     private StackPane borrowerListPane;
 
     @FXML
+    private StackPane homePane;
+
+    @FXML
     private StackPane searchPane;
 
     @FXML
@@ -63,9 +69,11 @@ public class MenuController implements Initializable {
 
     //sub feature: 840 x 510
     @FXML
-    private void backToHome (ActionEvent event) throws Exception {
-        //ControllerUtils.switchSceneWithinStage(coverPane, "Menu.fxml");
+    private void backToHome(ActionEvent event) throws IOException {
+        homePane = createHomeScreen();
+        switchNode(homePane);
     }
+
 
     @FXML
     private void logOutUser (ActionEvent event) throws Exception {
@@ -75,6 +83,14 @@ public class MenuController implements Initializable {
 
     private AnchorPane createFeature1Pane() throws IOException {
         return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Feature1.fxml")));
+    }
+
+    private StackPane createHomeScreen() throws IOException {
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("Home-View.fxml")));
+        StackPane pane = loader.load();
+        homeController = loader.getController();
+        homeController.setMenuController(this);
+        return pane;
     }
 
     private StackPane createAvailableBooksScreen() throws IOException {
@@ -103,7 +119,11 @@ public class MenuController implements Initializable {
     }
 
     private StackPane createBorrowHistoryScreen() throws IOException {
-        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("BorrowHistory.fxml")));
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("BorrowHistory.fxml")));
+        StackPane pane = loader.load();
+        borrowerHistoryController = loader.getController();
+        borrowerHistoryController.setMenuController(this);
+        return pane;
     }
 
 

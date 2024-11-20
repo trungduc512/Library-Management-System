@@ -181,7 +181,7 @@ public abstract class User {
   // Hàm liệt kê 4 sách được mượn nhiều nhất
   public List<Book> listTopBorrowedBooks() {
     List<Book> books = new ArrayList<>();
-    String sql = "SELECT * FROM Books ORDER BY borrowedBooks DESC LIMIT 4";
+    String sql = "SELECT * FROM Books ORDER BY borrowedBooks DESC LIMIT 5";
     try (Connection conn = DatabaseHelper.getConnection();
         PreparedStatement stmt = conn.prepareStatement(sql);
         ResultSet rs = stmt.executeQuery()) {
