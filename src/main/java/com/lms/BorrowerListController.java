@@ -1,22 +1,30 @@
 package com.lms;
 
+import classes.BorrowedBookRecord;
 import classes.Borrower;
+import classes.LMS;
 import classes.Librarian;
+import com.jfoenix.controls.JFXButton;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.effect.GaussianBlur;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
+import javafx.util.Callback;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class BorrowerListController {
+
+    private final GaussianBlur blurEffect = new GaussianBlur(10);
 
     @FXML
     private TableView<Borrower> borrowerTable;
@@ -29,7 +37,15 @@ public class BorrowerListController {
     @FXML
     private TableColumn<Borrower, String> statusColumn;
     @FXML
+    private TableColumn<Borrower, Void> changeInformationColumn;
+    @FXML
+    private VBox changeUserInformationBox;
+    @FXML
+    private TextField userNameField;
+    @FXML
     private Label noBorrowersLabel;
+
+    private Borrower currentBorrower;
 
     // Cache for borrower statuses
     private final Map<Integer, String> statusCache = new HashMap<>();
@@ -123,6 +139,46 @@ public class BorrowerListController {
             return status1.compareTo(status2); // Alphabetical order for others
         });
 
+        changeInformationColumn.setCellFactory(new Callback<TableColumn<Borrower, Void>, TableCell<Borrower, Void>>() {
+            @Override
+            public TableCell<Borrower, Void> call(TableColumn<Borrower, Void> param) {
+                return new TableCell<>() {
+                    private final JFXButton changeButton = new JFXButton();
+                    private final ImageView imageView = new ImageView(
+                            new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/edit_icon.png"))));
+
+                    {
+                        imageView.setFitHeight(20);
+                        imageView.setFitWidth(20);
+                        changeButton.setGraphic(imageView);
+                        changeButton.setOnAction(event -> {
+                            currentBorrower = getTableView().getItems().get(getIndex());
+                            toggleChangeBoxVisibility();
+                        });
+                    }
+
+                    @Override
+                    protected void updateItem(Void item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            setGraphic(changeButton);
+                        }
+                    }
+                };
+            }
+        });
+
+        borrowerTable.widthProperty().addListener((observable, oldValue, newValue) -> {
+            double tableWidth = borrowerTable.getWidth();
+            borrowerIdColumn.setPrefWidth(tableWidth * 0.05);
+            fullNameColumn.setPrefWidth(tableWidth * 0.32);
+            userNameColumn.setPrefWidth(tableWidth * 0.32);
+            statusColumn.setPrefWidth(tableWidth * 0.26);
+            changeInformationColumn.setPrefWidth(tableWidth * 0.05);
+        });
+
         // Load data into the table
         List<Borrower> borrowers = loadBorrowers();
         if (borrowers.isEmpty()) {
@@ -131,6 +187,39 @@ public class BorrowerListController {
         } else {
             noBorrowersLabel.setVisible(false);
             borrowerTable.getItems().addAll(borrowers);
+        }
+    }
+
+    @FXML
+    private void toggleChangeBoxVisibility() {
+        boolean isVisibleBefore = changeUserInformationBox.isVisible();
+
+        if (!isVisibleBefore) {
+            ControllerUtils.slideTransitionY(changeUserInformationBox, -70, 0, 0.5);
+            ControllerUtils.fadeTransition(changeUserInformationBox, 0, 1, 0.5);
+
+            borrowerTable.setDisable(true);
+            borrowerTable.setEffect(blurEffect);
+
+            userNameField.setText(currentBorrower.getFullName());
+        } else {
+            borrowerTable.setDisable(false);
+            borrowerTable.setEffect(null);
+        }
+
+        changeUserInformationBox.setVisible(!isVisibleBefore);
+    }
+
+    @FXML
+    private void submitChanges() {
+        String name = userNameField.getText();
+
+        if (currentBorrower != null) {
+            int rowIndex = borrowerTable.getItems().indexOf(currentBorrower);
+
+            currentBorrower.setFullName(name);
+            currentBorrower.updateProfile(name);
+            borrowerTable.getItems().set(rowIndex, currentBorrower);
         }
     }
 

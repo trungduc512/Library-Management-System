@@ -23,7 +23,7 @@ public class Borrower extends User {
     // Hàm cập nhật hồ sơ
     public void updateProfile(String fullName) {
         this.setFullName(fullName);
-        String sql = "UPDATE Users SET fullName = ? WHERE id = ?";
+        String sql = "UPDATE Borrowers SET fullName = ? WHERE id = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, fullName);
