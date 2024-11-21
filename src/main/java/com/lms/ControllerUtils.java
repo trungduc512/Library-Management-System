@@ -33,12 +33,21 @@ public class ControllerUtils {
         transition.play();
     }
 
-    public static void slideTransition(Node node, double fromX, double toX, double second) {
+    public static void slideTransitionX(Node node, double fromX, double toX, double second) {
         node.setTranslateX(fromX);
         TranslateTransition slide = new TranslateTransition();
         slide.setDuration(Duration.seconds(second));
         slide.setNode(node);
         slide.setToX(toX);
+        slide.play();
+    }
+
+    public static void slideTransitionY(Node node, double fromY, double toY, double second) {
+        node.setTranslateY(fromY);
+        TranslateTransition slide = new TranslateTransition();
+        slide.setDuration(Duration.seconds(second));
+        slide.setNode(node);
+        slide.setToY(toY);
         slide.play();
     }
 

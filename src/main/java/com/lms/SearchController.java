@@ -549,6 +549,9 @@ public class SearchController implements Initializable {
         addReviewContainer.setVisible(!isVisibleBefore);
 
         if (!isVisibleBefore) {
+            ControllerUtils.slideTransitionY(addReviewContainer, -120, 0, 0.5);
+            ControllerUtils.fadeTransition(addReviewContainer, 0, 1, 0.5);
+
             searchScrollPane.setDisable(true);
             searchScrollPane.setEffect(blurEffect);
 
