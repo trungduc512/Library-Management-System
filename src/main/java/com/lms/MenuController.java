@@ -6,6 +6,7 @@ import classes.LMS;
 import classes.Librarian;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -329,6 +330,12 @@ public class MenuController implements Initializable {
             System.out.println("Admin using");
         } else {
             System.out.println("Borrower using");
+        }
+
+        try {
+            backToHome(new ActionEvent());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
