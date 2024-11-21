@@ -37,7 +37,7 @@ public class BookCardController {
             if (book.getThumbnailURL() != null) {
                 url = book.getThumbnailURL();
             } else {
-                url = "/com/lms/images/no_cover_available.png";
+                url = "/com/lms/Images/no_cover_available.png";
             }
             bookImage.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(url))));
 

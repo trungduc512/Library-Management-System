@@ -91,7 +91,7 @@ public class SearchBookController implements Initializable {
     @FXML
     private void populateSuggestions() {
         for (Book book : bookObservableList) {
-            suggestions.add(new BookItem(book.getTitle(), "/com/lms/images/search_loop.png"));
+            suggestions.add(new BookItem(book.getTitle(), "/com/lms/Images/search_loop.png"));
         }
     }
 

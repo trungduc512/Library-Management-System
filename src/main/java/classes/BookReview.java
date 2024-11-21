@@ -7,16 +7,18 @@ public class BookReview {
     private int reviewerId;
     private String bookISBN;
     private int rating;
+    private String reviewerName;
     private String reviewText;
     private Timestamp createdAt;
 
     public BookReview() {
     }
 
-    public BookReview(int reviewerId, String bookISBN, int rating, String reviewText, Timestamp createdAt) {
+    public BookReview(int reviewerId, String bookISBN, int rating, String reviewerName, String reviewText, Timestamp createdAt) {
         this.reviewerId = reviewerId;
         this.bookISBN = bookISBN;
         this.rating = rating;
+        this.reviewerName = reviewerName;
         this.reviewText = reviewText;
         this.createdAt = createdAt;
     }
@@ -48,6 +50,14 @@ public class BookReview {
         this.rating = rating;
     }
 
+    public String getReviewerName() {
+        return reviewerName;
+    }
+
+    public void setReviewerName(String reviewerName) {
+        this.reviewerName = reviewerName;
+    }
+
     public String getReviewText() {
         return reviewText;
     }
@@ -70,6 +80,7 @@ public class BookReview {
                 "bookISBN='" + bookISBN + '\'' +
                 ", reviewerId=" + reviewerId +
                 ", rating=" + rating +
+                ", reviewerName='" + reviewerName +
                 ", reviewText='" + reviewText + '\'' +
                 ", createdAt=" + createdAt +
                 '}';
@@ -80,7 +91,7 @@ public class BookReview {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BookReview that = (BookReview) o;
-        return reviewerId == that.reviewerId && rating == that.rating &&
+        return reviewerId == that.reviewerId && rating == that.rating && Objects.equals(reviewerName, that.reviewerName) &&
                 Objects.equals(bookISBN, that.bookISBN) && Objects.equals(reviewText, that.reviewText) &&
                 Objects.equals(createdAt, that.createdAt);
     }
