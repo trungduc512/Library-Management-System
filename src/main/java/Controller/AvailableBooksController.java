@@ -1,7 +1,8 @@
 package Controller;
 
 import Model.Book;
-import Model.Borrower;
+import Model.LMS;
+import Model.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -20,7 +21,6 @@ import javafx.util.Callback;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.*;
 import java.util.*;
 
 public class AvailableBooksController implements Initializable {  // Implement Initializable
@@ -76,7 +76,7 @@ public class AvailableBooksController implements Initializable {  // Implement I
         }
     }
 
-    private static ObservableList<Book> bookObservableList = FXCollections.observableArrayList(Borrower.getAllBooks());
+    private static ObservableList<Book> bookObservableList = FXCollections.observableArrayList(User.getAllBooks());
     private static ObservableList<BookItem> suggestions = FXCollections.observableArrayList();
     private static FilteredList<Book> filteredList;
 
@@ -112,7 +112,7 @@ public class AvailableBooksController implements Initializable {  // Implement I
                     private final ImageView imageView = new ImageView();
                     private final VBox vbox = new VBox();
                     private final Image placeholderImage = new Image(
-                            getClass().getResource("/com/lms/Images/Image-not-found.png").toExternalForm(),
+                            Objects.requireNonNull(getClass().getResource("/View/Images/Image-not-found.png")).toExternalForm(),
                             IMAGE_WIDTH, IMAGE_HEIGHT, false, false);
 
                     @Override
@@ -202,32 +202,9 @@ public class AvailableBooksController implements Initializable {  // Implement I
     }
 
     private void loadBooksFromDatabase() {
-        String url = "jdbc:mysql://localhost:3306/library_db";
-        String user = "root";
-        String password = "123456";
-
-        try (Connection conn = DriverManager.getConnection(url, user, password)) {
-            String sql = "SELECT * FROM books"; // No LIMIT or OFFSET, load all books
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
-
-            allBooks.clear();
-            while (rs.next()) {
-                String title = rs.getString("title");
-                String author = rs.getString("author");
-                String imageUrl = rs.getString("thumbnailURL");
-                String description = rs.getString("description");
-                String isbn = rs.getString("isbn");
-                int totalBooks = rs.getInt("totalBooks");
-                int borrowBooks = rs.getInt("borrowedBooks");
-                allBooks.add(new Book(title, author, isbn, description, totalBooks, borrowBooks, imageUrl));
-            }
-
-            // Update the current page's books
-            updateCurrentPageBooks();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        allBooks.clear();
+        allBooks.addAll(LMS.getInstance().getBookList());
+        updateCurrentPageBooks();
     }
 
     private void updateCurrentPageBooks() {
@@ -272,7 +249,7 @@ public class AvailableBooksController implements Initializable {  // Implement I
                 }
             }
 
-            // Limit the number of results to between 5 and 7
+            // Limit the number of results to between 0 and 7
             int maxResults = 7;
             int minResults = 0;
 

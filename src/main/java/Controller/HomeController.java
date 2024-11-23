@@ -55,7 +55,7 @@ public class HomeController implements Initializable {
         Task<VBox> loadContent = new Task<VBox>() {
             @Override
             protected VBox call() throws Exception {
-                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("HomeContent-View.fxml")));
+                FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/View/HomeContent-View.fxml")));
                 VBox box = loader.load();
                 homeContentController = loader.getController();
                 homeContentController.setMenuController(menuController);
@@ -70,7 +70,7 @@ public class HomeController implements Initializable {
         });
 
         Thread thread = new Thread(loadContent);
-        thread.setDaemon(true); // Allow the thread to terminate when the application exits
+        thread.setDaemon(true);
         thread.start();
     }
 }

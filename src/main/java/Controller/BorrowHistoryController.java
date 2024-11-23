@@ -97,7 +97,7 @@ public class BorrowHistoryController implements Initializable {
                 return new TableCell<>() {
                     private final JFXButton returnButton = new JFXButton();
                     private final ImageView imageView = new ImageView(
-                            new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/return-book-icon.png"))));
+                            new Image(Objects.requireNonNull(getClass().getResourceAsStream("/View/Images/return-book-icon.png"))));
                     {
                         imageView.setFitHeight(20);
                         imageView.setFitWidth(20);
@@ -161,7 +161,7 @@ public class BorrowHistoryController implements Initializable {
         notificationLabel.setVisible(false);
 
         // Load the image and set it as the graphic
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/add-book-checked-icon.png")));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/View/Images/add-book-checked-icon.png")));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(17.0);
         imageView.setFitWidth(17.0);

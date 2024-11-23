@@ -1,12 +1,7 @@
 package Model;
 
-import services.DatabaseHelper;
 import services.UserService;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,15 +70,15 @@ public abstract class User {
         return UserService.getTotalBooks();
     }
 
-    public int getTotalBorrowedBooks() {
+    public static int getTotalBorrowedBooks() {
         return UserService.getTotalBorrowedBooks();
     }
 
-    public List<Book> listTopBorrowedBooks() {
+    public static List<Book> listTopBorrowedBooks() {
         return UserService.listTopBorrowedBooks();
     }
 
-    public List<Borrower> getTopBorrowers() {
+    public static List<Borrower> getTopBorrowers() {
         return UserService.getTopBorrowers();
     }
 }

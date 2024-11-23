@@ -18,7 +18,7 @@
 <?import java.lang.Integer?>
 
 <?import javafx.scene.layout.Region?>
-<StackPane fx:id="searchScreen" prefHeight="600.0" prefWidth="840.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.SearchController">
+<StackPane fx:id="searchScreen" prefHeight="600.0" prefWidth="840.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.SearchController">
    <children>
       <AnchorPane>
          <children>

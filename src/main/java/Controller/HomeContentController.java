@@ -2,7 +2,7 @@ package Controller;
 
 import Model.Book;
 import Model.Borrower;
-import Model.LMS;
+import Model.User;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
@@ -36,7 +36,7 @@ public class HomeContentController {
 
     @FXML
     public void initialize() {
-        List<Borrower> topBorrowerList = LMS.getInstance().getCurrentUser().getTopBorrowers();
+        List<Borrower> topBorrowerList = User.getTopBorrowers();
         int i = 0;
         for (Borrower borrower : topBorrowerList) {
             Label borrowerLabel = new Label(String.valueOf(++i) + ". " + borrower.getFullName());
@@ -44,8 +44,8 @@ public class HomeContentController {
             borrowerList.getChildren().add(borrowerLabel);
         }
 
-        int totalBook = LMS.getInstance().getCurrentUser().getTotalBooks();
-        int totalBorrowedBooks = LMS.getInstance().getCurrentUser().getTotalBorrowedBooks();
+        int totalBook = User.getTotalBooks();
+        int totalBorrowedBooks = User.getTotalBorrowedBooks();
         double borrowedPercentage = (double) totalBorrowedBooks / totalBook * 100;
         statisticLabel.setText(totalBorrowedBooks + " out of " + totalBook + " books");
         // Populate Pie Chart
@@ -53,7 +53,7 @@ public class HomeContentController {
                 new PieChart.Data("Borrowed books", borrowedPercentage),
                 new PieChart.Data("In stock", 100 - borrowedPercentage)
         );
-        List<Book> popularBooks = LMS.getInstance().getCurrentUser().listTopBorrowedBooks();
+        List<Book> popularBooks = User.listTopBorrowedBooks();
         for (Book book : popularBooks) {
             bookContainer.getChildren().add(createBookZone(book));
         }

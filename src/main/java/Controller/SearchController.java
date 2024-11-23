@@ -2,7 +2,7 @@ package Controller;
 
 import Model.*;
 import com.jfoenix.controls.JFXButton;
-import dao.BookReviewDAO;
+import dao2.BookReviewDAO;
 import javafx.animation.*;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -417,7 +417,7 @@ public class SearchController implements Initializable {
 
                 HBox user = new HBox();
                 user.setSpacing(2);
-                ImageView userIcon = new ImageView(new Image(String.valueOf(getClass().getResource("/com/lms/Images/user-top-icon.png"))));
+                ImageView userIcon = new ImageView(new Image(String.valueOf(getClass().getResource("/View/Images/user-top-icon.png"))));
                 userIcon.setFitWidth(32); // Adjust the width as needed
                 userIcon.setPreserveRatio(true);
                 VBox imageContainer = new VBox(userIcon);
@@ -683,7 +683,7 @@ public class SearchController implements Initializable {
         notificationLabel.setVisible(false);
 
         // Load the image and set it as the graphic
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/add-book-checked-icon.png")));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/View/Images/add-book-checked-icon.png")));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(17.0);
         imageView.setFitWidth(17.0);
@@ -727,7 +727,7 @@ public class SearchController implements Initializable {
         notificationLabel.setVisible(false);
 
         // Load the image and set it as the graphic
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/add-book-checked-icon.png")));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/View/Images/add-book-checked-icon.png")));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(17.0);
         imageView.setFitWidth(17.0);
@@ -771,7 +771,7 @@ public class SearchController implements Initializable {
         notificationLabel.setVisible(false);
 
         // Load the image and set it as the graphic
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/add-book-checked-icon.png")));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/View/Images/add-book-checked-icon.png")));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(17.0);
         imageView.setFitWidth(17.0);
@@ -815,7 +815,7 @@ public class SearchController implements Initializable {
         notificationLabel.setVisible(false);
 
         // Load the image and set it as the graphic
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/not-found-icon.png")));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/View/Images/not-found-icon.png")));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(17.0);
         imageView.setFitWidth(17.0);
@@ -860,7 +860,7 @@ public class SearchController implements Initializable {
         notFoundNotification.setVisible(false); // Initially not visible
 
         // Load the image and create an ImageView
-        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/com/lms/Images/not-found-icon.png")));
+        Image image = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/View/Images/not-found-icon.png")));
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(17.0);
         imageView.setFitWidth(17.0);
