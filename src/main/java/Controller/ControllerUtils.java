@@ -17,7 +17,7 @@ public class ControllerUtils {
 
     public static void switchSceneWithinStage(Node sourceNode, String fxmlFile) throws IOException {
         Stage stage = (Stage) sourceNode.getScene().getWindow();
-        Parent root = FXMLLoader.load(Objects.requireNonNull(ControllerUtils.class.getResource(fxmlFile)));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(ControllerUtils.class.getResource("/View/" + fxmlFile)));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.centerOnScreen();
@@ -50,11 +50,4 @@ public class ControllerUtils {
         slide.play();
     }
 
-    public static void showErrorAlert(String title, String content) {
-        System.out.println(title);
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setContentText(content);
-        alert.setHeaderText(title);
-        alert.show();
-    }
 }

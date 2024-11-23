@@ -1,9 +1,9 @@
 package Controller;
 
-import classes.Book;
-import classes.Borrower;
-import classes.LMS;
-import classes.Librarian;
+import Model.Book;
+import Model.Borrower;
+import Model.LMS;
+import Model.Librarian;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -83,12 +83,8 @@ public class MenuController implements Initializable {
         ControllerUtils.switchSceneWithinStage(coverPane, "Login.fxml");
     }
 
-    private AnchorPane createFeature1Pane() throws IOException {
-        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("Feature1.fxml")));
-    }
-
     private StackPane createHomeScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("Home-View.fxml")));
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/View/Home-View.fxml")));
         StackPane pane = loader.load();
         homeController = loader.getController();
         homeController.setMenuController(this);
@@ -96,7 +92,7 @@ public class MenuController implements Initializable {
     }
 
     private StackPane createAvailableBooksScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("AvailableBooks-view.fxml")));
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/View/AvailableBooks-view.fxml")));
         StackPane pane = loader.load();
         availableBooksController = loader.getController();
         availableBooksController.setMenuController(this);
@@ -104,15 +100,15 @@ public class MenuController implements Initializable {
     }
 
     private StackPane createBorrowerListPane() throws IOException {
-        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("BorrowerList-View.fxml")));
+        return FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/View/BorrowerList-View.fxml")));
     }
 
     private StackPane createSearchScreen() throws IOException {
         FXMLLoader loader;
         if (LMS.getInstance().getCurrentUser() instanceof Borrower) {
-            loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("Borrower-SearchView.fxml")));
+            loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/View/Borrower-SearchView.fxml")));
         } else {
-            loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("Admin-SearchView.fxml")));
+            loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/View/Admin-SearchView.fxml")));
         }
 
         StackPane pane = loader.load();
@@ -121,7 +117,7 @@ public class MenuController implements Initializable {
     }
 
     private StackPane createBorrowHistoryScreen() throws IOException {
-        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("BorrowHistory.fxml")));
+        FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/View/BorrowHistory.fxml")));
         StackPane pane = loader.load();
         borrowerHistoryController = loader.getController();
         borrowerHistoryController.setMenuController(this);
@@ -319,9 +315,7 @@ public class MenuController implements Initializable {
         headerBar.setAlignment(Pos.CENTER_RIGHT);
         headerBar.setPadding(new Insets(10));
         try {
-            feature1Pane = createFeature1Pane();
             availableBooks = createAvailableBooksScreen();
-
             searchPane = createSearchScreen();
             borrowHistoryPane = createBorrowHistoryScreen();
         } catch (IOException e) {

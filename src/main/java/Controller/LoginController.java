@@ -1,7 +1,7 @@
 package Controller;
 
-import classes.Borrower;
-import classes.LMS;
+import Model.Borrower;
+import Model.LMS;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import javafx.application.Platform;
@@ -101,9 +101,6 @@ public class LoginController implements Initializable {
             });
         }).start();
     }
-
-
-
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {

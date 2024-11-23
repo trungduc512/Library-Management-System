@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane fx:id="availableBooksPane" prefHeight="600.0" prefWidth="840" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.AvailableBooksController">
+<StackPane fx:id="availableBooksPane" prefHeight="600.0" prefWidth="840" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.AvailableBooksController">
 
     <!-- Main content area with BorderPane layout for ListView and pagination controls -->
     <BorderPane prefHeight="600.0" prefWidth="840.0" style="-fx-padding: 10;">

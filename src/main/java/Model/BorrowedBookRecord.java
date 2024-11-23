@@ -12,7 +12,6 @@ public class BorrowedBookRecord {
     private String title;
     private String status;
 
-    // Constructor
     public BorrowedBookRecord(int borrowerId, String title, String isbn, int quantity,
                               LocalDate borrowedDate, LocalDate returnDate) {
         this.borrowerId = borrowerId;
@@ -23,7 +22,6 @@ public class BorrowedBookRecord {
         this.title = title;
     }
 
-    // Getters và Setters
     public int getBorrowerId() {
         return borrowerId;
     }

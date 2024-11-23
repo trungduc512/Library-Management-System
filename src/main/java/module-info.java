@@ -21,4 +21,13 @@ module com.lms {
 
     opens classes to javafx.fxml;
     exports classes;
+
+    opens Application to javafx.fxml;
+    exports Application;
+
+    opens Controller to javafx.fxml;
+    exports Controller;
+
+    opens Model to javafx.fxml;
+    exports Model;
 }
