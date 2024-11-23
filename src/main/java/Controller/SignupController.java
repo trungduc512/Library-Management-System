@@ -1,6 +1,6 @@
 package Controller;
 
-import classes.Borrower;
+import Model.Borrower;
 import com.jfoenix.controls.JFXButton;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;

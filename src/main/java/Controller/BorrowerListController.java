@@ -1,7 +1,7 @@
 package Controller;
 
-import classes.Borrower;
-import classes.Librarian;
+import Model.Borrower;
+import Model.Librarian;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;

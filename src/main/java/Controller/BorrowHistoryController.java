@@ -1,8 +1,8 @@
 package Controller;
 
-import classes.BorrowedBookRecord;
-import classes.Borrower;
-import classes.LMS;
+import Model.BorrowedBookRecord;
+import Model.Borrower;
+import Model.LMS;
 import com.jfoenix.controls.JFXButton;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;

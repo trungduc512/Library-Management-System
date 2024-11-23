@@ -1,6 +1,6 @@
 package Controller;
 
-import classes.*;
+import Model.*;
 import com.jfoenix.controls.JFXButton;
 import dao.BookReviewDAO;
 import javafx.animation.*;

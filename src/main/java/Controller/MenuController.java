@@ -1,9 +1,9 @@
 package Controller;
 
-import classes.Book;
-import classes.Borrower;
-import classes.LMS;
-import classes.Librarian;
+import Model.Book;
+import Model.Borrower;
+import Model.LMS;
+import Model.Librarian;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;

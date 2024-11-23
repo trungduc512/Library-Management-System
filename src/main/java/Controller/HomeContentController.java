@@ -1,8 +1,8 @@
 package Controller;
 
-import classes.Book;
-import classes.Borrower;
-import classes.LMS;
+import Model.Book;
+import Model.Borrower;
+import Model.LMS;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
