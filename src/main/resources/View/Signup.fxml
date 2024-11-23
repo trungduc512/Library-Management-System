@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="signupScreen" prefHeight="570.0" prefWidth="350.0" style="-fx-background-color: #0A4969;" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.SignupController">
+    <children>
+        <AnchorPane layoutX="24.0" layoutY="202.0" prefHeight="158.0" prefWidth="284.0">
+            <children>
+                <PasswordField fx:id="passwordField" alignment="CENTER" layoutX="36.0" layoutY="79.0" prefHeight="25.0" prefWidth="248.0" promptText="Enter Password" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
+                <TextField fx:id="usernameField" alignment="CENTER" layoutX="36.0" layoutY="41.0" prefHeight="25.0" prefWidth="248.0" promptText="Enter Username" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
+                <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="2.0" layoutY="41.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@Images/username-logo.png" />
+                    </image>
+                </ImageView>
+                <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="2.0" layoutY="79.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@Images/password-icon.png" />
+                    </image>
+                </ImageView>
+            <PasswordField fx:id="confirmPasswordField" alignment="CENTER" layoutX="36.0" layoutY="119.0" prefHeight="25.0" prefWidth="248.0" promptText="Confirm Password" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
+            <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="2.0" layoutY="119.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@Images/password-icon.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="25.0" fitWidth="25.0" layoutX="2.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@Images/username-logo.png" />
+               </image>
+            </ImageView>
+            <TextField fx:id="fullnameField" alignment="CENTER" layoutX="36.0" layoutY="1.0" prefHeight="25.0" prefWidth="248.0" promptText="Enter full name" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
+            </children>
+        </AnchorPane>
+        <JFXButton fx:id="signupButton" layoutX="88.0" layoutY="390.0" onAction="#signUpUser" prefHeight="27.0" prefWidth="172.0" style="-fx-border-color: #ffffff; -fx-border-radius: 3em; -fx-background-radius: 3em; -fx-cursor: hand;" styleClass="signupButton" text="Sign up" textFill="WHITE" />
+        <AnchorPane layoutX="61.0" layoutY="459.0" prefHeight="31.0" prefWidth="204.0">
+            <children>
+                <Label layoutY="7.0" text="Already have an account?" textFill="WHITE" />
+                <JFXButton fx:id="backToLogin" layoutX="151.0" layoutY="3.0" onAction="#backToLogin" prefHeight="25.0" prefWidth="58.0" style="-fx-cursor: hand;" styleClass="signupButton" text="Log in." textFill="WHITE">
+                    <font>
+                        <Font name="System Bold" size="12.0" />
+                    </font>
+                </JFXButton>
+            </children>
+        </AnchorPane>
+        <Label layoutX="124.0" layoutY="91.0" prefHeight="25.0" prefWidth="100.0" text="Sign up" textFill="WHITE">
+            <font>
+                <Font name="Arial Bold" size="27.0" />
+            </font>
+        </Label>
+      <Label fx:id="signupMessageLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" layoutX="99.0" layoutY="360.0" prefHeight="17.0" prefWidth="209.0" />
+    </children>
+</AnchorPane>
