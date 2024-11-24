@@ -3,6 +3,7 @@ package Controller;
 import Model.Book;
 import Model.Borrower;
 import Model.User;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.chart.PieChart;
@@ -13,6 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 import java.util.List;
+import java.util.Objects;
 
 public class HomeContentController {
 
@@ -75,10 +77,25 @@ public class HomeContentController {
         }); // Handle click event
 
         // Create the image
-        ImageView bookImage = new ImageView(new Image(book.getThumbnailURL()));
+        ImageView bookImage = new ImageView();
         bookImage.setFitWidth(100);
         bookImage.setFitHeight(120);
         bookImage.setPreserveRatio(true);
+
+        // Placeholder image
+        bookImage.setImage(new Image(Objects.requireNonNull(getClass().getResource("/View/Images/Image-not-found.png")).toExternalForm()));
+
+        // Load the actual image asynchronously
+        new Thread(() -> {
+            try {
+                Image actualImage = new Image(book.getThumbnailURL(), true); // Use `true` for background loading
+                // Update the image on the JavaFX application thread
+                Platform.runLater(() -> bookImage.setImage(actualImage));
+            } catch (Exception e) {
+                // Handle exceptions (e.g., invalid URL or failed loading)
+                System.err.println("Error loading image: " + e.getMessage());
+            }
+        }).start();
 
         // Create the title
         Label bookTitle = new Label(book.getTitle());
