@@ -1,13 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.*?>
-<?import java.lang.*?>
-<?import javafx.collections.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import com.jfoenix.controls.JFXButton?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="availableBooksPane" prefHeight="600.0" prefWidth="840" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.AvailableBooksController">
+<StackPane fx:id="availableBooksPane" prefHeight="600.0" prefWidth="840" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.AvailableBooksController">
 
     <!-- Main content area with BorderPane layout for ListView and pagination controls -->
     <BorderPane prefHeight="600.0" prefWidth="840.0" style="-fx-padding: 10;">
@@ -24,6 +35,13 @@
                 <children>
                     <ListView fx:id="listView" layoutY="40.0" prefHeight="500.0" prefWidth="820.0" />
 
+                    <HBox layoutX="500.0" layoutY="3.0" />
+
+                      <!-- Suggestion ListView positioned below the search bar, hidden by default -->
+                      <ListView fx:id="suggestionListView" layoutX="498.0" layoutY="27.0" maxHeight="221.0" maxWidth="813.0" mouseTransparent="false" prefHeight="13.0" prefWidth="315.0" style="-fx-background-color: white; -fx-border-color: lightgray;" visible="false" />
+                      <TextField fx:id="searchField" layoutX="664.0" layoutY="2.0" maxWidth="250.0" promptText="Search document..." />
+                     <JFXButton fx:id="showDocumentFormButton" layoutX="25.0" layoutY="2.0" onAction="#toggleAddDocumentVisibility" style="-fx-background-color: #6487fa;" text="Add New Document" />
+
                     <ChoiceBox fx:id="documentShowingChoiceBox" layoutX="589.0" layoutY="2.0">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
@@ -32,13 +50,6 @@
                             </FXCollections>
                         </items>
                     </ChoiceBox>
-
-                    <HBox layoutX="500.0" layoutY="3.0" />
-
-                      <!-- Suggestion ListView positioned below the search bar, hidden by default -->
-                      <ListView fx:id="suggestionListView" layoutX="498.0" layoutY="27.0" maxHeight="221.0" maxWidth="813.0" mouseTransparent="false" prefHeight="13.0" prefWidth="315.0" style="-fx-background-color: white; -fx-border-color: lightgray;" visible="false" />
-                      <TextField fx:id="searchField" layoutX="664.0" layoutY="2.0" maxWidth="250.0" promptText="Search document..." />
-                     <JFXButton fx:id="showDocumentFormButton" layoutX="25.0" layoutY="2.0" onAction="#toggleAddDocumentVisibility" style="-fx-background-color: #6487fa;" text="Add New Document" />
                 </children>
             </AnchorPane>
       </top>
@@ -72,13 +83,12 @@
         <TextField fx:id="thumbnailURLField" promptText="Thumbnail URL" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
 
         <VBox alignment="BASELINE_LEFT">
-            <Label fx:id="addDocumentStatusText" text="Add Review"
-                   style="-fx-font-size: 14px; -fx-text-fill: red;" visible="false"/>
+            <Label fx:id="addDocumentStatusText" style="-fx-font-size: 14px; -fx-text-fill: red;" text="Add Review" visible="false" />
         </VBox>
 
         <HBox>
             <Region />
-            <JFXButton fx:id="addDocButton" style="-fx-background-color: #4caf50; -fx-text-fill: white;" text="Add Document" onAction="#addNewDocument"/>
+            <JFXButton fx:id="addDocButton" onAction="#addNewDocument" style="-fx-background-color: #4caf50; -fx-text-fill: white;" text="Add Document" />
         </HBox>
     </VBox>
 

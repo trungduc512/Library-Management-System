@@ -354,9 +354,19 @@ public class SearchController implements Initializable {
         Image thumbnail;
         if (currentDoc.getThumbnailURL() == null || currentDoc.getThumbnailURL().isEmpty()) {
             currentDoc.setThumbnailURL("/com/lms/Images/Image-not-found.png");
-            thumbnail = new Image(getClass().getResource("/com/lms/Images/Image-not-found.png").toExternalForm());
+            thumbnail = new Image(Objects.requireNonNull(getClass().getResource("/com/lms/Images/Image-not-found.png")).toExternalForm());
         } else {
-            thumbnail = new Image(currentDoc.getThumbnailURL());
+            try {
+                // Attempt to load the thumbnail
+                thumbnail = new Image(currentDoc.getThumbnailURL(), true); // Set `backgroundLoading` to true
+                // Fallback to placeholder if loading fails
+                if (thumbnail.isError()) {
+                    thumbnail = new Image(Objects.requireNonNull(getClass().getResource("/com/lms/Images/Image-not-found.png")).toExternalForm());
+                }
+            } catch (IllegalArgumentException e) {
+                // Fallback to placeholder if the URL is invalid or inaccessible
+                thumbnail = new Image(Objects.requireNonNull(getClass().getResource("/com/lms/Images/Image-not-found.png")).toExternalForm());
+            }
         }
         ImageView thumbnailView = new ImageView(thumbnail);
         thumbnailView.setFitWidth(150); // Adjust the width as needed

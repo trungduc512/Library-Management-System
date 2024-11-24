@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="borrowHistoryPane" prefHeight="600.0" prefWidth="840.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.BorrowHistoryController">
+<StackPane fx:id="borrowHistoryPane" prefHeight="600.0" prefWidth="840.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.lms.BorrowHistoryController">
     <AnchorPane prefHeight="600.0" prefWidth="840.0">
         <VBox spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
             <Label fx:id="noBooksLabel" text="You haven't borrowed any book yet." visible="false" />

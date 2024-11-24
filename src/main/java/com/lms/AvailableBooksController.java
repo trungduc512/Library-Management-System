@@ -166,24 +166,42 @@ public class AvailableBooksController implements Initializable {  // Implement I
 
                         String imageUrl = item.getThumbnailURL();
                         if (imageUrl == null || imageUrl.trim().isEmpty()) {
-                            imageView.setImage(placeholderImage); // No URL: Use the placeholder image
+                            // Case 1: No URL provided
+                            imageView.setImage(placeholderImage); // Show placeholder
                         } else if (imageCache.containsKey(imageUrl)) {
-                            imageView.setImage(imageCache.get(imageUrl)); // Use cached image if available
+                            // Case 2: URL exists in cache
+                            imageView.setImage(imageCache.get(imageUrl)); // Use cached image
                         } else {
-                            Image bookImage = new Image(imageUrl, IMAGE_WIDTH, IMAGE_HEIGHT, false, false, true);
-                            imageView.setImage(placeholderImage);
-                            bookImage.progressProperty().addListener((observable, oldValue, newValue) -> {
-                                if (newValue.doubleValue() == 1.0 && item.getThumbnailURL().equals(imageUrl)) {
-                                    imageCache.put(imageUrl, bookImage);
-                                    imageView.setImage(bookImage);
-                                }
-                            });
-                            bookImage.errorProperty().addListener((obs, oldError, newError) -> {
-                                if (newError) {
-                                    imageView.setImage(placeholderImage); // Set placeholder if load fails
-                                }
-                            });
+                            try {
+                                // Attempt to load the image from the provided URL
+                                Image bookImage = new Image(imageUrl, IMAGE_WIDTH, IMAGE_HEIGHT, false, false, true);
+
+                                // Temporarily show the placeholder image while the main image loads
+                                imageView.setImage(placeholderImage);
+
+                                // Listen for loading progress
+                                bookImage.progressProperty().addListener((observable, oldValue, newValue) -> {
+                                    if (newValue.doubleValue() == 1.0) { // Fully loaded
+                                        if (item.getThumbnailURL().equals(imageUrl)) { // Verify URL matches
+                                            imageCache.put(imageUrl, bookImage); // Cache the loaded image
+                                            imageView.setImage(bookImage); // Display the loaded image
+                                        }
+                                    }
+                                });
+
+                                // Listen for errors during image loading
+                                bookImage.errorProperty().addListener((obs, oldError, newError) -> {
+                                    if (newError) {
+                                        // Set the placeholder if loading fails
+                                        imageView.setImage(placeholderImage);
+                                    }
+                                });
+                            } catch (IllegalArgumentException e) {
+                                // Handle invalid URL or inaccessible resource
+                                imageView.setImage(placeholderImage); // Show placeholder immediately
+                            }
                         }
+
 
                         VBox textContainer = item.getInfo();
 
