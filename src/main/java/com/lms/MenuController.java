@@ -1,9 +1,6 @@
 package com.lms;
 
-import classes.Book;
-import classes.Borrower;
-import classes.LMS;
-import classes.Librarian;
+import classes.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
@@ -291,14 +288,14 @@ public class MenuController implements Initializable {
         switchNode(searchPane);
     }
 
-    public void toSearchScreen(Book book) {
+    public void toSearchScreen(Document doc) {
         switchNode(searchPane);
-        searchController.showBookInfo(book);
+        searchController.showDocumentInfo(doc);
     }
 
-    public void toSearchScreen(String isbn) {
+    public void toSearchScreen(String id) {
         switchNode(searchPane);
-        searchController.showBookInfo(isbn);
+        searchController.showDocumentInfo(id);
     }
 
     public void toHomeScreen() {

@@ -37,7 +37,7 @@ public class BorrowHistoryController implements Initializable {
     private TableColumn<BorrowedBookRecord, String> titleColumn;
 
     @FXML
-    private TableColumn<BorrowedBookRecord, String> isbnColumn;
+    private TableColumn<BorrowedBookRecord, String> typeColumn;
 
     @FXML
     private TableColumn<BorrowedBookRecord, String> borrowedDateColumn;
@@ -58,13 +58,20 @@ public class BorrowHistoryController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Set the column resize policy
-        borrowHistoryTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        //borrowHistoryTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
-        isbnColumn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
+        typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
         borrowedDateColumn.setCellValueFactory(new PropertyValueFactory<>("borrowedDate"));
         returnDateColumn.setCellValueFactory(new PropertyValueFactory<>("returnDate"));
         statusColumn.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        titleColumn.prefWidthProperty().bind(borrowHistoryTable.widthProperty().multiply(0.36));
+        typeColumn.prefWidthProperty().bind(borrowHistoryTable.widthProperty().multiply(0.10));
+        borrowedDateColumn.prefWidthProperty().bind(borrowHistoryTable.widthProperty().multiply(0.15));
+        returnDateColumn.prefWidthProperty().bind(borrowHistoryTable.widthProperty().multiply(0.15));
+        statusColumn.prefWidthProperty().bind(borrowHistoryTable.widthProperty().multiply(0.15));
+        returnColumn.prefWidthProperty().bind(borrowHistoryTable.widthProperty().multiply(0.08));
 
         statusColumn.setCellFactory(column -> new TableCell<BorrowedBookRecord, String>() {
             @Override
@@ -133,8 +140,9 @@ public class BorrowHistoryController implements Initializable {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
                     BorrowedBookRecord rowData = row.getItem();
                     // Handle double-click logic here
-                    String isbn = rowData.getIsbn();
-                    menuController.toSearchScreen(isbn);
+
+                    String id = rowData.getDocumentId();
+                    menuController.toSearchScreen(id);
                 }
             });
             return row;
@@ -154,9 +162,9 @@ public class BorrowHistoryController implements Initializable {
 
     private void showReturnBookNotification() {
         // Create the notification label
-        Label notificationLabel = new Label("Return book successfully!");
+        Label notificationLabel = new Label("Return document successfully!");
         notificationLabel.setPrefHeight(37.0);
-        notificationLabel.setPrefWidth(230.0);
+        notificationLabel.setPrefWidth(240.0);
         notificationLabel.setStyle("-fx-background-color: #73B573; -fx-text-fill: white; -fx-padding: 10px; -fx-background-radius: 0.5em;");
         notificationLabel.setVisible(false);
 

@@ -25,8 +25,8 @@
                <JFXButton fx:id="showReviewButton" text="Show Review " onAction="#toggleReviewVisibility" style="-fx-background-color: #6487fa; -fx-text-fill: white;" />
             </HBox>
 
-            <JFXButton fx:id="reduceButton" layoutX="480.0" layoutY="14.0" onAction="#reduceBookFromDatabase" prefHeight="25.0" prefWidth="110.0" style="-fx-background-color: #54BE41;" styleClass="addBookButton" text="Remove copies" textFill="WHITE" />
-            <JFXButton fx:id="addButton" layoutX="669.0" layoutY="14.0" onAction="#addBookToDatabase" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #54BE41;" styleClass="addBookButton" text="Add to library" textFill="WHITE" />
+            <JFXButton fx:id="reduceButton" layoutX="480.0" layoutY="14.0" onAction="#reduceDocFromDatabase" prefHeight="25.0" prefWidth="110.0" style="-fx-background-color: #54BE41;" styleClass="addBookButton" text="Remove copies" textFill="WHITE" />
+            <JFXButton fx:id="addButton" layoutX="669.0" layoutY="14.0" onAction="#addDocToDatabase" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #54BE41;" styleClass="addBookButton" text="Add to library" textFill="WHITE" />
             <Spinner fx:id="numberSpinner" layoutX="758.0" layoutY="14.0" prefHeight="25.0" prefWidth="59.0" />
             <Spinner fx:id="numberSpinner1" layoutX="590.0" layoutY="14.0" prefHeight="25.0" prefWidth="59.0" />
             <JFXButton fx:id="searchButton" ellipsisString="" layoutX="162.0" layoutY="14.0" onAction="#clicked" prefHeight="25.0" prefWidth="38.0" style="-fx-background-color: #6487fa; -fx-background-radius: 3em;">

@@ -128,60 +128,15 @@ public class LMS {
     }
 
     public boolean loginBorrower(String userName, String password) {
-        String sql = "SELECT * FROM Borrowers WHERE userName = ?";
-        try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, userName);
-            ResultSet rs = stmt.executeQuery();
+        currentUser = new Borrower();
 
-            if (rs.next()) {
-                String storedPassword = rs.getString("password");
-
-                if (password.equals(storedPassword)) {
-                    int userId = rs.getInt("id");
-                    String fullName = rs.getString("fullName");
-                    System.out.println("Login successfully.");
-                    currentUser = new Borrower(userId, fullName, userName, storedPassword);
-                    return true;  // Đăng nhập thành công
-                } else {
-                    System.out.println("Wrong password.");
-                }
-            } else {
-                System.out.println("User not exists.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;  // Đăng nhập thất bại
+        return currentUser.login(userName, password);
     }
 
     public boolean loginLibrarian(String userName, String password) {
-        String sql = "SELECT * FROM Librarians WHERE userName = ?";
-        try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, userName);
-            ResultSet rs = stmt.executeQuery();
+        currentUser = new Librarian();
 
-            if (rs.next()) {
-                String storedPassword = rs.getString("password");
-
-                // Kiểm tra mật khẩu có khớp hay không
-                if (password.equals(storedPassword)) {
-                    int userId = rs.getInt("id");
-                    String fullName = rs.getString("userName");
-                    System.out.println("Login successfully.");
-                    currentUser = new Librarian(userId, fullName, userName, storedPassword);
-                    return true; // Đăng nhập thành công
-                } else {
-                    System.out.println("Wrong password.");
-                }
-            } else {
-                System.out.println("User not exists.");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;  // Đăng nhập thất bại
+        return currentUser.login(userName, password);
     }
 
     // Hàm đăng xuất (logout)
