@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+
+<VBox alignment="TOP_CENTER" fillWidth="true" prefHeight="868.0" prefWidth="820.0" spacing="20" style="-fx-padding: 10;" styleClass="root-home" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.HomeContentController">
+
+    <!-- Content Row: Introduction and Borrower + Pie Chart -->
+    <HBox alignment="CENTER" prefHeight="546.0" prefWidth="800.0" spacing="20" style="-fx-padding: 20;">
+        <!-- Introduction Section -->
+        <VBox alignment="TOP_LEFT" prefHeight="486.0" prefWidth="375.0" spacing="10" styleClass="section-box">
+            <Label maxWidth="500" prefHeight="70.0" prefWidth="302.0" styleClass="label-title" text="Welcome to the LMS" wrapText="true" />
+            <TextFlow maxWidth="425.0" prefHeight="89.0" prefWidth="353.0" styleClass="label-subtitle" textAlignment="JUSTIFY">
+                <Text text="A library management system simplifies the organization, borrowing, and returning of books, providing an efficient way to manage resources and enhance the user experience. It serves as a centralized platform where users can explore the library’s collection, check book availability, and manage their borrowing activity with ease." />
+            </TextFlow>
+         <TextFlow maxWidth="425.0" prefHeight="89.0" prefWidth="353.0" styleClass="label-subtitle" textAlignment="JUSTIFY">
+            <children>
+               <Text text="For library staff, the system streamlines routine processes such as cataloging new books, tracking borrowed items, and maintaining borrower records." />
+            </children>
+         </TextFlow>
+         <TextFlow maxWidth="425.0" prefHeight="89.0" prefWidth="353.0" styleClass="label-subtitle" textAlignment="JUSTIFY">
+            <children>
+               <Text text="Beyond functionality, a library management system plays a pivotal role in encouraging engagement by highlighting popular books, showcasing new arrivals, and organizing the collection in an intuitive and accessible manner." />
+            </children>
+         </TextFlow>
+        </VBox>
+
+        <!-- Top Borrowers + Pie Chart -->
+        <VBox alignment="TOP_CENTER" prefHeight="528.0" prefWidth="395.0" spacing="20" style="-fx-fill-width: true;">
+            <!-- Top Borrowers Section -->
+            <VBox fx:id="borrowerList" alignment="TOP_LEFT" spacing="10" styleClass="section-box">
+                <Label styleClass="label-section-title" text="Top Borrowers" />
+                <!-- Borrower items will be dynamically added here -->
+            </VBox>
+
+            <!-- Pie Chart Section -->
+            <VBox alignment="CENTER" fillWidth="true" spacing="10" styleClass="pie-chart-container">
+                <Label prefHeight="57.0" prefWidth="206.0" styleClass="label-section-title" text="Number of books issued" />
+            <Label fx:id="statisticLabel" />
+                <!-- Increased height for PieChart -->
+                <PieChart fx:id="pieChart" prefHeight="140.0" prefWidth="342.0" style="-fx-pref-width: 100%; -fx-pref-height: 600px;" />
+            </VBox>
+        </VBox>
+    </HBox>
+   <HBox prefHeight="327.0" prefWidth="800.0" spacing="20" style="-fx-padding: 20">
+      <children>
+         <VBox prefHeight="251.0" prefWidth="800.0" styleClass="section-box">
+            <children>
+                 <Label prefHeight="45.0" prefWidth="67.0" styleClass="label-section-title" text="Popular" />
+                 <HBox fx:id="bookContainer" alignment="CENTER" spacing="10">
+                     <!-- Dynamically added book zones will go here -->
+                 </HBox>
+            </children>
+         </VBox>
+      </children>
+   </HBox>
+</VBox>
