@@ -212,7 +212,7 @@ public class Librarian extends User {
         if (thesis != null) {
             return thesis.getTotalDocument() - thesis.getBorrowedDocument();
         } else {
-            System.out.println("Book not found.");
+            System.out.println("Document not found.");
         }
         return 0;
     }

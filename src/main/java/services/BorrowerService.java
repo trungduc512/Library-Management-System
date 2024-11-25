@@ -1,73 +1,79 @@
 package services;
 
-import Model.Book;
-import Model.BorrowedBookRecord;
-import Model.User;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import Model.*;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BorrowerService {
-    public static void incrementBorrowedBooks(String isbn, int quantity) {
-        Book book = UserService.getBookByIsbn(isbn);
-        if (book != null) {
-            String sql = "UPDATE Books SET borrowedBooks = ? WHERE isbn = ?";
-            try (Connection conn = DatabaseHelper.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-                // Thêm borrowed_books
-                stmt.setInt(1, book.getBorrowedBooks() + quantity);
-                stmt.setString(2, isbn);
-                stmt.executeUpdate();
-                System.out.println("classes.Book updated in database.");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("Books not updated.");
-        }
-    }
 
-    public static void reduceBorrowedBooks(String isbn, int quantity) {
-        Book book = User.getBookByIsbn(isbn);
-        if (book != null) {
-            String sql = "UPDATE Books SET borrowedBooks = ? WHERE isbn = ?";
-            try (Connection conn = DatabaseHelper.getConnection();
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-                // Trừ borrowed_books
-                stmt.setInt(1, book.getBorrowedBooks() - quantity);
-                stmt.setString(2, isbn);
-                stmt.executeUpdate();
-                System.out.println("classes.Book updated in database.");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        } else {
-            System.out.println("Books not updated.");
+    public static boolean registerUser(String fullName, String userName, String password) {
+        // Kiểm tra nếu tên tài khoản đã tồn tại
+        if (classes.Borrower.userExists(userName)) {
+            System.out.println("User already exists");
+            return false;
         }
-    }
 
-    public static void updateProfile(String fullName, int id) {
-        String sql = "UPDATE Users SET fullName = ? WHERE id = ?";
-        try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+        String sql = "INSERT INTO Borrowers (fullName, userName, password) VALUES (?, ?, ?)";
+        try (Connection conn = classes.DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql,
+                     PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, fullName);
-            stmt.setInt(2, id);
+            stmt.setString(2, userName);
+            stmt.setString(3, password);
             stmt.executeUpdate();
-            System.out.println("Profile updated in database.");
+            System.out.println("Register successfully!");
+
+            return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
-    public static boolean addBorrowedBookRecord(int borrowerId, String title, String isbn, int quantity) {
-        String sql = "INSERT INTO BorrowedBookRecord (borrowerId, title, isbn, quantity, borrowedDate, returnDate) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+    public static Borrower loginUser(String userName, String password) {
+        String sql = "SELECT * FROM Borrowers WHERE userName = ?";
+        try (Connection conn = classes.DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, userName);
+            ResultSet rs = stmt.executeQuery();
 
+            if (rs.next()) {
+                String storedPassword = rs.getString("password");
+
+                if (password.equals(storedPassword)) {
+                    int userId = rs.getInt("id");
+                    String fullName = rs.getString("fullName");
+                    System.out.println("Login successfully.");
+
+                    return new Borrower(userId, fullName, userName, storedPassword);  // Đăng nhập thành công
+                } else {
+                    System.out.println("Wrong password.");
+                }
+            } else {
+                System.out.println("User not exists.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;  // Đăng nhập thất bại
+    }
+
+    public static boolean borrowDocument(Borrower borrower, String documentId, int quantity) {
+        Document doc = User.getDocumentById(documentId);
+        if (doc != null && quantity <= doc.getTotalDocument() - doc.getBorrowedDocument()) {
+            String type = (doc instanceof Book) ? "Book" : "Thesis";
+            if (addBorrowedBookRecord(borrower.getId(), doc.getTitle(), documentId, quantity, type)) {
+                incrementBorrowedBooks(documentId, quantity);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean addBorrowedBookRecord(int borrowerId, String title, String documentId, int quantity, String type) {
+        String sql = "INSERT INTO BorrowedDocumentRecord (borrowerId, title, documentId, quantity, borrowedDate, returnDate, type) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             LocalDate borrowDate = LocalDate.now();
@@ -75,13 +81,13 @@ public class BorrowerService {
 
             stmt.setInt(1, borrowerId);
             stmt.setString(2, title);
-            stmt.setString(3, isbn);
+            stmt.setString(3, documentId);
             stmt.setInt(4, quantity);
             stmt.setDate(5, java.sql.Date.valueOf(borrowDate));
             stmt.setDate(6, java.sql.Date.valueOf(returnDate));
+            stmt.setString(7, type);
 
             stmt.executeUpdate();
-            System.out.println("Book borrowed and saved to the database successfully!");
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -89,94 +95,111 @@ public class BorrowerService {
         return false;
     }
 
-    public static List<BorrowedBookRecord> listBorrowedBooksOfUserID(int id) {
-
-        List<BorrowedBookRecord> records = new ArrayList<>();
-        String sql = "SELECT * FROM BorrowedBookRecord WHERE borrowerId = ?";
-
-        try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            System.out.println("Borrowed books:");
-
-            while (rs.next()) {
-                int recordId = rs.getInt("id"); // ID tự động tạo
-                String title = rs.getString("title");
-                String isbn = rs.getString("isbn");
-                int quantity = rs.getInt("quantity");
-                LocalDate borrowedDate = rs.getDate("borrowedDate").toLocalDate();
-                LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
-                records.add(new BorrowedBookRecord(recordId, title, isbn, quantity, borrowedDate, returnDate));
-                System.out.println(
-                        "Record ID: " + recordId + ", ISBN: " + isbn + ", quantity: " + quantity);
+    private static void incrementBorrowedBooks(String documentId, int quantity) {
+        Document doc = User.getDocumentById(documentId);
+        if (doc != null) {
+            try (Connection conn = DatabaseHelper.getConnection()) {
+                String sql = (doc instanceof Book)
+                        ? "UPDATE Books SET borrowedBooks = ? WHERE isbn = ?"
+                        : "UPDATE Thesis SET borrowedTheses = ? WHERE id = ?";
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    stmt.setInt(1, doc.getBorrowedDocument() + quantity);
+                    stmt.setString(2, (doc instanceof Book) ? ((Book) doc).getIsbn() : Long.toString(((Thesis) doc).getId()));
+                    stmt.executeUpdate();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-
-        return records;
-    }
-
-    private static BorrowedBookRecord findBorrowedRecordById(int recordId) {
-        String sql = "SELECT * FROM BorrowedBookRecord WHERE id = ?";
-        try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, recordId);
-            ResultSet rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                String title = rs.getString("title");
-                String isbn = rs.getString("isbn");
-                int quantity = rs.getInt("quantity");
-                LocalDate borrowedDate = rs.getDate("borrowedDate").toLocalDate();
-                LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
-                return new BorrowedBookRecord(recordId, title, isbn, quantity, borrowedDate, returnDate);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static boolean deleteBorrowedBookRecord(int recordId) {
-        String sql = "DELETE FROM BorrowedBookRecord WHERE id = ?";
-        try (Connection conn = DatabaseHelper.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, recordId);
-            stmt.executeUpdate();
-            System.out.println("Return book successfully.");
-            return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     public static boolean returnBook(int recordId) {
         BorrowedBookRecord record = findBorrowedRecordById(recordId);
-        if (record == null) {
-            System.out.println("Borrow record ID not found.");
-            return false;
+        if (record != null) {
+            Document doc = User.getDocumentById(record.getDocumentId());
+            if (doc != null) {
+                decreaseBorrowedBooks(doc, record.getQuantity());
+            }
+            return deleteBorrowedBookRecord(recordId);
         }
-        Book book = UserService.getBookByIsbn(record.getIsbn());
-        if (book != null) {
-            reduceBorrowedBooks(book.getIsbn(), record.getQuantity());
-        }
-        return deleteBorrowedBookRecord(recordId);
+        return false;
     }
 
-    public static String returnStatusOfUserId(int id) {
-        String sql = "SELECT returnDate FROM BorrowedBookRecord WHERE borrowerId = ?";
+    private static boolean deleteBorrowedBookRecord(int recordId) {
+        String sql = "DELETE FROM BorrowedDocumentRecord WHERE id = ?";
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, recordId);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static void decreaseBorrowedBooks(Document doc, int quantity) {
+        try (Connection conn = DatabaseHelper.getConnection()) {
+            String sql = (doc instanceof Book)
+                    ? "UPDATE Books SET borrowedBooks = ? WHERE isbn = ?"
+                    : "UPDATE Thesis SET borrowedTheses = ? WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, doc.getBorrowedDocument() - quantity);
+                stmt.setString(2, (doc instanceof Book) ? ((Book) doc).getIsbn() : Long.toString(((Thesis) doc).getId()));
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static List<BorrowedBookRecord> listBorrowedBooks(int borrowerId) {
+        List<BorrowedBookRecord> records = new ArrayList<>();
+        String sql = "SELECT * FROM BorrowedDocumentRecord WHERE borrowerId = ?";
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, borrowerId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int recordId = rs.getInt("id");
+                String title = rs.getString("title");
+                String documentId = rs.getString("documentId");
+                int quantity = rs.getInt("quantity");
+                LocalDate borrowedDate = rs.getDate("borrowedDate").toLocalDate();
+                LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
+                String type = rs.getString("type");
+                records.add(new BorrowedBookRecord(recordId, title, documentId, quantity, borrowedDate, returnDate, type));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return records;
+    }
+
+    // Check if a user exists
+    public static boolean userExists(String userName) {
+        String sql = "SELECT * FROM Borrowers WHERE userName = ?";
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, userName);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    // Get borrower status (whether the borrower has overdue books)
+    public static String getBorrowerStatus(int borrowerId) {
+        String sql = "SELECT returnDate FROM BorrowedDocumentRecord WHERE borrowerId = ?";
         LocalDate today = LocalDate.now();
         boolean hasBorrowed = false;
         boolean hasOverdue = false;
-
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, id);
+            stmt.setInt(1, borrowerId);
             ResultSet rs = stmt.executeQuery();
-
             while (rs.next()) {
                 hasBorrowed = true;
                 LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
@@ -187,7 +210,6 @@ public class BorrowerService {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         if (!hasBorrowed) {
             return "No active loans";
         }
@@ -195,5 +217,27 @@ public class BorrowerService {
             return "Has overdue loans";
         }
         return "In good standing";
+    }
+
+    // Find a borrowed book record by ID
+    private static BorrowedBookRecord findBorrowedRecordById(int recordId) {
+        String sql = "SELECT * FROM BorrowedDocumentRecord WHERE id = ?";
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, recordId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String title = rs.getString("title");
+                String documentId = rs.getString("documentId");
+                int quantity = rs.getInt("quantity");
+                LocalDate borrowedDate = rs.getDate("borrowedDate").toLocalDate();
+                LocalDate returnDate = rs.getDate("returnDate").toLocalDate();
+                String type = rs.getString("type");
+                return new BorrowedBookRecord(recordId, title, documentId, quantity, borrowedDate, returnDate, type);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

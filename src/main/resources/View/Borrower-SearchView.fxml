@@ -42,7 +42,7 @@
                </graphic>
             </JFXButton>
 
-            <JFXButton fx:id="borrowButton" layoutX="728.0" layoutY="14.0" onAction="#borrowBook" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #54BE41;" styleClass="borrowButton" text="Borrow" textFill="WHITE" />
+            <JFXButton fx:id="borrowButton" layoutX="728.0" layoutY="14.0" onAction="#borrowDoc" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #54BE41;" styleClass="borrowButton" text="Borrow" textFill="WHITE" />
 
             <StackPane fx:id="displayStackPane" layoutY="46.0" prefHeight="556.0" prefWidth="840.0">
                <children>

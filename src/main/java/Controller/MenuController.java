@@ -1,12 +1,9 @@
 package Controller;
 
-import Model.Book;
-import Model.Borrower;
-import Model.LMS;
-import Model.Librarian;
+import Model.*;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,14 +12,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
+import javafx.concurrent.Task;
 
 import java.io.IOException;
 import java.net.URL;
@@ -80,7 +76,7 @@ public class MenuController implements Initializable {
     @FXML
     private void logOutUser (ActionEvent event) throws Exception {
         LMS.getInstance().logoutCurrentUser();
-        ControllerUtils.switchSceneWithinStage(coverPane, "Login.fxml");
+        ControllerUtils.switchSceneWithinStage(coverPane, "/View/Login.fxml");
     }
 
     private StackPane createHomeScreen() throws IOException {
@@ -288,14 +284,14 @@ public class MenuController implements Initializable {
         switchNode(searchPane);
     }
 
-    public void toSearchScreen(Book book) {
+    public void toSearchScreen(Document doc) {
         switchNode(searchPane);
-        searchController.showBookInfo(book);
+        searchController.showDocumentInfo(doc);
     }
 
-    public void toSearchScreen(String isbn) {
+    public void toSearchScreen(String id) {
         switchNode(searchPane);
-        searchController.showBookInfo(isbn);
+        searchController.showDocumentInfo(id);
     }
 
     public void toHomeScreen() {

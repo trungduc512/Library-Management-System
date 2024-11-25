@@ -445,10 +445,15 @@ public class SearchController implements Initializable {
 
         // update available quantity to delete
         if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
-            int bookAvailable = ((Librarian) LMS.getInstance().getCurrentUser()).getDeleteQuantity(this.isbn_13);
+            int docAvailable;
+            if (currentDoc instanceof Book) {
+                docAvailable = ((Librarian) LMS.getInstance().getCurrentUser()).getDeleteQuantity(this.isbn_13);
+            } else {
+                docAvailable = ((Librarian) LMS.getInstance().getCurrentUser()).getDeleteQuantity(((Thesis) currentDoc).getId());
+            }
             SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory1 =
-                    new SpinnerValueFactory.IntegerSpinnerValueFactory(Math.min(1, bookAvailable),
-                            bookAvailable, Math.min(1, bookAvailable));
+                    new SpinnerValueFactory.IntegerSpinnerValueFactory(Math.min(1, docAvailable),
+                            docAvailable, Math.min(1, docAvailable));
             numberSpinner1.setValueFactory(valueFactory1);
 
             if (numberSpinner1.getValue() == 0) {

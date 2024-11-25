@@ -231,7 +231,7 @@ public abstract class User {
             e.printStackTrace();
         }
 
-        return null;  // Nếu không tìm thấy sách
+        return null;
     }
 
 
@@ -285,7 +285,7 @@ public abstract class User {
             e.printStackTrace();
         }
 
-        return null;  // Nếu không tìm thấy sách
+        return null;
     }
 
     // Hàm tìm tổng số sách có trong database
