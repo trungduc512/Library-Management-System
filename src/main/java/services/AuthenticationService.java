@@ -66,7 +66,7 @@ public class AuthenticationService {
         return null;
     }
 
-    private static boolean userExists(String userName) {
+    public static boolean userExists(String userName) {
         String sql = "SELECT * FROM Borrowers  WHERE userName = ?";
         try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

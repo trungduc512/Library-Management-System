@@ -53,7 +53,7 @@ public class SignupController implements Initializable {
 
     @FXML
     private void backToLogin(ActionEvent event) throws Exception {
-        ControllerUtils.switchSceneWithinStage(backToLogin, "Login.fxml");
+        ControllerUtils.switchSceneWithinStage(backToLogin, "/View/Login.fxml");
     }
 
     @FXML

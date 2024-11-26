@@ -9,14 +9,13 @@ import java.util.List;
 public class BorrowerService {
 
     public static boolean registerUser(String fullName, String userName, String password) {
-        // Kiểm tra nếu tên tài khoản đã tồn tại
-        if (classes.Borrower.userExists(userName)) {
+        if (AuthenticationService.userExists(userName)) {
             System.out.println("User already exists");
             return false;
         }
 
         String sql = "INSERT INTO Borrowers (fullName, userName, password) VALUES (?, ?, ?)";
-        try (Connection conn = classes.DatabaseHelper.getConnection();
+        try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql,
                      PreparedStatement.RETURN_GENERATED_KEYS)) {
             stmt.setString(1, fullName);
@@ -34,7 +33,7 @@ public class BorrowerService {
 
     public static Borrower loginUser(String userName, String password) {
         String sql = "SELECT * FROM Borrowers WHERE userName = ?";
-        try (Connection conn = classes.DatabaseHelper.getConnection();
+        try (Connection conn = DatabaseHelper.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, userName);
             ResultSet rs = stmt.executeQuery();

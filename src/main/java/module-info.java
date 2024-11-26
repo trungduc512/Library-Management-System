@@ -16,12 +16,6 @@ module com.lms {
     requires java.sql;
     requires java.management;
 
-    opens com.lms to javafx.fxml;
-    exports com.lms;
-
-    opens classes to javafx.fxml;
-    exports classes;
-
     opens Application to javafx.fxml;
     exports Application;
 

@@ -15,7 +15,7 @@ public class LibraryApplication extends Application {
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/View/Login.fxml")));
         Scene scene = new Scene(root);
         stage.setScene(scene);
-        stage.setTitle("Login");
+        stage.setTitle("LMS 1.0.0");
         stage.setResizable(false);
         stage.show();
     }
