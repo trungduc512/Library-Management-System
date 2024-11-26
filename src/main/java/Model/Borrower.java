@@ -1,81 +1,62 @@
 package Model;
 
-import services.AuthenticationService;
-import services.BorrowerService;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import services.BorrowerService;
 
 public class Borrower extends User {
 
     private List<BorrowedBookRecord> borrowedBooks;
-    private List<Book> searchedBooks;
 
+    public Borrower() {
+    }
+
+    // Constructor
     public Borrower(int id, String fullName, String userName, String password) {
         super(id, fullName, userName, password);
         this.borrowedBooks = new ArrayList<>();
-        this.searchedBooks = new ArrayList<>();
     }
 
-    public void updateProfile(String fullName) {
-        this.setFullName(fullName);
-        BorrowerService.updateProfile(fullName, id);
-    }
+    @Override
+    public boolean login(String userName, String password) {
+        Borrower borrower = BorrowerService.loginUser(userName, password);
+        if (borrower != null) {
+            System.out.println("Login successfully.");
+            this.id = borrower.id;
+            this.fullName = borrower.fullName;
+            this.userName = borrower.userName;
+            this.password = borrower.password;
 
-    private void incrementBorrowedBooks(String isbn, int quantity) {
-        BorrowerService.incrementBorrowedBooks(isbn, quantity);
-    }
-
-    private void reduceBorrowedBooks(String isbn, int quantity) {
-        BorrowerService.reduceBorrowedBooks(isbn, quantity);
-    }
-
-    public void searchBooks(String title) {
-        searchedBooks = searchBooksByTitle(title);
-        if (searchedBooks.isEmpty()) {
-            System.out.println("Not found: " + title);
-        } else {
-            System.out.println("Found results: ");
-            for (Book book : searchedBooks) {
-                System.out.println(
-                        book.getTitle() + " - " + book.getAuthor() + " (ISBN: " + book.getIsbn() + ")");
-            }
-        }
-    }
-
-    public boolean borrowBookByIsbn(String isbn, int quantity) {
-        Book book = getBookByIsbn(isbn);
-        assert book != null;
-        if (quantity <= book.getTotalBooks() - book.getBorrowedBooks()) {
-            System.out.println("Borrowed: " + book.getTitle());
-            if (addBorrowedBookRecord(this.getId(), book.getTitle(), book.getIsbn(), quantity)) {
-                incrementBorrowedBooks(book.getIsbn(), quantity);
-            }
             return true;
-        } else {
-            System.out.println("Not enough books. In stock: " + book.getTotalBooks());
-            return false;
         }
+        System.out.println("Login failed.");
+        return false;
     }
 
-    private boolean addBorrowedBookRecord(int borrowerId, String title, String isbn, int quantity) {
-        return BorrowerService.addBorrowedBookRecord(borrowerId, title, isbn, quantity);
+    public static boolean register(String fullName, String userName, String password) {
+        if (BorrowerService.registerUser(fullName, userName, password)) {
+            System.out.println("Registration successful.");
+            return true;
+        }
+        System.out.println("User already exists.");
+        return false;
     }
 
     public List<BorrowedBookRecord> listBorrowedBooks() {
-        return BorrowerService.listBorrowedBooksOfUserID(id);
+        return BorrowerService.listBorrowedBooks(this.getId());
+    }
+
+    public boolean borrowDocumentById(String documentId, int quantity) {
+        return BorrowerService.borrowDocument(this, documentId, quantity);
     }
 
     public boolean returnBook(int recordId) {
         return BorrowerService.returnBook(recordId);
     }
 
-    public static boolean register(String fullName, String userName, String password) {
-        return AuthenticationService.registerUser(fullName, userName, password);
-    }
-
     public String returnStatus() {
-        return BorrowerService.returnStatusOfUserId(id);
+        return BorrowerService.getBorrowerStatus(this.getId());
     }
 }
 

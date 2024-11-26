@@ -10,6 +10,7 @@ import javafx.scene.control.Alert;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import javax.management.Notification;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -17,7 +18,7 @@ public class ControllerUtils {
 
     public static void switchSceneWithinStage(Node sourceNode, String fxmlFile) throws IOException {
         Stage stage = (Stage) sourceNode.getScene().getWindow();
-        Parent root = FXMLLoader.load(Objects.requireNonNull(ControllerUtils.class.getResource("/View/" + fxmlFile)));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(ControllerUtils.class.getResource(fxmlFile)));
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.centerOnScreen();
@@ -49,5 +50,4 @@ public class ControllerUtils {
         slide.setToY(toY);
         slide.play();
     }
-
 }

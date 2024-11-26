@@ -5,22 +5,24 @@ import java.time.LocalDate;
 public class BorrowedBookRecord {
 
     private int borrowerId;
-    private String isbn;
+    private String documentId;
     private int quantity;
     private LocalDate borrowedDate;
     private LocalDate returnDate;
     private String title;
+    private String type;
     private String status;
 
     // Constructor
-    public BorrowedBookRecord(int borrowerId, String title, String isbn, int quantity,
-                              LocalDate borrowedDate, LocalDate returnDate) {
+    public BorrowedBookRecord(int borrowerId, String title, String documentId, int quantity,
+                              LocalDate borrowedDate, LocalDate returnDate, String type) {
         this.borrowerId = borrowerId;
-        this.isbn = isbn;
+        this.documentId = documentId;
         this.quantity = quantity;
         this.borrowedDate = borrowedDate;
         this.returnDate = returnDate;
         this.title = title;
+        this.type = type;
     }
 
     // Getters và Setters
@@ -32,12 +34,12 @@ public class BorrowedBookRecord {
         this.borrowerId = borrowerId;
     }
 
-    public String getIsbn() {
-        return isbn;
+    public String getDocumentId() {
+        return documentId;
     }
 
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
+    public void setDocumentId(String documentId) {
+        this.documentId = documentId;
     }
 
     public int getQuantity() {
@@ -54,6 +56,14 @@ public class BorrowedBookRecord {
 
     public LocalDate getReturnDate() {
         return returnDate;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getStatus() {

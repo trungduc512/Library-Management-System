@@ -2,6 +2,8 @@ package services;
 
 import Model.Book;
 import Model.Borrower;
+import Model.Document;
+import Model.Thesis;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -67,6 +69,38 @@ public class UserService {
         return books;
     }
 
+    public static ArrayList<Thesis> searchThesisByTitle(String title) {
+        ArrayList<Thesis> theses = new ArrayList<>();
+        String sql = "SELECT * FROM Thesis WHERE title LIKE ?";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, "%" + title + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                long id = rs.getLong("id");
+                String thesisTitle = rs.getString("title");
+                String author = rs.getString("author");
+                String description = rs.getString("description");
+                String university = rs.getString("university");
+                int totalTheses = rs.getInt("totalTheses");
+                int borrowedTheses = rs.getInt("borrowedTheses");
+                String thumbnailURL = rs.getString("thumbnailURL");
+
+                Thesis thesis = new Thesis(thesisTitle, author, description, totalTheses, borrowedTheses, thumbnailURL, university);
+                thesis.setId(id);
+
+                theses.add(thesis);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return theses;
+    }
+
     public static ArrayList<Book> getAllBooks() {
         ArrayList<Book> books = new ArrayList<>();
         String sql = "SELECT * FROM Books";
@@ -92,6 +126,119 @@ public class UserService {
         }
 
         return books;
+    }
+
+    public static ArrayList<Thesis> getAllThesis() {
+        ArrayList<Thesis> theses = new ArrayList<>();
+        String sql = "SELECT * FROM Thesis";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String thesisTitle = rs.getString("title");
+                String author = rs.getString("author");
+                String description = rs.getString("description");
+                String university = rs.getString("university");
+                int totalTheses = rs.getInt("totalTheses");
+                int borrowedTheses = rs.getInt("borrowedTheses");
+                String thumbnailURL = rs.getString("thumbnailURL");
+
+                Thesis thesis = new Thesis(thesisTitle, author, description, totalTheses, borrowedTheses, thumbnailURL, university);
+                thesis.setId(id);
+
+                theses.add(thesis);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return theses;
+    }
+
+    public static Thesis getThesisById(long id) {
+        String sql = "SELECT * FROM Thesis WHERE id = ?";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String title = rs.getString("title");
+                String author = rs.getString("author");
+                String description = rs.getString("description");
+                String university = rs.getString("university");
+                String thumbnailURL = rs.getString("thumbnailURL");
+                int totalTheses = rs.getInt("totalTheses");
+                int borrowedTheses = rs.getInt("borrowedTheses");
+
+                Thesis thesis = new Thesis(title, author, description, totalTheses, borrowedTheses, thumbnailURL, university);
+                thesis.setId(id);
+
+                return thesis;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static Document getDocumentById(String id) {
+        String sql = " SELECT *" +
+                " FROM (" +
+                " SELECT isbn AS id, title, author, description, thumbnailURL, totalBooks, borrowedBooks," +
+                " NULL AS totalTheses, NULL AS borrowedTheses, 'Book' AS type, NULL AS university "+
+                " FROM Books WHERE isbn = ?" +
+                " UNION ALL" +
+                " SELECT id, title, author, description, thumbnailURL, NULL AS totalBooks, NULL AS borrowedBooks," +
+                " totalTheses, borrowedTheses, 'Thesis' AS type, university " +
+                " FROM Thesis WHERE id = ?" +
+                ") AS Documents;";
+
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, id);
+            stmt.setLong(2, Long.parseLong(id));
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+
+                String type = rs.getString("type");
+                if (type.equals("Book")) {
+                    String title = rs.getString("title");
+                    String author = rs.getString("author");
+                    String description = rs.getString("description");
+                    String thumbnailURL = rs.getString("thumbnailURL");
+                    int totalBooks = rs.getInt("totalBooks");
+                    int borrowedBooks = rs.getInt("borrowedBooks");
+
+                    return new Book(title, author, id, description, totalBooks, borrowedBooks, thumbnailURL);
+                } else if (type.equals("Thesis")) {
+                    int thesisId = rs.getInt("id");
+                    String thesisTitle = rs.getString("title");
+                    String author = rs.getString("author");
+                    String description = rs.getString("description");
+                    String university = rs.getString("university");
+                    int totalTheses = rs.getInt("totalTheses");
+                    int borrowedTheses = rs.getInt("borrowedTheses");
+                    String thumbnailURL = rs.getString("thumbnailURL");
+                    Thesis thesis = new Thesis(thesisTitle, author, description, totalTheses, borrowedTheses, thumbnailURL, university);
+                    thesis.setId(thesisId);
+
+                    return thesis;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     public static int getTotalBooks() {
@@ -156,7 +303,7 @@ public class UserService {
         String sql = """
                 SELECT b.id, b.fullName, b.userName, b.password
                 FROM Borrowers b
-                JOIN BorrowedBookRecord r ON b.id = r.borrowerId
+                JOIN BorrowedDocumentRecord r ON b.id = r.borrowerId
                 GROUP BY b.id, b.fullName, b.userName, b.password
                 ORDER BY SUM(r.quantity) DESC
                 LIMIT 3

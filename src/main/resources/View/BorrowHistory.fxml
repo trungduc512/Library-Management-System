@@ -14,37 +14,33 @@
             <Label fx:id="noBooksLabel" text="You haven't borrowed any book yet." visible="false" />
             <TableView fx:id="borrowHistoryTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="recordIdColumn" prefWidth="39.19998013973236" text="ID">
-                        <cellValueFactory>
-                            <PropertyValueFactory property="borrowerId" />
-                        </cellValueFactory>
-                    </TableColumn>
-                    <TableColumn fx:id="titleColumn" prefWidth="225.60001373291016" text="Title">
+
+                    <TableColumn fx:id="titleColumn" prefWidth="330.0" text="Title">
                         <cellValueFactory>
                             <PropertyValueFactory property="title" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="isbnColumn" prefWidth="153.5999755859375" text="ISBN">
+                    <TableColumn fx:id="typeColumn" prefWidth="108.0" text="Type">
                         <cellValueFactory>
                             <PropertyValueFactory property="isbn" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="borrowedDateColumn" prefWidth="129.60000610351562" text="Borrowed Date">
+                    <TableColumn fx:id="borrowedDateColumn" prefWidth="105.0" text="Borrowed Date">
                         <cellValueFactory>
                             <PropertyValueFactory property="borrowedDate" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="returnDateColumn" minWidth="0.0" prefWidth="119.99993896484375" text="Return Date">
+                    <TableColumn fx:id="returnDateColumn" minWidth="0.0" prefWidth="114.0" text="Return Date">
                         <cellValueFactory>
                             <PropertyValueFactory property="returnDate" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="statusColumn" maxWidth="381.5999450683594" prefWidth="79.20001220703125" resizable="false" text="Status">
+                    <TableColumn fx:id="statusColumn" maxWidth="381.0" prefWidth="100.0" resizable="false" text="Status">
                         <cellValueFactory>
                             <PropertyValueFactory property="status" />
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="returnColumn" prefWidth="71.199951171875" resizable="false" text="Return" />
+                    <TableColumn fx:id="returnColumn" prefWidth="58.0" resizable="false" text="Return" />
                 </columns>
             </TableView>
         </VBox>
