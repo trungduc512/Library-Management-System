@@ -5,6 +5,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Book extends Document {
     private String isbn;
 
@@ -27,20 +30,15 @@ public class Book extends Document {
     }
 
     @Override
-    public VBox getInfo() {
-        Label titleLabel = new Label(this.getTitle());
-        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
+    public Map<String, String> getInfo() {
+        Map<String, String> info = new HashMap<>();
+        info.put("Title", this.getTitle());
+        info.put("Author", this.getAuthor());
+        info.put("ISBN", this.getIsbn());
+        info.put("Total books", String.valueOf(this.getTotalDocument()));
+        info.put("Borrowed books", String.valueOf(this.getBorrowedDocument()));
 
-        VBox textContainer = new VBox(
-                titleLabel,
-                new Label("Author: " + this.getAuthor()),
-                new Label("ISBN: " + this.getIsbn()),
-                new Label("Total books: " + this.getTotalDocument()),
-                new Label("Borrowed books: " + this.getBorrowedDocument())
-        );
-        textContainer.setSpacing(5);
-
-        return textContainer;
+        return info;
     }
 
     // Hàm in ra thông tin sách

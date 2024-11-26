@@ -1,9 +1,7 @@
 package Model;
 
-import javafx.scene.control.Label;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Thesis extends Document {
     private long id;
@@ -23,21 +21,15 @@ public class Thesis extends Document {
     }
 
     @Override
-    public VBox getInfo() {
+    public Map<String, String> getInfo() {
+        Map<String, String> info = new HashMap<>();
+        info.put("Title", this.getTitle());
+        info.put("Author", this.getAuthor());
+        info.put("University", this.getUniversity());
+        info.put("Total theses", String.valueOf(this.getTotalDocument()));
+        info.put("Borrowed theses", String.valueOf(this.getBorrowedDocument()));
 
-        Label titleLabel = new Label(this.getTitle());
-        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 16));
-
-        VBox textContainer = new VBox(
-                titleLabel,
-                new Label("Author: " + this.getAuthor()),
-                new Label("University: " + this.getUniversity()),
-                new Label("Total theses: " + this.getTotalDocument()),
-                new Label("Borrowed theses: " + this.getBorrowedDocument())
-        );
-        textContainer.setSpacing(5);
-
-        return textContainer;
+        return info;
     }
 
     public long getId() {
@@ -55,7 +47,6 @@ public class Thesis extends Document {
     public void setUniversity(String university) {
         this.university = university;
     }
-
 
     @Override
     public void printDetails() {

@@ -255,8 +255,6 @@ public class SearchController implements Initializable {
         isLoadingReview = false;
         addReviewStatusText.setVisible(false);
 
-        updateUI();
-
         if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
             // Enable add button
             addButton.setDisable(false);
@@ -274,6 +272,8 @@ public class SearchController implements Initializable {
             borrowButton.setDisable(false);
             addReviewButton.setDisable(false);
         }
+
+        updateUI();
     }
 
     @FXML
@@ -355,14 +355,11 @@ public class SearchController implements Initializable {
             thumbnail = new Image(Objects.requireNonNull(getClass().getResource("/View/Images/Image-not-found.png")).toExternalForm());
         } else {
             try {
-                // Attempt to load the thumbnail
                 thumbnail = new Image(currentDoc.getThumbnailURL(), true); // Set `backgroundLoading` to true
-                // Fallback to placeholder if loading fails
                 if (thumbnail.isError()) {
                     thumbnail = new Image(Objects.requireNonNull(getClass().getResource("/View/Images/Image-not-found.png")).toExternalForm());
                 }
             } catch (IllegalArgumentException e) {
-                // Fallback to placeholder if the URL is invalid or inaccessible
                 thumbnail = new Image(Objects.requireNonNull(getClass().getResource("/View/Images/Image-not-found.png")).toExternalForm());
             }
         }
@@ -456,6 +453,7 @@ public class SearchController implements Initializable {
 
             if (numberSpinner1.getValue() == 0) {
                 reduceButton.setDisable(true);
+
             } else {
                 reduceButton.setDisable(false);
             }
@@ -1055,6 +1053,7 @@ public class SearchController implements Initializable {
 
             SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory1 =
                     new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0);
+            numberSpinner1.setValueFactory(valueFactory1);
             numberSpinner1.valueProperty().addListener((obs, oldValue, newValue) -> {
                 if (newValue == 0) {
                     reduceButton.setDisable(true);

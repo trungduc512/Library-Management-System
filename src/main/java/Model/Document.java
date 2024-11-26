@@ -1,6 +1,6 @@
 package Model;
 
-import javafx.scene.layout.VBox;
+import java.util.Map;
 
 public abstract class Document {
     protected String title;
@@ -70,7 +70,7 @@ public abstract class Document {
         this.borrowedDocument = borrowedDocument;
     }
 
-    public abstract VBox getInfo();
+    public abstract Map<String, String> getInfo();
 
     public void printDetails() {
         String details = "Document{" +

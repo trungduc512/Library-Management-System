@@ -75,8 +75,8 @@ public class Librarian extends User {
                           int totalTheses, String thumbnailURL) {
 
         ArrayList<Thesis> list = User.searchThesisByTitle(title);
-        if (!list.isEmpty()) {
-            Thesis FindThesis = list.getFirst();
+        for (int i = 0; i < list.size(); i++) {
+            Thesis FindThesis = list.get(i);
             if (FindThesis != null && FindThesis.getAuthor().equals(author)
                     && FindThesis.getUniversity().equals(university)
                     && FindThesis.getTitle().equals(title)) {
@@ -132,7 +132,7 @@ public class Librarian extends User {
         if (thesis != null) {
             return thesis.getTotalDocument() - thesis.getBorrowedDocument();
         } else {
-            System.out.println("Book not found.");
+            System.out.println("Thesis not found.");
         }
         return 0;
     }
@@ -159,9 +159,9 @@ public class Librarian extends User {
                     thesis.getTotalDocument() - decreaseQuantity);
             // Cập nhật thông tin sách vào cơ sở dữ liệu
             updateTotalThesis(thesis);
-            System.out.println("Updated book: " + thesis.getTitle());
+            System.out.println("Updated thesis: " + thesis.getTitle());
         } else {
-            System.out.println("Book not found.");
+            System.out.println("Thesis not found.");
         }
     }
 

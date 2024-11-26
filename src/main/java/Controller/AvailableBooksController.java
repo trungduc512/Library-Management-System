@@ -4,6 +4,7 @@ import Model.*;
 import com.jfoenix.controls.JFXButton;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -166,30 +167,30 @@ public class AvailableBooksController implements Initializable {  // Implement I
 
                         String imageUrl = item.getThumbnailURL();
                         if (imageUrl == null || imageUrl.trim().isEmpty()) {
-                            // Case 1: No URL provided
+                            // No URL
                             imageView.setImage(placeholderImage); // Show placeholder
                         } else if (imageCache.containsKey(imageUrl)) {
-                            // Case 2: URL exists in cache
+                            System.out.println(imageUrl);
+                            // URL in cache
                             imageView.setImage(imageCache.get(imageUrl)); // Use cached image
                         } else {
                             try {
-                                // Attempt to load the image from the provided URL
+                                // load image from provided URL
                                 Image bookImage = new Image(imageUrl, IMAGE_WIDTH, IMAGE_HEIGHT, false, false, true);
 
-                                // Temporarily show the placeholder image while the main image loads
+                                // show the placeholder image while the main image loads
                                 imageView.setImage(placeholderImage);
 
                                 // Listen for loading progress
                                 bookImage.progressProperty().addListener((observable, oldValue, newValue) -> {
-                                    if (newValue.doubleValue() == 1.0) { // Fully loaded
+                                    if (newValue.doubleValue() == 1.0) {
                                         if (item.getThumbnailURL().equals(imageUrl)) { // Verify URL matches
                                             imageCache.put(imageUrl, bookImage); // Cache the loaded image
-                                            imageView.setImage(bookImage); // Display the loaded image
+                                            imageView.setImage(bookImage);
                                         }
                                     }
                                 });
 
-                                // Listen for errors during image loading
                                 bookImage.errorProperty().addListener((obs, oldError, newError) -> {
                                     if (newError) {
                                         // Set the placeholder if loading fails
@@ -197,13 +198,42 @@ public class AvailableBooksController implements Initializable {  // Implement I
                                     }
                                 });
                             } catch (IllegalArgumentException e) {
-                                // Handle invalid URL or inaccessible resource
-                                imageView.setImage(placeholderImage); // Show placeholder immediately
+
+                                imageView.setImage(placeholderImage);
                             }
                         }
 
+                        Map<String, String> info = item.getInfo();
 
-                        VBox textContainer = item.getInfo();
+                        VBox textContainer = new VBox();
+                        textContainer.setSpacing(5);
+
+                        Label title = new Label(info.get("Title"));
+                        title.setFont(Font.font("System", FontWeight.BOLD, 16));
+                        textContainer.getChildren().add(title);
+
+                        Label author = new Label("Author: " + info.get("Author"));
+                        textContainer.getChildren().add(author);
+
+                        if (item instanceof Book) {
+                            Label isbn = new Label("ISBN: " + info.get("ISBN"));
+                            textContainer.getChildren().add(isbn);
+
+                            Label total = new Label("Total books: " + info.get("Total books"));
+                            textContainer.getChildren().add(total);
+
+                            Label borrowed = new Label("Borrowed books: " + info.get("Borrowed books"));
+                            textContainer.getChildren().add(borrowed);
+                        } else {
+                            Label university = new Label("University: " + info.get("University"));
+                            textContainer.getChildren().add(university);
+
+                            Label total = new Label("Total theses: " + info.get("Total theses"));
+                            textContainer.getChildren().add(total);
+
+                            Label borrowed = new Label("Borrowed theses: " + info.get("Borrowed theses"));
+                            textContainer.getChildren().add(borrowed);
+                        }
 
                         HBox cellContainer = new HBox(imageView, textContainer);
                         cellContainer.setSpacing(10);
@@ -437,24 +467,26 @@ public class AvailableBooksController implements Initializable {  // Implement I
 
     @FXML
     private void populateSuggestions() {
-        suggestions.clear();
-
-        for (Document doc : bookObservableList) {
-            String id;
-            if (doc instanceof Book) {
-                id = ((Book) doc).getIsbn();
-            } else {
-                id = Long.toString(((Thesis) doc).getId());
+        Platform.runLater(() -> {
+            suggestions.clear();
+            for (Document doc : bookObservableList) {
+                String id;
+                if (doc instanceof Book) {
+                    id = ((Book) doc).getIsbn();
+                } else {
+                    id = Long.toString(((Thesis) doc).getId());
+                }
+                suggestions.add(new DocumentItem(doc.getTitle(), id));
             }
-            suggestions.add(new DocumentItem(doc.getTitle(), id));
-        }
+        });
     }
+
 
     private void showAddedDocumentNotification() {
         // Create the notification label
         Label notificationLabel = new Label("Document added successfully!");
         notificationLabel.setPrefHeight(37.0);
-        notificationLabel.setPrefWidth(175.0);
+        notificationLabel.setPrefWidth(225.0);
         notificationLabel.setStyle("-fx-background-color: #73B573; -fx-text-fill: white; -fx-padding: 10px; -fx-background-radius: 0.5em;");
         notificationLabel.setVisible(false);
 
