@@ -18,7 +18,8 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="availableBooksPane" prefHeight="600.0" prefWidth="840" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.AvailableBooksController">
+<StackPane fx:id="availableBooksPane" prefHeight="600.0" prefWidth="840" xmlns="http://javafx.com/javafx/17"
+           xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.AvailableBooksController">
 
     <!-- Main content area with BorderPane layout for ListView and pagination controls -->
     <BorderPane prefHeight="600.0" prefWidth="840.0" style="-fx-padding: 10;">
@@ -26,27 +27,32 @@
         <!-- Bottom: Pagination controls -->
         <bottom>
             <HBox alignment="CENTER" prefHeight="35.0" prefWidth="820.0" spacing="10" style="-fx-padding: 5;">
-                <Button fx:id="prevButton" text="Previous" />
-                <Button fx:id="nextButton" text="Next" />
+                <Button fx:id="prevButton" text="Previous"/>
+                <Button fx:id="nextButton" text="Next"/>
             </HBox>
         </bottom>
         <top>
             <AnchorPane prefHeight="539.0" prefWidth="820.0" BorderPane.alignment="CENTER">
                 <children>
-                    <ListView fx:id="listView" layoutY="40.0" prefHeight="500.0" prefWidth="820.0" />
+                    <ListView fx:id="listView" layoutY="40.0" prefHeight="500.0" prefWidth="820.0"/>
 
-                    <HBox layoutX="500.0" layoutY="3.0" />
+                    <HBox layoutX="500.0" layoutY="3.0"/>
 
                     <!-- Suggestion ListView positioned below the search bar, hidden by default -->
-                    <ListView fx:id="suggestionListView" layoutX="498.0" layoutY="27.0" maxHeight="221.0" maxWidth="813.0" mouseTransparent="false" prefHeight="13.0" prefWidth="315.0" style="-fx-background-color: white; -fx-border-color: lightgray;" visible="false" />
-                    <TextField fx:id="searchField" layoutX="664.0" layoutY="2.0" maxWidth="250.0" promptText="Search document..." />
-                    <JFXButton fx:id="showDocumentFormButton" layoutX="25.0" layoutY="2.0" onAction="#toggleAddDocumentVisibility" style="-fx-background-color: #6487fa;" text="Add New Document" />
+                    <ListView fx:id="suggestionListView" layoutX="498.0" layoutY="27.0" maxHeight="221.0"
+                              maxWidth="813.0" mouseTransparent="false" prefHeight="13.0" prefWidth="315.0"
+                              style="-fx-background-color: white; -fx-border-color: lightgray;" visible="false"/>
+                    <TextField fx:id="searchField" layoutX="664.0" layoutY="2.0" maxWidth="250.0"
+                               promptText="Search document..."/>
+                    <JFXButton fx:id="showDocumentFormButton" layoutX="25.0" layoutY="2.0"
+                               onAction="#toggleAddDocumentVisibility" style="-fx-background-color: #6487fa;"
+                               text="Add New Document"/>
 
                     <ChoiceBox fx:id="documentShowingChoiceBox" layoutX="589.0" layoutY="2.0">
                         <items>
                             <FXCollections fx:factory="observableArrayList">
-                                <String fx:value="Book" />
-                                <String fx:value="Thesis" />
+                                <String fx:value="Book"/>
+                                <String fx:value="Thesis"/>
                             </FXCollections>
                         </items>
                     </ChoiceBox>
@@ -55,40 +61,49 @@
         </top>
     </BorderPane>
 
-    <VBox fx:id="addDocumentContainer" alignment="CENTER" maxHeight="500.0" maxWidth="550.0" prefHeight="500.0" prefWidth="550.0" spacing="10" style="-fx-background-color: white; -fx-border-color: #ccc; -fx-border-width: 1px; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-padding: 20px;" visible="false">
+    <VBox fx:id="addDocumentContainer" alignment="CENTER" maxHeight="500.0" maxWidth="550.0" prefHeight="500.0"
+          prefWidth="550.0" spacing="10"
+          style="-fx-background-color: white; -fx-border-color: #ccc; -fx-border-width: 1px; -fx-border-radius: 10px; -fx-background-radius: 10px; -fx-padding: 20px;"
+          visible="false">
         <HBox alignment="TOP_RIGHT" spacing="10">
-            <Region />
-            <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#toggleAddDocumentVisibility" style="-fx-cursor: hand;">
+            <Region/>
+            <ImageView fitHeight="20.0" fitWidth="20.0" onMouseClicked="#toggleAddDocumentVisibility"
+                       style="-fx-cursor: hand;">
                 <image>
-                    <Image url="@Images/exit.png" />
+                    <Image url="@Images/exit.png"/>
                 </image>
             </ImageView>
         </HBox>
 
-        <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Add New Document" />
+        <Label style="-fx-font-size: 16px; -fx-font-weight: bold;" text="Add New Document"/>
 
         <ChoiceBox fx:id="documentTypeChoiceBox">
             <items>
                 <FXCollections fx:factory="observableArrayList">
-                    <String fx:value="Thesis" />
+                    <String fx:value="Thesis"/>
                 </FXCollections>
             </items>
         </ChoiceBox>
 
-        <TextField fx:id="titleField" promptText="Title" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
-        <TextField fx:id="authorField" promptText="Author" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
-        <TextField fx:id="universityField" promptText="University" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
-        <TextArea fx:id="descriptionField" prefHeight="90.0" promptText="Description" />
-        <TextField fx:id="totalDocumentField" promptText="Total document" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
-        <TextField fx:id="thumbnailURLField" promptText="Thumbnail URL" style="-fx-background-radius: 3em; -fx-border-radius: 3em;" />
+        <TextField fx:id="titleField" promptText="Title" style="-fx-background-radius: 3em; -fx-border-radius: 3em;"/>
+        <TextField fx:id="authorField" promptText="Author" style="-fx-background-radius: 3em; -fx-border-radius: 3em;"/>
+        <TextField fx:id="universityField" promptText="University"
+                   style="-fx-background-radius: 3em; -fx-border-radius: 3em;"/>
+        <TextArea fx:id="descriptionField" prefHeight="90.0" promptText="Description"/>
+        <TextField fx:id="totalDocumentField" promptText="Total document"
+                   style="-fx-background-radius: 3em; -fx-border-radius: 3em;"/>
+        <TextField fx:id="thumbnailURLField" promptText="Thumbnail URL"
+                   style="-fx-background-radius: 3em; -fx-border-radius: 3em;"/>
 
         <VBox alignment="BASELINE_LEFT">
-            <Label fx:id="addDocumentStatusText" style="-fx-font-size: 14px; -fx-text-fill: red;" text="Add Review" visible="false" />
+            <Label fx:id="addDocumentStatusText" style="-fx-font-size: 14px; -fx-text-fill: red;" text="Add Review"
+                   visible="false"/>
         </VBox>
 
         <HBox>
-            <Region />
-            <JFXButton fx:id="addDocButton" onAction="#addNewDocument" style="-fx-background-color: #4caf50; -fx-text-fill: white;" text="Add Document" />
+            <Region/>
+            <JFXButton fx:id="addDocButton" onAction="#addNewDocument"
+                       style="-fx-background-color: #4caf50; -fx-text-fill: white;" text="Add Document"/>
         </HBox>
     </VBox>
 

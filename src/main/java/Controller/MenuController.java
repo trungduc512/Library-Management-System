@@ -3,7 +3,6 @@ package Controller;
 import Model.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -12,7 +11,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -65,7 +63,7 @@ public class MenuController implements Initializable {
     @FXML
     private HBox headerBar;
 
-    //sub feature: 840 x 510
+    // sub feature: 840 x 510
     @FXML
     private void backToHome(ActionEvent event) throws IOException {
         homePane = createHomeScreen();

@@ -299,6 +299,7 @@ public class UserService {
         }
         return books;
     }
+
     public static List<Borrower> getTopBorrowers() {
         String sql = """
                 SELECT b.id, b.fullName, b.userName, b.password
@@ -335,5 +336,4 @@ public class UserService {
 
         return topBorrowers;
     }
-
 }

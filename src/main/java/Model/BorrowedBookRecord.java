@@ -75,7 +75,6 @@ public class BorrowedBookRecord {
     }
 
 
-
     public String getTitle() {
         return title;
     }

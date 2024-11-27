@@ -189,6 +189,18 @@ public class BorrowerService {
         return false;
     }
 
+    public static void updateProfile(String fullName, int id) {
+        String sql = "UPDATE Borrowers SET fullName = ? WHERE id = ?";
+        try (Connection conn = DatabaseHelper.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, fullName);
+            stmt.setInt(2, id);
+            stmt.executeUpdate();
+            System.out.println("Profile updated in database.");
+        } catch (SQLException e) {
+        e.printStackTrace();
+    }
+}
     // Get borrower status (whether the borrower has overdue books)
     public static String getBorrowerStatus(int borrowerId) {
         String sql = "SELECT returnDate FROM BorrowedDocumentRecord WHERE borrowerId = ?";

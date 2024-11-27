@@ -27,7 +27,6 @@ import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.*;
 import java.util.*;
 
 public class AvailableBooksController implements Initializable {  // Implement Initializable
@@ -35,36 +34,29 @@ public class AvailableBooksController implements Initializable {  // Implement I
     private static final int IMAGE_HEIGHT = 118;
     private static final int IMAGE_WIDTH = 80;
     private static final double SEARCH_CELL_HEIGHT = 25;
+    private static final ObservableList<Document> bookObservableList = FXCollections.observableArrayList(User.getAllBooks());
+    private static final ObservableList<DocumentItem> suggestions = FXCollections.observableArrayList();
+    private static FilteredList<Document> filteredList;
     private final GaussianBlur blurEffect = new GaussianBlur(10);
-
-    private ObservableList<Document> allDocument = FXCollections.observableArrayList(); // All books
-    private ObservableList<Document> currentPageDocument = FXCollections.observableArrayList(); // Books for current page
-    private int currentPage = 1;
     private final Map<String, Image> imageCache = new HashMap<>();
-
+    private final ObservableList<Document> allDocument = FXCollections.observableArrayList(); // All books
+    private final ObservableList<Document> currentPageDocument = FXCollections.observableArrayList(); // Books for current page
+    private int currentPage = 1;
     private MenuController menuController;
-
     @FXML
     private StackPane availableBooksPane;
-
     @FXML
     private ListView<Document> listView;
-
     @FXML
     private ListView<DocumentItem> suggestionListView;
-
     @FXML
     private TextField searchField;
-
     @FXML
     private Button prevButton;
-
     @FXML
     private Button nextButton;
-
     @FXML
     private ChoiceBox<String> documentShowingChoiceBox;
-
     // add document properties
     @FXML
     private VBox addDocumentContainer;
@@ -92,26 +84,6 @@ public class AvailableBooksController implements Initializable {  // Implement I
     public void setMenuController(MenuController menuController) {
         this.menuController = menuController;
     }
-
-    public static class DocumentItem {
-        private String title;
-        private String id;
-
-        public DocumentItem(String title, String id) {
-            this.title = title;
-            this.id = id;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public String getId() {return id;}
-    }
-
-    private static ObservableList<Document> bookObservableList = FXCollections.observableArrayList(User.getAllBooks());
-    private static ObservableList<DocumentItem> suggestions = FXCollections.observableArrayList();
-    private static FilteredList<Document> filteredList;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -170,7 +142,6 @@ public class AvailableBooksController implements Initializable {  // Implement I
                             // No URL
                             imageView.setImage(placeholderImage); // Show placeholder
                         } else if (imageCache.containsKey(imageUrl)) {
-                            System.out.println(imageUrl);
                             // URL in cache
                             imageView.setImage(imageCache.get(imageUrl)); // Use cached image
                         } else {
@@ -198,7 +169,7 @@ public class AvailableBooksController implements Initializable {  // Implement I
                                     }
                                 });
                             } catch (IllegalArgumentException e) {
-
+                                // URL is illegal, loads not found cover image
                                 imageView.setImage(placeholderImage);
                             }
                         }
@@ -434,7 +405,7 @@ public class AvailableBooksController implements Initializable {  // Implement I
                 filteredSuggestionList = FXCollections.observableArrayList(filteredSuggestionList.subList(0, maxResults));
             } else if (filteredSuggestionList.size() < minResults) {
                 while (filteredSuggestionList.size() < minResults) {
-                    filteredSuggestionList.add(new DocumentItem("","")); // Add empty results
+                    filteredSuggestionList.add(new DocumentItem("", "")); // Add empty results
                 }
             }
 
@@ -464,9 +435,9 @@ public class AvailableBooksController implements Initializable {  // Implement I
         }
     }
 
-
     @FXML
     private void populateSuggestions() {
+        // thread safe if user click multiple time simultaneously
         Platform.runLater(() -> {
             suggestions.clear();
             for (Document doc : bookObservableList) {
@@ -481,12 +452,11 @@ public class AvailableBooksController implements Initializable {  // Implement I
         });
     }
 
-
     private void showAddedDocumentNotification() {
         // Create the notification label
         Label notificationLabel = new Label("Document added successfully!");
         notificationLabel.setPrefHeight(37.0);
-        notificationLabel.setPrefWidth(225.0);
+        notificationLabel.setPrefWidth(200.0);
         notificationLabel.setStyle("-fx-background-color: #73B573; -fx-text-fill: white; -fx-padding: 10px; -fx-background-radius: 0.5em;");
         notificationLabel.setVisible(false);
 
@@ -508,7 +478,7 @@ public class AvailableBooksController implements Initializable {  // Implement I
         ControllerUtils.fadeTransition(notificationLabel, 0, 1, 0.5);
         slideIn.setFromX(400); // Start from the right
         slideIn.setFromY(-230); // Start above the screen
-        slideIn.setToX(320); // Slide to the center
+        slideIn.setToX(310); // Slide to the center
 
         slideIn.setOnFinished(slideInEvent -> {
             PauseTransition delay = new PauseTransition(Duration.seconds(0.3));
@@ -524,5 +494,22 @@ public class AvailableBooksController implements Initializable {  // Implement I
         });
 
         slideIn.play();
+    }
+
+    public static class DocumentItem {
+        private final String title;
+        private final String id;
+
+        public DocumentItem(String title, String id) {
+            this.title = title;
+            this.id = id;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+        public String getId() {
+            return id;
+        }
     }
 }

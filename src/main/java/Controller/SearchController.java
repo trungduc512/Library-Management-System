@@ -1,7 +1,6 @@
 package Controller;
 
 import Model.*;
-import services.BookReviewDAO;
 import com.jfoenix.controls.JFXButton;
 import javafx.animation.*;
 import javafx.application.Platform;
@@ -16,13 +15,16 @@ import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.text.TextFlow;
 import javafx.util.Duration;
-import javafx.scene.shape.Rectangle;
+import services.BookReviewDAO;
 import services.GoogleBooksAPIClient;
 
 import java.net.URL;
@@ -36,87 +38,62 @@ import java.util.ResourceBundle;
 
 public class SearchController implements Initializable {
 
+    // book review properties
+    private static final int ITEMS_PER_REVIEW_UPDATE_ATTEMPT = 1;
+    private final GaussianBlur blurEffect = new GaussianBlur(10);
+    List<BookReview> bookReviewList;
+    List<BookReview> currentBookReviewList;
     private Document currentDoc;
-
     private String isbn_13;
     private String publisher;
-
-    // book review properties
-    private static final int ITEMS_PER_REVIEW_UPDATE_ATTEMPT = 3;
-    private final GaussianBlur blurEffect = new GaussianBlur(10);
-
     private int totalReview = 0;
     private int rating = 0;
     private int totalTimeBookReviewUpdate = 1;
     private boolean isDisplayReview = false;
     private boolean isLoadingReview = false;
-
     @FXML
     private VBox reviewBox;
-
     @FXML
     private VBox reviewContainer;
-
     @FXML
     private Label star1, star2, star3, star4, star5;
-
     @FXML
     private StackPane searchScreen;
-
     @FXML
     private StackPane displayStackPane;
-
     @FXML
     private ScrollPane searchScrollPane;
-
     @FXML
     private Button searchButton;
-
     @FXML
     private VBox vbox;
-
     @FXML
     private TextField search;
-
     @FXML
     private ProgressBar progressBar;
-
     @FXML
     private Spinner<Integer> numberSpinner;
-
     @FXML
     private Spinner<Integer> numberSpinner1;
-
     @FXML
     private JFXButton reduceButton;
-
     @FXML
     private JFXButton addButton;
-
     @FXML
     private JFXButton borrowButton;
-
     // book review
     @FXML
     private JFXButton showReviewButton;
-
     @FXML
     private JFXButton addReviewButton;
-
     @FXML
     private JFXButton submitReviewButton;
-
     @FXML
     private VBox addReviewContainer;
-
     @FXML
     private TextArea reviewText;
-
     @FXML
     private Label addReviewStatusText;
-
-    List<BookReview> bookReviewList;
-    List<BookReview> currentBookReviewList;
 
     @FXML
     private void clicked(ActionEvent event) {
@@ -302,7 +279,7 @@ public class SearchController implements Initializable {
 
     @FXML
     private void reduceDocFromDatabase(ActionEvent event) {
-        if (LMS.getInstance().getCurrentUser() instanceof  Librarian) {
+        if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
             int docAvailable;
 
             if (currentDoc instanceof Book) {
@@ -423,12 +400,11 @@ public class SearchController implements Initializable {
             vbox.getChildren().add(uniLabel);
         }
 
-        // Add Description label
+        // Add description label
         Label descriptionLabelTitle = new Label("Description:");
         descriptionLabelTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 10px 20px 0 20px;");
         vbox.getChildren().add(descriptionLabelTitle);
 
-        // Add Description content using TextFlow for justified text
         String descriptionText = currentDoc.getDescription();
         Text descriptionContent = new Text(descriptionText);
         descriptionContent.setStyle("-fx-font-size: 16px;");
@@ -441,22 +417,19 @@ public class SearchController implements Initializable {
         // update available quantity to delete
         if (LMS.getInstance().getCurrentUser() instanceof Librarian) {
             int docAvailable;
+
             if (currentDoc instanceof Book) {
                 docAvailable = ((Librarian) LMS.getInstance().getCurrentUser()).getDeleteQuantity(this.isbn_13);
             } else {
                 docAvailable = ((Librarian) LMS.getInstance().getCurrentUser()).getDeleteQuantity(((Thesis) currentDoc).getId());
             }
+
             SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory1 =
                     new SpinnerValueFactory.IntegerSpinnerValueFactory(Math.min(1, docAvailable),
                             docAvailable, Math.min(1, docAvailable));
             numberSpinner1.setValueFactory(valueFactory1);
 
-            if (numberSpinner1.getValue() == 0) {
-                reduceButton.setDisable(true);
-
-            } else {
-                reduceButton.setDisable(false);
-            }
+            reduceButton.setDisable(numberSpinner1.getValue() == 0);
         }
 
         updateReviewBookBox();
@@ -476,25 +449,27 @@ public class SearchController implements Initializable {
         reviewBox.getChildren().clear();
         reviewContainer.getChildren().clear();
 
+        // add review label
         Label reviewsSectionTitle = new Label("Reviews");
         reviewsSectionTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 30px 20px 0px 20px;");
         reviewBox.getChildren().add(reviewsSectionTitle);
 
+        // add rating box with stars
         HBox avgRatingBox = new HBox();
-        avgRatingBox.setSpacing(2); // Space between stars
+        avgRatingBox.setSpacing(2);
         for (int i = 0; i < 5; i++) {
             Label star = new Label(i < (int) avg_rate ? "★" : "☆");
             star.setStyle("-fx-font-size: 20px; -fx-text-fill: gold;");
             avgRatingBox.getChildren().add(star);
         }
-        Label rate = new Label(Double.toString(avg_rate) + " out of 5");
+        Label rate = new Label(avg_rate + " out of 5");
         rate.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 2px 20px 0px 10px;");
         avgRatingBox.getChildren().add(rate);
         avgRatingBox.setStyle("-fx-padding: 0px 0px 0px 20px;");
         reviewBox.getChildren().add(avgRatingBox);
 
         this.totalReview = brDao.getNumberOfReview(documentId);
-        Label ratingNumber = new Label(Integer.toString(this.totalReview) + " ratings");
+        Label ratingNumber = new Label(this.totalReview + " ratings");
         ratingNumber.setStyle("-fx-font-size: 14px; -fx-padding: 0px 20px 30px 20px;");
         reviewBox.getChildren().add(ratingNumber);
 
@@ -502,6 +477,7 @@ public class SearchController implements Initializable {
         showReviewButton.setDisable(!(this.totalReview > 0 && !addReviewContainer.isVisible()));
     }
 
+    // show borrowers' review
     private void displayBookReview(List<BookReview> reviews) {
         if (reviews != null && !reviews.isEmpty()) {
 
@@ -513,7 +489,7 @@ public class SearchController implements Initializable {
                 HBox user = new HBox();
                 user.setSpacing(2);
                 ImageView userIcon = new ImageView(new Image(String.valueOf(getClass().getResource("/View/Images/user-top-icon.png"))));
-                userIcon.setFitWidth(32); // Adjust the width as needed
+                userIcon.setFitWidth(32);
                 userIcon.setPreserveRatio(true);
                 VBox imageContainer = new VBox(userIcon);
                 user.getChildren().add(imageContainer);
@@ -549,6 +525,7 @@ public class SearchController implements Initializable {
         }
     }
 
+    // load more reviews if borrower scroll down
     private void updateCurrentBookReview() {
 
         int startIndex = (totalTimeBookReviewUpdate - 1) * ITEMS_PER_REVIEW_UPDATE_ATTEMPT;
@@ -648,6 +625,7 @@ public class SearchController implements Initializable {
         boolean isVisibleBefore = addReviewContainer.isVisible();
         addReviewContainer.setVisible(!isVisibleBefore);
 
+        // show and hide appropriate buttons
         if (!isVisibleBefore) {
             ControllerUtils.slideTransitionY(addReviewContainer, -120, 0, 0.5);
             ControllerUtils.fadeTransition(addReviewContainer, 0, 1, 0.5);
@@ -754,7 +732,6 @@ public class SearchController implements Initializable {
 
     @FXML
     private void rateBook(MouseEvent event) {
-
         Label clickedStar = (Label) event.getSource();
         String starId = clickedStar.getId();
 
@@ -1006,9 +983,9 @@ public class SearchController implements Initializable {
         slideIn.play(); // Play the slide-in animation
     }
 
+    // load info due to document type
     public void showDocumentInfo(Document doc) {
-        if (doc instanceof Book) {
-            Book book = (Book) doc;
+        if (doc instanceof Book book) {
 
             search.setText(book.getIsbn());
             loadDataInBackground(book.getIsbn());
@@ -1055,11 +1032,7 @@ public class SearchController implements Initializable {
                     new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 0, 0);
             numberSpinner1.setValueFactory(valueFactory1);
             numberSpinner1.valueProperty().addListener((obs, oldValue, newValue) -> {
-                if (newValue == 0) {
-                    reduceButton.setDisable(true);
-                } else {
-                    reduceButton.setDisable(false);
-                }
+                reduceButton.setDisable(newValue == 0);
             });
 
             addButton.setVisible(false);

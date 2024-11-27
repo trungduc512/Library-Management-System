@@ -1,9 +1,7 @@
 package Model;
 
-import services.DatabaseHelper;
 import services.UserService;
 
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -103,7 +101,7 @@ public abstract class User {
 
     // Hàm liệt kê 4 sách được mượn nhiều nhất
     public static List<Book> listTopBorrowedBooks() {
-        return  UserService.listTopBorrowedBooks();
+        return UserService.listTopBorrowedBooks();
     }
 
     // Hàm liệt kê Top 3 người mượn nhiều sách nhất
@@ -111,5 +109,3 @@ public abstract class User {
         return UserService.getTopBorrowers();
     }
 }
-
-

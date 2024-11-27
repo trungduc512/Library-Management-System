@@ -1,22 +1,15 @@
 package Model;
 
-import services.DatabaseHelper;
 import services.LMSService;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class LMS {
+    private static LMS instance = null;
     private List<Borrower> borrowerList;
     private List<Librarian> librarianList;
     private List<Book> bookList;
     private User currentUser;
-
-    private static LMS instance = null;
 
     private LMS() {
         borrowerList = null;

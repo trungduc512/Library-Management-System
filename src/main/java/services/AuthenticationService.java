@@ -3,7 +3,6 @@ package services;
 import Model.Borrower;
 import Model.Librarian;
 import Model.User;
-import services.DatabaseHelper;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

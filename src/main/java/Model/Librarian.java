@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Librarian extends User {
-
     private List<Document> documents;
 
     // Constructor
@@ -48,6 +47,7 @@ public class Librarian extends User {
         LibrarianService.updateTotalBook(book);
     }
 
+    // Hàm cạp nhật luận văn
     public void updateTotalThesis(Thesis thesis) {
         LibrarianService.updateTotalThesis(thesis);
     }
@@ -73,7 +73,6 @@ public class Librarian extends User {
 
     public void addThesis(String title, String author, String university, String description,
                           int totalTheses, String thumbnailURL) {
-
         ArrayList<Thesis> list = User.searchThesisByTitle(title);
         for (int i = 0; i < list.size(); i++) {
             Thesis FindThesis = list.get(i);
@@ -105,8 +104,7 @@ public class Librarian extends User {
         }
     }
 
-    public void updateThesis(long id,
-                             int increaseQuantity) {
+    public void updateThesis(long id, int increaseQuantity) {
         Thesis thesis = User.getThesisById(id);
         if (thesis != null) {
             thesis.setTotalDocument(
@@ -180,7 +178,7 @@ public class Librarian extends User {
         return LibrarianService.returnStatus(borrowerId);
     }
 
-    // Hàm đăng ký (register)
+    // Hàm đăng ký
     public static boolean register(String fullName, String userName, String password) {
         return LibrarianService.register(fullName, userName, password);
     }

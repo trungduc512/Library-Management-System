@@ -58,7 +58,7 @@ public class BorrowHistoryController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Set the column resize policy
-        //borrowHistoryTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        // borrowHistoryTable.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         titleColumn.setCellValueFactory(new PropertyValueFactory<>("title"));
         typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
@@ -71,7 +71,7 @@ public class BorrowHistoryController implements Initializable {
         borrowedDateColumn.prefWidthProperty().bind(borrowHistoryTable.widthProperty().multiply(0.15));
         returnDateColumn.prefWidthProperty().bind(borrowHistoryTable.widthProperty().multiply(0.15));
         statusColumn.prefWidthProperty().bind(borrowHistoryTable.widthProperty().multiply(0.15));
-        returnColumn.prefWidthProperty().bind(borrowHistoryTable.widthProperty().multiply(0.08));
+        returnColumn.prefWidthProperty().bind(borrowHistoryTable.widthProperty().multiply(0.085));
 
         statusColumn.setCellFactory(column -> new TableCell<BorrowedBookRecord, String>() {
             @Override
@@ -105,6 +105,7 @@ public class BorrowHistoryController implements Initializable {
                     private final JFXButton returnButton = new JFXButton();
                     private final ImageView imageView = new ImageView(
                             new Image(Objects.requireNonNull(getClass().getResourceAsStream("/View/Images/return-book-icon.png"))));
+
                     {
                         imageView.setFitHeight(20);
                         imageView.setFitWidth(20);

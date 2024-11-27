@@ -1,46 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-
-<StackPane fx:id="borrowHistoryPane" prefHeight="600.0" prefWidth="840.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.BorrowHistoryController">
+<?import javafx.scene.control.cell.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<StackPane fx:id="borrowHistoryPane" prefHeight="600.0" prefWidth="840.0" stylesheets="@Style.css"
+           xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="Controller.BorrowHistoryController">
     <AnchorPane prefHeight="600.0" prefWidth="840.0">
-        <VBox spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
-            <Label fx:id="noBooksLabel" text="You haven't borrowed any book yet." visible="false" />
+        <VBox spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0"
+              AnchorPane.topAnchor="10.0">
+            <Label fx:id="noBooksLabel" text="You haven't borrowed any book yet." visible="false"/>
             <TableView fx:id="borrowHistoryTable" VBox.vgrow="ALWAYS">
                 <columns>
 
                     <TableColumn fx:id="titleColumn" prefWidth="330.0" text="Title">
                         <cellValueFactory>
-                            <PropertyValueFactory property="title" />
+                            <PropertyValueFactory property="title"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn fx:id="typeColumn" prefWidth="108.0" text="Type">
                         <cellValueFactory>
-                            <PropertyValueFactory property="isbn" />
+                            <PropertyValueFactory property="isbn"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn fx:id="borrowedDateColumn" prefWidth="105.0" text="Borrowed Date">
                         <cellValueFactory>
-                            <PropertyValueFactory property="borrowedDate" />
+                            <PropertyValueFactory property="borrowedDate"/>
                         </cellValueFactory>
                     </TableColumn>
                     <TableColumn fx:id="returnDateColumn" minWidth="0.0" prefWidth="114.0" text="Return Date">
                         <cellValueFactory>
-                            <PropertyValueFactory property="returnDate" />
+                            <PropertyValueFactory property="returnDate"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="statusColumn" maxWidth="381.0" prefWidth="100.0" resizable="false" text="Status">
+                    <TableColumn fx:id="statusColumn" maxWidth="381.0" prefWidth="100.0" resizable="false"
+                                 text="Status">
                         <cellValueFactory>
-                            <PropertyValueFactory property="status" />
+                            <PropertyValueFactory property="status"/>
                         </cellValueFactory>
                     </TableColumn>
-                    <TableColumn fx:id="returnColumn" prefWidth="58.0" resizable="false" text="Return" />
+                    <TableColumn fx:id="returnColumn" prefWidth="58.0" resizable="false" text="Return"/>
                 </columns>
             </TableView>
         </VBox>

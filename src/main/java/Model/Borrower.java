@@ -1,9 +1,9 @@
 package Model;
 
+import services.BorrowerService;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import services.BorrowerService;
 
 public class Borrower extends User {
 
@@ -16,6 +16,15 @@ public class Borrower extends User {
     public Borrower(int id, String fullName, String userName, String password) {
         super(id, fullName, userName, password);
         this.borrowedBooks = new ArrayList<>();
+    }
+
+    public static boolean register(String fullName, String userName, String password) {
+        if (BorrowerService.registerUser(fullName, userName, password)) {
+            System.out.println("Registration successful.");
+            return true;
+        }
+        System.out.println("User already exists.");
+        return false;
     }
 
     @Override
@@ -34,13 +43,9 @@ public class Borrower extends User {
         return false;
     }
 
-    public static boolean register(String fullName, String userName, String password) {
-        if (BorrowerService.registerUser(fullName, userName, password)) {
-            System.out.println("Registration successful.");
-            return true;
-        }
-        System.out.println("User already exists.");
-        return false;
+    public void updateProfile(String fullName) {
+        this.setFullName(fullName);
+        BorrowerService.updateProfile(fullName, id);
     }
 
     public List<BorrowedBookRecord> listBorrowedBooks() {
