@@ -98,7 +98,7 @@ The system supports two types of users:
 ## **Application Architecture**
 
 - **Language**: Java  
-- **Framework**: Spring Boot (or JavaFX for the GUI).  
+- **Framework**: JavaFX for the GUI.  
 - **Database**: MySQL/PostgreSQL  
 - **Design Pattern**: MVC (Model-View-Controller) for modular and scalable code organization.  
 
