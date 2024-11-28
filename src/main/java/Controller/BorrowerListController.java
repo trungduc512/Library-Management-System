@@ -23,10 +23,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * Controller for managing the list of borrowers in the library system.
+ * Provides functionality for displaying borrower information, editing borrower profiles,
+ * and lazy-loading borrower statuses.
+ */
 public class BorrowerListController {
 
+    /** Applies a blur effect when the user is editing borrower information. */
     private final GaussianBlur blurEffect = new GaussianBlur(10);
-    // Cache for borrower statuses
+    /** Cache for storing borrower statuses to minimize redundant calculations. */
     private final Map<Integer, String> statusCache = new HashMap<>();
     @FXML
     private StackPane borrowerListStackPane;
@@ -65,7 +71,7 @@ public class BorrowerListController {
             return new SimpleStringProperty(status);
         });
 
-        // Set a custom cell factory for styling
+        // Configures the status column to lazily load statuses and apply custom comparators.
         statusColumn.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(String status, boolean empty) {
@@ -139,8 +145,8 @@ public class BorrowerListController {
             return status1.compareTo(status2); // Alphabetical order for others
         });
 
+        // show change information button
         changeInformationColumn.setCellFactory(new Callback<TableColumn<Borrower, Void>, TableCell<Borrower, Void>>() {
-
             @Override
             public TableCell<Borrower, Void> call(TableColumn<Borrower, Void> param) {
 
@@ -193,6 +199,10 @@ public class BorrowerListController {
         }
     }
 
+    /**
+     * Toggles the visibility of the borrower information editing box.
+     * Applies a blur effect and disables the borrower table while the editing box is visible.
+     */
     @FXML
     private void toggleChangeBoxVisibility() {
         boolean isVisibleBefore = changeUserInformationBox.isVisible();
@@ -212,7 +222,10 @@ public class BorrowerListController {
         changeUserInformationBox.setVisible(!isVisibleBefore);
     }
 
-    // submit user information change
+    /**
+     * Submits changes to the currently selected borrower's information.
+     * Updates the table and shows a notification upon success.
+     */
     @FXML
     private void submitChanges() {
         String name = userNameField.getText();

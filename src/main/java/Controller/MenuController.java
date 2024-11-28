@@ -23,8 +23,15 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+/**
+ * Controller class for managing the main navigation and layout of the application.
+ * It handles switching between different feature screens and user interactions with the menu.
+ * The controller integrates multiple views such as the home screen, available books, borrower history,
+ * and search functionalities, and provides a smooth user experience with asynchronous loading and transitions.
+ */
 public class MenuController implements Initializable {
 
+;
     private AvailableBooksController availableBooksController;
     private SearchController searchController;
     private BorrowHistoryController borrowerHistoryController;
@@ -270,8 +277,6 @@ public class MenuController implements Initializable {
         thread.start();
     }
 
-
-
     private void useFeature3() {
         switchNode(feature3Pane);
     }
@@ -291,10 +296,6 @@ public class MenuController implements Initializable {
         switchNode(searchPane);
         searchController.showDocumentInfo(id);
     }
-
-    public void toHomeScreen() {
-
-    };
 
     // Switch Layout Panes in Center of BorderPane
     public void switchNode(Node node) {

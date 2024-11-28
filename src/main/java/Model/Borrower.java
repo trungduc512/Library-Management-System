@@ -5,6 +5,10 @@ import services.BorrowerService;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The Borrower class represents a user who borrows books from the library system.
+ * It extends the User class and includes additional functionality for managing borrowed books.
+ */
 public class Borrower extends User {
 
     private List<BorrowedBookRecord> borrowedBooks;
@@ -60,6 +64,11 @@ public class Borrower extends User {
         return BorrowerService.returnBook(recordId);
     }
 
+    /**
+     * Retrieves the current status of the borrower, such as the overdue ,...
+     *
+     * @return the borrower's status
+     */
     public String returnStatus() {
         return BorrowerService.getBorrowerStatus(this.getId());
     }

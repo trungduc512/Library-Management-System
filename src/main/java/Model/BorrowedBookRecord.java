@@ -2,6 +2,10 @@ package Model;
 
 import java.time.LocalDate;
 
+/**
+ * Represents a record of a borrowed book or document. This class contains details about the borrower, the borrowed item,
+ * and the borrowing period, including the document's ID, title, type, quantity, borrowing dates, and its current status.
+ */
 public class BorrowedBookRecord {
 
     private int borrowerId;

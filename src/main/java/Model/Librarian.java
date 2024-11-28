@@ -5,6 +5,12 @@ import services.LibrarianService;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a Librarian, a user who can manage books and theses in the library system.
+ * The Librarian class extends the User class and provides additional functionality for adding, updating, deleting,
+ * and managing documents (books and theses) in the system. It also provides methods for listing borrowers and
+ * checking their borrowing status.
+ */
 public class Librarian extends User {
     private List<Document> documents;
 
@@ -33,31 +39,47 @@ public class Librarian extends User {
         return false;
     }
 
-    // Hàm lưu sách vào database
+    /**
+     * Saves a book to the database.
+     *
+     * @param book the book to be saved.
+     */
     public void save(Book book) {
         LibrarianService.saveBook(book);
     }
 
+    /**
+     * Saves a thesis to the database.
+     *
+     * @param thesis the thesis to be saved.
+     */
     public void save(Thesis thesis) {
         LibrarianService.saveThesis(thesis);
     }
 
-    // Hàm cập nhật sách trong database
     public void updateTotalBook(Book book) {
         LibrarianService.updateTotalBook(book);
     }
 
-    // Hàm cạp nhật luận văn
     public void updateTotalThesis(Thesis thesis) {
         LibrarianService.updateTotalThesis(thesis);
     }
 
-    // Hàm xóa sách khỏi database
     public void delete(String isbn) {
         LibrarianService.deleteBook(isbn);
     }
 
-    // Hàm thêm sách
+    /**
+     * Adds a book to the library system.
+     * If the book already exists, updates its quantity.
+     *
+     * @param title        the title of the book.
+     * @param author       the author of the book.
+     * @param isbn         the ISBN of the book.
+     * @param description  the description of the book.
+     * @param totalBooks   the total quantity of the book.
+     * @param thumbnailURL the URL of the book's thumbnail image.
+     */
     public void addBook(String title, String author, String isbn, String description,
                         int totalBooks, String thumbnailURL) {
         Book FindBook = User.getBookByIsbn(isbn);
@@ -71,6 +93,17 @@ public class Librarian extends User {
         System.out.println("Added book: " + title + " successfully.");
     }
 
+    /**
+     * Adds a thesis to the library system.
+     * If the thesis already exists, updates its quantity.
+     *
+     * @param title        the title of the thesis.
+     * @param author       the author of the thesis.
+     * @param university   the university where the thesis was submitted.
+     * @param description  the description of the thesis.
+     * @param totalTheses  the total quantity of the thesis.
+     * @param thumbnailURL the URL of the thesis's thumbnail image.
+     */
     public void addThesis(String title, String author, String university, String description,
                           int totalTheses, String thumbnailURL) {
         ArrayList<Thesis> list = User.searchThesisByTitle(title);
@@ -89,7 +122,12 @@ public class Librarian extends User {
         System.out.println("Added thesis: " + title + " successfully.");
     }
 
-    // Hàm sửa số lượng sách
+    /**
+     * Updates the quantity of a book based on ISBN.
+     *
+     * @param isbn          the ISBN of the book.
+     * @param increaseQuantity the quantity to increase.
+     */
     public void updateBook(String isbn,
                            int increaseQuantity) {
         Book book = User.getBookByIsbn(isbn);
@@ -104,6 +142,12 @@ public class Librarian extends User {
         }
     }
 
+    /**
+     * Updates the quantity of a thesis based on its ID.
+     *
+     * @param id             the ID of the thesis.
+     * @param increaseQuantity the quantity to increase.
+     */
     public void updateThesis(long id, int increaseQuantity) {
         Thesis thesis = User.getThesisById(id);
         if (thesis != null) {
@@ -114,7 +158,12 @@ public class Librarian extends User {
         }
     }
 
-    // Trả về lượng sách có thể xóa của sách đó
+    /**
+     * Returns the quantity of books that can be deleted based on ISBN.
+     *
+     * @param isbn the ISBN of the book.
+     * @return the quantity of books that can be deleted.
+     */
     public int getDeleteQuantity(String isbn) {
         Book book = User.getBookByIsbn(isbn);
         if (book != null) {
@@ -125,6 +174,12 @@ public class Librarian extends User {
         return 0;
     }
 
+    /**
+     * Returns the quantity of theses that can be deleted based on ID.
+     *
+     * @param id the ID of the thesis.
+     * @return the quantity of theses that can be deleted.
+     */
     public int getDeleteQuantity(long id) {
         Thesis thesis = User.getThesisById(id);
         if (thesis != null) {
@@ -135,7 +190,12 @@ public class Librarian extends User {
         return 0;
     }
 
-    // Hàm giảm số lượng sách
+    /**
+     * Decreases the quantity of a book based on ISBN.
+     *
+     * @param isbn          the ISBN of the book.
+     * @param decreaseQuantity the quantity to decrease.
+     */
     public void decreaseBook(String isbn, int decreaseQuantity) {
         Book book = User.getBookByIsbn(isbn);
         if (book != null) {
@@ -149,6 +209,12 @@ public class Librarian extends User {
         }
     }
 
+    /**
+     * Decreases the quantity of a thesis based on ID.
+     *
+     * @param id             the ID of the thesis.
+     * @param decreaseQuantity the quantity to decrease.
+     */
     public void decreaseThesis(long id, int decreaseQuantity) {
         Thesis thesis = User.getThesisById(id);
 
@@ -163,22 +229,18 @@ public class Librarian extends User {
         }
     }
 
-    // Hàm xóa sách
     public void deleteBook(String isbn) {
         LibrarianService.deleteBook(isbn);
     }
 
-    // Hàm liệt kê danh sách borrower
     public static List<Borrower> listBorrowers() {
         return LibrarianService.listBorrowers();
     }
 
-    // Hàm returnStatusBorrower trả về trạng thái người mượn sách
     public String returnStatus(int borrowerId) {
         return LibrarianService.returnStatus(borrowerId);
     }
 
-    // Hàm đăng ký
     public static boolean register(String fullName, String userName, String password) {
         return LibrarianService.register(fullName, userName, password);
     }

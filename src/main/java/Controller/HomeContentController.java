@@ -14,6 +14,10 @@ import javafx.scene.layout.VBox;
 
 import java.util.List;
 
+/**
+ * Controller class for managing the content displayed on the home screen of the application.
+ * It displays statistics, top borrowers, and popular books, and handles user interactions.
+ */
 public class HomeContentController {
 
     private MenuController menuController;

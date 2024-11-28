@@ -3,6 +3,11 @@ package Model;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The Thesis class represents a specific type of document in the library system.
+ * It extends the Document class and includes additional attributes such as university.
+ * It provides methods to retrieve and manage thesis-specific information.
+ */
 public class Thesis extends Document {
     private long id;
     private String university;

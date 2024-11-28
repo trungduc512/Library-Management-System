@@ -146,6 +146,8 @@ public class SearchController implements Initializable {
             GoogleBooksAPIClient apiClient = task.getValue();
             if (apiClient.getISBN() == null || !Objects.equals(apiClient.getISBN(), search.getText())) {
                 vbox.getChildren().clear();
+                reviewBox.getChildren().clear();
+                reviewContainer.getChildren().clear();
                 showNotFoundNotification();
             } else {
                 String thumbnailURl = apiClient.getThumbnailURL();
@@ -193,6 +195,8 @@ public class SearchController implements Initializable {
         task.setOnFailed(event -> {
             Platform.runLater(() -> {
                 vbox.getChildren().clear();
+                reviewBox.getChildren().clear();
+                reviewContainer.getChildren().clear();
                 showNotFoundNotification();
             });
             displayStackPane.getChildren().remove(stackPane); // Remove the overlay and indicator
@@ -935,9 +939,9 @@ public class SearchController implements Initializable {
 
     private void showNotFoundNotification() {
         // Create the notification label with text and styling
-        Label notFoundNotification = new Label("Cannot find document with provided ISBN.");
+        Label notFoundNotification = new Label("Cannot find document with provided ISBN");
         notFoundNotification.setPrefHeight(37.0);
-        notFoundNotification.setPrefWidth(260.0);
+        notFoundNotification.setPrefWidth(280.0);
         notFoundNotification.setStyle("-fx-background-color: #FE7156; -fx-text-fill: white; -fx-padding: 10px; -fx-background-radius: 0.5em;");
         notFoundNotification.setVisible(false); // Initially not visible
 
@@ -961,7 +965,7 @@ public class SearchController implements Initializable {
         ControllerUtils.fadeTransition(notFoundNotification, 0, 1, 0.5); // Apply fade transition
         slideIn.setFromX(330); // Start from the right
         slideIn.setFromY(-230); // Start above the screen
-        slideIn.setToX(280); // Slide to the center
+        slideIn.setToX(240.0); // Slide to the center
 
         // Set the action to perform after the slide-in animation is finished
         slideIn.setOnFinished(slideInEvent -> {

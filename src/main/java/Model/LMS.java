@@ -4,6 +4,11 @@ import services.LMSService;
 
 import java.util.List;
 
+/**
+ * The LMS (Library Management System) class serves as the central hub for managing the library's users and documents.
+ * It follows the Singleton pattern to ensure there is only one instance of the system. It provides methods to handle
+ * login and logout for borrowers and librarians, and to retrieve lists of users and books.
+ */
 public class LMS {
     private static LMS instance = null;
     private List<Borrower> borrowerList;
@@ -26,7 +31,7 @@ public class LMS {
         return instance;
     }
 
-    //get current user
+    // Get current user
     public User getCurrentUser() {
         return currentUser;
     }
@@ -61,7 +66,6 @@ public class LMS {
         return currentUser.login(userName, password);
     }
 
-    // Hàm đăng xuất (logout)
     public void logoutBorrower(Borrower borrower) {
         System.out.println("Log out successfully.");
         if (borrower != null) {

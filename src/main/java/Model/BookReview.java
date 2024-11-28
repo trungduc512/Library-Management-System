@@ -3,6 +3,11 @@ package Model;
 import java.sql.Timestamp;
 import java.util.Objects;
 
+/**
+ * Represents a review for a book, containing details about the reviewer, their rating, and the review content.
+ * This class is used to store and retrieve book review data, including the reviewer's ID, name, rating, review text,
+ * and the date when the review was created.
+ */
 public class BookReview {
     private int reviewerId;
     private String bookISBN;

@@ -20,6 +20,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * Controller class for the login screen.
+ * Manages user login and transitions to other screens in the application.
+ */
 public class LoginController implements Initializable {
 
     @FXML

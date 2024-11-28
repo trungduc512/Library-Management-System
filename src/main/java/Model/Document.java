@@ -2,6 +2,11 @@ package Model;
 
 import java.util.Map;
 
+/**
+ * The Document class serves as an abstract representation of a document in the library system.
+ * It contains common attributes such as title, author, description, thumbnail URL, and document quantities,
+ * and provides methods to manage and retrieve document information.
+ */
 public abstract class Document {
     protected String title;
     protected String author;

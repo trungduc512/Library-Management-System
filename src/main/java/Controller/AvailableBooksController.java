@@ -29,6 +29,10 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
+/**
+ * Controller class for managing the "Available Books" screen in the Library Management System.
+ * Provides functionality to display, search, filter, and add new documents such as books and theses.
+ */
 public class AvailableBooksController implements Initializable {  // Implement Initializable
     private static final int ITEMS_PER_PAGE = 4;
     private static final int IMAGE_HEIGHT = 118;
@@ -250,6 +254,9 @@ public class AvailableBooksController implements Initializable {  // Implement I
         nextButton.setOnAction(this::loadNextPage);
     }
 
+    /**
+     * Toggles the visibility of the "Add Document" form.
+     */
     @FXML
     private void toggleAddDocumentVisibility() {
         boolean isVisibleBefore = addDocumentContainer.isVisible();
@@ -279,6 +286,9 @@ public class AvailableBooksController implements Initializable {  // Implement I
         }
     }
 
+    /**
+     * Adds a new document (Thesis) based on user input.
+     */
     @FXML
     private void addNewDocument() {
         String selectedType = documentTypeChoiceBox.getValue();
@@ -379,6 +389,9 @@ public class AvailableBooksController implements Initializable {  // Implement I
         }
     }
 
+    /**
+     * Handles the search field's text change event to update suggestions.
+     */
     @FXML
     private void handleKeyReleased() {
         String searchKeyWord = searchField.getText().toLowerCase();
@@ -496,6 +509,9 @@ public class AvailableBooksController implements Initializable {  // Implement I
         slideIn.play();
     }
 
+    /**
+     * Inner class representing a document item for suggestions.
+     */
     public static class DocumentItem {
         private final String title;
         private final String id;

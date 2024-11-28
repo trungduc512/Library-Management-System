@@ -23,6 +23,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for the borrow history view. Displays a table of borrowed books and provides functionality
+ * for returning books, highlighting overdue items, and navigating to book details.
+ */
 public class BorrowHistoryController implements Initializable {
 
     private MenuController menuController;

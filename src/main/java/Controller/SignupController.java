@@ -15,8 +15,11 @@ import javafx.scene.paint.Color;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+/**
+ * The SignupController class is responsible for handling the user signup logic for the library system.
+ * It validates the input fields, manages the signup process, and provides appropriate feedback to the user.
+ */
 public class SignupController implements Initializable {
-
 
     @FXML
     private AnchorPane signupScreen;

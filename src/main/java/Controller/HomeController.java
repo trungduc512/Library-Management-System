@@ -16,6 +16,11 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+/**
+ * Controller class for managing the home screen of the application.
+ * It initializes the home screen view, loads dynamic content, and manages the interaction between
+ * components such as the menu and the main content.
+ */
 public class HomeController implements Initializable {
 
     private VBox content;
@@ -42,6 +47,11 @@ public class HomeController implements Initializable {
         loadScreen();
     }
 
+    /**
+     * Loads the main content of the home screen asynchronously.
+     * It displays a loading overlay with a progress indicator while the content is being loaded.
+     * On successful loading, the dynamic content is added to the main layout.
+     */
     private void loadScreen() {
         Rectangle overlay = new Rectangle(coverPane.getWidth(), coverPane.getHeight(), Color.rgb(0, 0, 0, 0.1));
         overlay.setDisable(true); // Make sure the overlay doesn't block interactions

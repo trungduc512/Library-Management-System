@@ -5,11 +5,15 @@ import services.UserService;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The User class is an abstract representation of a user in the library system.
+ * It contains common attributes and methods for both borrowers and librarians.
+ */
 public abstract class User {
 
     protected int id;
-    protected String fullName;  // Họ tên người dùng
-    protected String userName;  // Tên tài khoản (username)
+    protected String fullName;
+    protected String userName;
     protected String password;
 
     // Constructor
@@ -58,7 +62,6 @@ public abstract class User {
 
     public abstract boolean login(String userName, String password);
 
-    //Hàm tìm sách theo tên
     public static ArrayList<Book> searchBooksByTitle(String title) {
         return UserService.searchBooksByTitle(title);
     }
@@ -67,7 +70,6 @@ public abstract class User {
         return UserService.searchThesisByTitle(title);
     }
 
-    // Hàm lấy danh sách sách từ cơ sở dữ liệu
     public static ArrayList<Book> getAllBooks() {
         return UserService.getAllBooks();
     }
@@ -76,7 +78,6 @@ public abstract class User {
         return UserService.getAllThesis();
     }
 
-    // Hàm lấy thông tin sách từ ISBN
     public static Book getBookByIsbn(String isbn) {
         return UserService.getBookByIsbn(isbn);
     }
@@ -89,22 +90,18 @@ public abstract class User {
         return UserService.getDocumentById(id);
     }
 
-    // Hàm tìm tổng số sách có trong database
     public static int getTotalBooks() {
         return UserService.getTotalBooks();
     }
 
-    // Hàm tìm tổng số sách đã mượn
     public static int getTotalBorrowedBooks() {
         return UserService.getTotalBorrowedBooks();
     }
 
-    // Hàm liệt kê 4 sách được mượn nhiều nhất
     public static List<Book> listTopBorrowedBooks() {
         return UserService.listTopBorrowedBooks();
     }
 
-    // Hàm liệt kê Top 3 người mượn nhiều sách nhất
     public static List<Borrower> getTopBorrowers() {
         return UserService.getTopBorrowers();
     }
