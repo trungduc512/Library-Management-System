@@ -99,7 +99,7 @@ The system supports two types of users:
 
 - **Language**: Java  
 - **Framework**: JavaFX for the GUI.  
-- **Database**: MySQL/PostgreSQL  
+- **Database**: MySQL.  
 - **Design Pattern**: MVC (Model-View-Controller) for modular and scalable code organization.  
 
 ---
