@@ -36,6 +36,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
 
+/**
+ * Controller class for managing the UI of the Search feature in the Library Management System (LMS).
+ * This class is responsible for handling user actions related to searching, displaying documents,
+ * adding or reducing documents, borrowing documents, and managing reviews.
+ */
 public class SearchController implements Initializable {
 
     // book review properties
@@ -95,12 +100,23 @@ public class SearchController implements Initializable {
     @FXML
     private Label addReviewStatusText;
 
+    /**
+     * Handles the search button click event. Initiates the data loading process in the background.
+     *
+     * @param event The ActionEvent triggered by the search button click.
+     */
     @FXML
     private void clicked(ActionEvent event) {
         String isbn = search.getText();
         loadDataInBackground(isbn);
     }
 
+    /**
+     * Loads the data related to the book in the background by calling the GoogleBooksAPI.
+     * Displays a loading indicator during the process and updates the UI when the data is successfully retrieved.
+     *
+     * @param isbn The ISBN of the book to search for.
+     */
     private void loadDataInBackground(String isbn) {
         Task<GoogleBooksAPIClient> task = new Task<GoogleBooksAPIClient>() {
             @Override
@@ -223,6 +239,10 @@ public class SearchController implements Initializable {
         thread.start();
     }
 
+    /**
+     * Load detail data of specific thesis.
+     * @param thesis
+     */
     private void loadThesis(Thesis thesis) {
         Thesis dummy = new Thesis(thesis.getTitle(), thesis.getAuthor(), thesis.getDescription(), thesis.getTotalDocument(),
                 thesis.getBorrowedDocument(), thesis.getThumbnailURL(), thesis.getUniversity());
@@ -325,6 +345,10 @@ public class SearchController implements Initializable {
         }
     }
 
+    /**
+     * Updates the UI with the document details, including thumbnail, title, authors, publisher, description, etc.
+     * This method is called after the document data is successfully fetched from the API or loaded from the database.
+     */
     private void updateUI() {
         // Clear the VBox
         vbox.getChildren().clear();
